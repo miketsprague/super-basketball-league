@@ -18,6 +18,9 @@
         padding: 1rem;
         text-align: center;
       }
+      .initial-loading.hidden {
+        display: none;
+      }
       .initial-loading .emoji {
         font-size: 3rem;
         animation: bounce 1s ease-in-out infinite;
@@ -29,11 +32,6 @@
       @keyframes bounce {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-10px); }
-      }
-      /* Hide loading state once React renders */
-      #root:not(:empty) + .initial-loading,
-      #root:not(:empty) ~ .initial-loading {
-        display: none;
       }
     </style>
   </head>
@@ -54,17 +52,31 @@
     </noscript>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Hide loading indicator once React has initialized
-      // This handles the case where React fails to mount
-      window.addEventListener('load', function() {
+      // Check if React has mounted and hide loading indicator
+      // Uses MutationObserver to detect when React adds content to #root
+      (function() {
+        var root = document.getElementById('root');
+        var loading = document.getElementById('initial-loading');
+        
+        if (!root || !loading) return;
+        
+        // Hide loading when React mounts (adds children to root)
+        var observer = new MutationObserver(function(mutations) {
+          if (root.hasChildNodes()) {
+            loading.classList.add('hidden');
+            observer.disconnect();
+          }
+        });
+        
+        observer.observe(root, { childList: true });
+        
+        // Fallback: show error if React fails to mount after 10 seconds
         setTimeout(function() {
-          var root = document.getElementById('root');
-          var loading = document.getElementById('initial-loading');
-          if (root && root.innerHTML === '' && loading) {
+          if (!root.hasChildNodes() && loading) {
             loading.innerHTML = '<div class="emoji">🏀</div><p style="color: #dc2626;">Failed to load app. Please refresh the page.</p><button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #ea580c; color: white; border: none; border-radius: 0.25rem; cursor: pointer;">Refresh</button>';
           }
-        }, 5000);
-      });
+        }, 10000);
+      })();
     </script>
   </body>
 </html>
