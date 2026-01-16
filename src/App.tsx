@@ -32,7 +32,8 @@ function HomePage() {
         const availableLeagues = await fetchLeagues();
         setLeagues(availableLeagues);
         // Set the first league as selected if default league is not in the list
-        if (availableLeagues.length > 0 && !availableLeagues.find(l => l.id === DEFAULT_LEAGUE.id)) {
+        const hasDefaultLeague = availableLeagues.some(l => l.id === DEFAULT_LEAGUE.id);
+        if (availableLeagues.length > 0 && !hasDefaultLeague) {
           setSelectedLeague(availableLeagues[0]);
         }
       } catch (error) {

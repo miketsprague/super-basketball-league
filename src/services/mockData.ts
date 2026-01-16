@@ -603,13 +603,14 @@ function generateMockPlayers(teamName: string, totalScore: number): PlayerStatis
   }).sort((a, b) => b.points - a.points);
 }
 
+// Combined array for searching across all leagues
+const allMockMatches = [...mockMatches, ...euroleagueMockMatches];
+
 /**
  * Get mock match details for a given match ID
  */
 export function getMockMatchDetails(matchId: string): MatchDetails | null {
-  // Search in both Super League and EuroLeague matches
-  const match = mockMatches.find((m) => m.id === matchId) || 
-                euroleagueMockMatches.find((m) => m.id === matchId);
+  const match = allMockMatches.find((m) => m.id === matchId);
   if (!match) return null;
   
   const isCompleted = match.status === 'completed';

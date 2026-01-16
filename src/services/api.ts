@@ -235,10 +235,9 @@ export async function fetchLeagues(): Promise<League[]> {
   if (data?.leagues && Array.isArray(data.leagues)) {
     // Filter for basketball leagues that match our predefined leagues
     const basketballLeagues = data.leagues
-      .filter((league) => league.strSport === 'Basketball')
       .filter((league) => 
-        league.idLeague === LEAGUE_IDS.SUPER_LEAGUE || 
-        league.idLeague === LEAGUE_IDS.EUROLEAGUE
+        league.strSport === 'Basketball' &&
+        (league.idLeague === LEAGUE_IDS.SUPER_LEAGUE || league.idLeague === LEAGUE_IDS.EUROLEAGUE)
       )
       .map((league): League => ({
         id: league.idLeague,
