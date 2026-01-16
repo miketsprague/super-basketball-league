@@ -1,73 +1,162 @@
-# React + TypeScript + Vite
+# 🏀 Super Basketball League
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile-first web application to display fixtures, results, and league standings for **Super League Basketball** (UK's top basketball league).
 
-Currently, two official plugins are available:
+Built with React, TypeScript, Vite, and Tailwind CSS.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 Features
 
-## React Compiler
+- 📱 Mobile-first responsive design
+- 🏆 Live league standings with playoff and relegation indicators
+- 📅 Fixtures and results with British date formatting
+- 🔄 Auto-refresh data every 5 minutes
+- ⚡ Fast loading with Vite
+- 🎨 Modern UI with Tailwind CSS
+- 📊 API integration with fallback to mock data
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Quick Start
 
-## Expanding the ESLint configuration
+### Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js 20+ and npm
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/miketsprague/super-basketball-league.git
+   cd super-basketball-league
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. (Optional) Configure API key:
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your TheSportsDB API key
+   ```
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:5173/super-basketball-league/](http://localhost:5173/super-basketball-league/) in your browser
+
+## 🔧 Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint
+
+### Project Structure
+
+```
+super-basketball-league/
+├── src/
+│   ├── components/       # React components
+│   │   ├── Fixtures.tsx
+│   │   └── LeagueTable.tsx
+│   ├── services/         # API and data services
+│   │   ├── api.ts        # API integration
+│   │   └── mockData.ts   # Fallback mock data
+│   ├── types/            # TypeScript type definitions
+│   ├── App.tsx           # Main application component
+│   └── main.tsx          # Application entry point
+├── public/               # Static assets
+└── .github/workflows/    # GitHub Actions workflows
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🌐 API Configuration
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The app uses [TheSportsDB API](https://www.thesportsdb.com/) to fetch live data. The API key can be configured via environment variables.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Setting up API Key
+
+1. Sign up for a free API key at [TheSportsDB](https://www.thesportsdb.com/)
+2. Copy `.env.example` to `.env`
+3. Add your API key:
+   ```
+   VITE_SPORTSDB_API_KEY=your_api_key_here
+   ```
+
+**Note:** If the API is unavailable or returns no data, the app automatically falls back to mock data.
+
+### For GitHub Pages Deployment
+
+Add the API key as a repository secret:
+1. Go to your repository Settings
+2. Navigate to Secrets and variables → Actions
+3. Click "New repository secret"
+4. Name: `VITE_SPORTSDB_API_KEY`
+5. Value: Your API key
+
+## 📦 Deployment
+
+### GitHub Pages
+
+The app is configured for automatic deployment to GitHub Pages via GitHub Actions.
+
+1. Ensure GitHub Pages is enabled in repository settings:
+   - Go to Settings → Pages
+   - Source: GitHub Actions
+
+2. Push to the `main` branch:
+   ```bash
+   git push origin main
+   ```
+
+3. The workflow will automatically build and deploy the app
+
+The app will be available at: `https://[username].github.io/super-basketball-league/`
+
+### Manual Deployment
+
+```bash
+npm run build
+# Deploy the dist/ folder to your hosting provider
 ```
+
+## 🏀 Teams (2025-26 Season)
+
+1. London Lions
+2. Cheshire Phoenix
+3. B. Braun Sheffield Sharks
+4. Manchester Basketball
+5. Bristol Flyers
+6. Leicester Riders
+7. Surrey 89ers
+8. Newcastle Eagles
+9. Caledonia Gladiators
+
+## 🛠 Technical Stack
+
+- **Framework:** React 19
+- **Language:** TypeScript
+- **Build Tool:** Vite 7
+- **Styling:** Tailwind CSS 4
+- **Routing:** React Router Dom 7
+- **Linting:** ESLint 9
+
+## 📝 License
+
+This project is open source and available under the MIT License.
+
+## 🔗 Links
+
+- [Super League Basketball Official Site](https://www.superleaguebasketballm.co.uk/)
+- [TheSportsDB API Documentation](https://www.thesportsdb.com/documentation)
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+---
+
+Made with ❤️ for basketball fans
