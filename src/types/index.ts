@@ -5,6 +5,14 @@ export interface Team {
   logo?: string;
 }
 
+export interface League {
+  id: string;
+  name: string;
+  shortName: string;
+  country: string;
+  logo?: string;
+}
+
 export type MatchStatus = 'scheduled' | 'live' | 'completed';
 export type LivePeriod = 'Q1' | 'Q2' | 'Half-time' | 'Q3' | 'Q4' | 'OT' | 'Full Time';
 

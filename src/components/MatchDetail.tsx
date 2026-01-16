@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { MatchDetails, TeamStatistics } from '../types';
-import { fetchMatchDetails } from '../services/api';
+import { fetchMatchDetails } from '../services/dataProvider';
 
 const LIVE_POLL_INTERVAL = 30000; // 30 seconds
 

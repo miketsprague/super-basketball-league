@@ -256,6 +256,310 @@ export const mockStandings: StandingsEntry[] = [
   },
 ];
 
+// EuroLeague teams for 2025-26 season
+const euroleagueTeams: { [key: string]: Team } = {
+  realMadrid: {
+    id: 'e1',
+    name: 'Real Madrid',
+    shortName: 'Real Madrid',
+  },
+  barcelona: {
+    id: 'e2',
+    name: 'FC Barcelona',
+    shortName: 'Barcelona',
+  },
+  olympiacos: {
+    id: 'e3',
+    name: 'Olympiacos Piraeus',
+    shortName: 'Olympiacos',
+  },
+  panathinaikos: {
+    id: 'e4',
+    name: 'Panathinaikos Athens',
+    shortName: 'Panathinaikos',
+  },
+  fenerbahce: {
+    id: 'e5',
+    name: 'Fenerbahce Istanbul',
+    shortName: 'Fenerbahce',
+  },
+  efes: {
+    id: 'e6',
+    name: 'Anadolu Efes',
+    shortName: 'Efes',
+  },
+  maccabi: {
+    id: 'e7',
+    name: 'Maccabi Tel Aviv',
+    shortName: 'Maccabi',
+  },
+  cska: {
+    id: 'e8',
+    name: 'CSKA Moscow',
+    shortName: 'CSKA',
+  },
+  milano: {
+    id: 'e9',
+    name: 'EA7 Emporio Armani Milano',
+    shortName: 'Milano',
+  },
+  bayern: {
+    id: 'e10',
+    name: 'FC Bayern Munich',
+    shortName: 'Bayern',
+  },
+  partizan: {
+    id: 'e11',
+    name: 'Partizan Belgrade',
+    shortName: 'Partizan',
+  },
+  monaco: {
+    id: 'e12',
+    name: 'AS Monaco',
+    shortName: 'Monaco',
+  },
+};
+
+// EuroLeague mock fixtures and results
+export const euroleagueMockMatches: Match[] = [
+  // Recent results
+  {
+    id: 'e1',
+    homeTeam: euroleagueTeams.realMadrid,
+    awayTeam: euroleagueTeams.barcelona,
+    homeScore: 82,
+    awayScore: 79,
+    date: '2026-01-12',
+    time: '21:00',
+    venue: 'WiZink Center, Madrid',
+    status: 'completed',
+  },
+  {
+    id: 'e2',
+    homeTeam: euroleagueTeams.olympiacos,
+    awayTeam: euroleagueTeams.fenerbahce,
+    homeScore: 88,
+    awayScore: 84,
+    date: '2026-01-13',
+    time: '20:30',
+    venue: 'Peace and Friendship Stadium, Piraeus',
+    status: 'completed',
+  },
+  {
+    id: 'e3',
+    homeTeam: euroleagueTeams.panathinaikos,
+    awayTeam: euroleagueTeams.milano,
+    homeScore: 91,
+    awayScore: 77,
+    date: '2026-01-14',
+    time: '20:30',
+    venue: 'OAKA Arena, Athens',
+    status: 'completed',
+  },
+  {
+    id: 'e4',
+    homeTeam: euroleagueTeams.maccabi,
+    awayTeam: euroleagueTeams.bayern,
+    homeScore: 73,
+    awayScore: 81,
+    date: '2026-01-15',
+    time: '19:00',
+    venue: 'Menora Mivtachim Arena, Tel Aviv',
+    status: 'completed',
+  },
+  // Upcoming fixtures
+  {
+    id: 'e5',
+    homeTeam: euroleagueTeams.barcelona,
+    awayTeam: euroleagueTeams.olympiacos,
+    date: '2026-01-18',
+    time: '21:00',
+    venue: 'Palau Blaugrana, Barcelona',
+    status: 'scheduled',
+  },
+  {
+    id: 'e6',
+    homeTeam: euroleagueTeams.fenerbahce,
+    awayTeam: euroleagueTeams.realMadrid,
+    date: '2026-01-19',
+    time: '20:00',
+    venue: 'Ulker Sports Arena, Istanbul',
+    status: 'scheduled',
+  },
+  {
+    id: 'e7',
+    homeTeam: euroleagueTeams.monaco,
+    awayTeam: euroleagueTeams.panathinaikos,
+    date: '2026-01-19',
+    time: '19:00',
+    venue: 'Salle Gaston Médecin, Monaco',
+    status: 'scheduled',
+  },
+  {
+    id: 'e8',
+    homeTeam: euroleagueTeams.bayern,
+    awayTeam: euroleagueTeams.efes,
+    date: '2026-01-20',
+    time: '20:30',
+    venue: 'SAP Garden, Munich',
+    status: 'scheduled',
+  },
+  {
+    id: 'e9',
+    homeTeam: euroleagueTeams.partizan,
+    awayTeam: euroleagueTeams.maccabi,
+    date: '2026-01-21',
+    time: '19:00',
+    venue: 'Stark Arena, Belgrade',
+    status: 'scheduled',
+  },
+  {
+    id: 'e10',
+    homeTeam: euroleagueTeams.realMadrid,
+    awayTeam: euroleagueTeams.monaco,
+    date: '2026-01-25',
+    time: '21:00',
+    venue: 'WiZink Center, Madrid',
+    status: 'scheduled',
+  },
+];
+
+// EuroLeague mock standings
+export const euroleagueMockStandings: StandingsEntry[] = [
+  {
+    position: 1,
+    team: euroleagueTeams.realMadrid,
+    played: 20,
+    won: 17,
+    lost: 3,
+    pointsFor: 1720,
+    pointsAgainst: 1540,
+    pointsDifference: 180,
+    points: 34,
+  },
+  {
+    position: 2,
+    team: euroleagueTeams.panathinaikos,
+    played: 20,
+    won: 16,
+    lost: 4,
+    pointsFor: 1690,
+    pointsAgainst: 1520,
+    pointsDifference: 170,
+    points: 32,
+  },
+  {
+    position: 3,
+    team: euroleagueTeams.olympiacos,
+    played: 20,
+    won: 15,
+    lost: 5,
+    pointsFor: 1660,
+    pointsAgainst: 1550,
+    pointsDifference: 110,
+    points: 30,
+  },
+  {
+    position: 4,
+    team: euroleagueTeams.monaco,
+    played: 20,
+    won: 14,
+    lost: 6,
+    pointsFor: 1640,
+    pointsAgainst: 1560,
+    pointsDifference: 80,
+    points: 28,
+  },
+  {
+    position: 5,
+    team: euroleagueTeams.barcelona,
+    played: 20,
+    won: 13,
+    lost: 7,
+    pointsFor: 1620,
+    pointsAgainst: 1580,
+    pointsDifference: 40,
+    points: 26,
+  },
+  {
+    position: 6,
+    team: euroleagueTeams.fenerbahce,
+    played: 20,
+    won: 12,
+    lost: 8,
+    pointsFor: 1600,
+    pointsAgainst: 1590,
+    pointsDifference: 10,
+    points: 24,
+  },
+  {
+    position: 7,
+    team: euroleagueTeams.bayern,
+    played: 20,
+    won: 11,
+    lost: 9,
+    pointsFor: 1580,
+    pointsAgainst: 1600,
+    pointsDifference: -20,
+    points: 22,
+  },
+  {
+    position: 8,
+    team: euroleagueTeams.efes,
+    played: 20,
+    won: 10,
+    lost: 10,
+    pointsFor: 1560,
+    pointsAgainst: 1580,
+    pointsDifference: -20,
+    points: 20,
+  },
+  {
+    position: 9,
+    team: euroleagueTeams.maccabi,
+    played: 20,
+    won: 8,
+    lost: 12,
+    pointsFor: 1520,
+    pointsAgainst: 1600,
+    pointsDifference: -80,
+    points: 16,
+  },
+  {
+    position: 10,
+    team: euroleagueTeams.milano,
+    played: 20,
+    won: 6,
+    lost: 14,
+    pointsFor: 1480,
+    pointsAgainst: 1620,
+    pointsDifference: -140,
+    points: 12,
+  },
+  {
+    position: 11,
+    team: euroleagueTeams.partizan,
+    played: 20,
+    won: 4,
+    lost: 16,
+    pointsFor: 1440,
+    pointsAgainst: 1680,
+    pointsDifference: -240,
+    points: 8,
+  },
+  {
+    position: 12,
+    team: euroleagueTeams.cska,
+    played: 20,
+    won: 2,
+    lost: 18,
+    pointsFor: 1400,
+    pointsAgainst: 1740,
+    pointsDifference: -340,
+    points: 4,
+  },
+];
+
 // Mock statistics data generator
 function generateMockStats(): TeamStatistics {
   return {
@@ -299,11 +603,14 @@ function generateMockPlayers(teamName: string, totalScore: number): PlayerStatis
   }).sort((a, b) => b.points - a.points);
 }
 
+// Combined array for searching across all leagues
+const allMockMatches = [...mockMatches, ...euroleagueMockMatches];
+
 /**
  * Get mock match details for a given match ID
  */
 export function getMockMatchDetails(matchId: string): MatchDetails | null {
-  const match = mockMatches.find((m) => m.id === matchId);
+  const match = allMockMatches.find((m) => m.id === matchId);
   if (!match) return null;
   
   const isCompleted = match.status === 'completed';
