@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Fixtures } from './components/Fixtures';
 import { LeagueTable } from './components/LeagueTable';
 import type { Match, StandingsEntry } from './types';
+import { fetchAllData } from './services/api';
 
 type Tab = 'fixtures' | 'table';
 
@@ -10,24 +11,29 @@ function App() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [standings, setStandings] = useState<StandingsEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // TODO: Replace with actual API calls
     const fetchData = async () => {
       setLoading(true);
+      setError(null);
       try {
-        // Placeholder - will be replaced with real API
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setMatches([]);
-        setStandings([]);
+        const data = await fetchAllData();
+        setMatches(data.matches);
+        setStandings(data.standings);
       } catch (error) {
         console.error('Failed to fetch data:', error);
+        setError('Failed to load data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+
+    // Optional: Auto-refresh every 5 minutes
+    const interval = setInterval(fetchData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -67,7 +73,11 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">
-        {activeTab === 'fixtures' ? (
+        {error ? (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        ) : activeTab === 'fixtures' ? (
           <Fixtures matches={matches} loading={loading} />
         ) : (
           <LeagueTable standings={standings} loading={loading} />
