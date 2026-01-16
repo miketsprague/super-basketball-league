@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import type { Match } from '../types';
 
 interface FixturesProps {
@@ -6,6 +7,8 @@ interface FixturesProps {
 }
 
 export function Fixtures({ matches, loading }: FixturesProps) {
+  const navigate = useNavigate();
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -31,12 +34,17 @@ export function Fixtures({ matches, loading }: FixturesProps) {
     });
   };
 
+  const handleMatchClick = (matchId: string) => {
+    navigate(`/match/${matchId}`);
+  };
+
   return (
     <div className="space-y-4">
       {matches.map((match) => (
-        <div
+        <button
           key={match.id}
-          className="bg-white rounded-lg shadow p-4 border-l-4 border-orange-500"
+          onClick={() => handleMatchClick(match.id)}
+          className="w-full text-left bg-white rounded-lg shadow p-4 border-l-4 border-orange-500 hover:shadow-md hover:border-orange-600 transition-all cursor-pointer"
         >
           <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
             <span>{formatDate(match.date)} • {match.time}</span>
@@ -68,8 +76,11 @@ export function Fixtures({ matches, loading }: FixturesProps) {
             </div>
           </div>
           
-          <div className="text-xs text-gray-400 mt-2">{match.venue}</div>
-        </div>
+          <div className="text-xs text-gray-400 mt-2 flex justify-between items-center">
+            <span>{match.venue}</span>
+            <span className="text-orange-500">View details →</span>
+          </div>
+        </button>
       ))}
     </div>
   );

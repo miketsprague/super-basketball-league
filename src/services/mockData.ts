@@ -1,4 +1,4 @@
-import type { Match, StandingsEntry, Team } from '../types';
+import type { Match, MatchDetails, StandingsEntry, Team, TeamStatistics, PlayerStatistics } from '../types';
 
 // Mock teams based on the 2025-26 season
 const teams: { [key: string]: Team } = {
@@ -255,3 +255,100 @@ export const mockStandings: StandingsEntry[] = [
     points: 6,
   },
 ];
+
+// Mock statistics data generator
+function generateMockStats(): TeamStatistics {
+  return {
+    fieldGoalPct: Math.round(35 + Math.random() * 20),
+    threePointPct: Math.round(25 + Math.random() * 20),
+    freeThrowPct: Math.round(65 + Math.random() * 25),
+    rebounds: Math.round(30 + Math.random() * 20),
+    offensiveRebounds: Math.round(5 + Math.random() * 10),
+    defensiveRebounds: Math.round(20 + Math.random() * 15),
+    assists: Math.round(15 + Math.random() * 15),
+    turnovers: Math.round(8 + Math.random() * 10),
+    steals: Math.round(4 + Math.random() * 8),
+    blocks: Math.round(2 + Math.random() * 6),
+  };
+}
+
+function generateMockPlayers(teamName: string, totalScore: number): PlayerStatistics[] {
+  const playerNames = [
+    `${teamName.charAt(0)}. Johnson`,
+    `${teamName.charAt(0)}. Williams`,
+    `${teamName.charAt(0)}. Davis`,
+    `${teamName.charAt(0)}. Miller`,
+    `${teamName.charAt(0)}. Anderson`,
+  ];
+  
+  let remainingPoints = totalScore;
+  return playerNames.map((name, i) => {
+    const points = i === playerNames.length - 1 
+      ? remainingPoints 
+      : Math.round(remainingPoints * (0.2 + Math.random() * 0.15));
+    remainingPoints -= points;
+    
+    return {
+      id: `player-${i + 1}`,
+      name,
+      points: Math.max(0, points),
+      rebounds: Math.round(2 + Math.random() * 10),
+      assists: Math.round(1 + Math.random() * 8),
+      minutes: Math.round(15 + Math.random() * 25),
+    };
+  }).sort((a, b) => b.points - a.points);
+}
+
+/**
+ * Get mock match details for a given match ID
+ */
+export function getMockMatchDetails(matchId: string): MatchDetails | null {
+  const match = mockMatches.find((m) => m.id === matchId);
+  if (!match) return null;
+  
+  const isCompleted = match.status === 'completed';
+  const isLive = match.status === 'live';
+  
+  if (!isCompleted && !isLive) {
+    // Scheduled match - no stats available
+    return {
+      ...match,
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+  
+  const homeTotal = match.homeScore ?? 0;
+  const awayTotal = match.awayScore ?? 0;
+  
+  // Generate quarter-by-quarter scores that sum to total
+  const generateQuarterScores = (total: number) => {
+    if (total === 0) {
+      return { q1: 0, q2: 0, q3: 0, q4: 0 };
+    }
+    // Use smaller multipliers to ensure q4 is never negative
+    const q1 = Math.round(total * (0.20 + Math.random() * 0.05));
+    const q2 = Math.round(total * (0.20 + Math.random() * 0.05));
+    const q3 = Math.round(total * (0.20 + Math.random() * 0.05));
+    const q4 = Math.max(0, total - q1 - q2 - q3);
+    return { q1, q2, q3, q4 };
+  };
+  
+  const homeQuarters = generateQuarterScores(homeTotal);
+  const awayQuarters = generateQuarterScores(awayTotal);
+  
+  return {
+    ...match,
+    currentPeriod: isCompleted ? 'Full Time' : 'Q3',
+    quarterScores: {
+      q1: { home: homeQuarters.q1, away: awayQuarters.q1 },
+      q2: { home: homeQuarters.q2, away: awayQuarters.q2 },
+      q3: { home: homeQuarters.q3, away: awayQuarters.q3 },
+      q4: { home: homeQuarters.q4, away: awayQuarters.q4 },
+    },
+    homeStats: generateMockStats(),
+    awayStats: generateMockStats(),
+    homePlayers: generateMockPlayers(match.homeTeam.shortName, homeTotal),
+    awayPlayers: generateMockPlayers(match.awayTeam.shortName, awayTotal),
+    lastUpdated: new Date().toISOString(),
+  };
+}

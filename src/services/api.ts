@@ -1,5 +1,5 @@
-import type { Match, StandingsEntry } from '../types';
-import { mockMatches, mockStandings } from './mockData';
+import type { Match, MatchDetails, StandingsEntry } from '../types';
+import { mockMatches, mockStandings, getMockMatchDetails } from './mockData';
 
 // TheSportsDB API configuration
 const API_BASE_URL = 'https://www.thesportsdb.com/api/v1/json';
@@ -205,4 +205,39 @@ export async function fetchAllData(): Promise<{
   ]);
   
   return { matches, standings };
+}
+
+/**
+ * Fetch details for a specific match
+ */
+export async function fetchMatchDetails(matchId: string): Promise<MatchDetails | null> {
+  try {
+    // Try to fetch event details from API
+    const data = await fetchFromAPI<{ events?: SportsDBEvent[] }>(`lookupevent.php?id=${matchId}`);
+    
+    if (data?.events && data.events.length > 0) {
+      const event = data.events[0];
+      const baseMatch = transformEvent(event);
+      
+      // TheSportsDB free tier doesn't have detailed stats, so we use mock data for details
+      const mockDetails = getMockMatchDetails(matchId);
+      
+      return {
+        ...baseMatch,
+        quarterScores: mockDetails?.quarterScores,
+        homeStats: mockDetails?.homeStats,
+        awayStats: mockDetails?.awayStats,
+        homePlayers: mockDetails?.homePlayers,
+        awayPlayers: mockDetails?.awayPlayers,
+        currentPeriod: mockDetails?.currentPeriod,
+        lastUpdated: new Date().toISOString(),
+      };
+    }
+    
+    // Fall back to mock data
+    return getMockMatchDetails(matchId);
+  } catch (error) {
+    console.error('Error fetching match details:', error);
+    return getMockMatchDetails(matchId);
+  }
 }
