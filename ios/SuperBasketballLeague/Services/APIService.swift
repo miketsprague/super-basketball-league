@@ -67,9 +67,16 @@ actor APIService {
     static let shared = APIService()
     
     private let baseURL = "https://www.thesportsdb.com/api/v1/json"
+    // Note: This is a free-tier API key matching the web app configuration.
+    // For production, consider using environment configuration or secure storage.
     private let apiKey = "38dde0dae877d7b97cccc6ac32faacef"
     private let leagueId = "4431" // Super League Basketball
     private let currentSeason = "2025-2026"
+    
+    // Pre-compiled regex for team name cleaning
+    private static let teamNamePattern: NSRegularExpression? = {
+        try? NSRegularExpression(pattern: "\\b(Basketball|FC|AFC|United)\\b", options: .caseInsensitive)
+    }()
     
     private init() {}
     
@@ -296,15 +303,18 @@ actor APIService {
     }
     
     private func cleanTeamName(_ name: String) -> String {
-        let patterns = ["Basketball", "FC", "AFC", "United"]
-        var cleanedName = name
-        for pattern in patterns {
-            cleanedName = cleanedName.replacingOccurrences(
-                of: "\\b\(pattern)\\b",
-                with: "",
-                options: [.regularExpression, .caseInsensitive]
-            )
+        guard let regex = Self.teamNamePattern else {
+            // Fallback to simple replacement if regex failed to compile
+            return name
+                .replacingOccurrences(of: "Basketball", with: "")
+                .replacingOccurrences(of: "FC", with: "")
+                .replacingOccurrences(of: "AFC", with: "")
+                .replacingOccurrences(of: "United", with: "")
+                .trimmingCharacters(in: .whitespaces)
         }
+        
+        let range = NSRange(name.startIndex..., in: name)
+        let cleanedName = regex.stringByReplacingMatches(in: name, options: [], range: range, withTemplate: "")
         return cleanedName.trimmingCharacters(in: .whitespaces)
     }
 }

@@ -11,13 +11,16 @@ final class HomeViewModel: ObservableObject {
     
     private var refreshTimer: Timer?
     private let refreshInterval: TimeInterval = 5 * 60 // 5 minutes
+    private var isAppActive = true
     
     init() {
+        setupNotificationObservers()
         startAutoRefresh()
     }
     
     deinit {
         refreshTimer?.invalidate()
+        NotificationCenter.default.removeObserver(self)
     }
     
     /// Load all data from the API
@@ -40,9 +43,44 @@ final class HomeViewModel: ObservableObject {
         standings = fetchedStandings
     }
     
+    private func setupNotificationObservers() {
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.handleAppBecameActive()
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.handleAppWillResignActive()
+        }
+    }
+    
+    private func handleAppBecameActive() {
+        isAppActive = true
+        startAutoRefresh()
+        Task {
+            await refresh()
+        }
+    }
+    
+    private func handleAppWillResignActive() {
+        isAppActive = false
+        refreshTimer?.invalidate()
+        refreshTimer = nil
+    }
+    
     private func startAutoRefresh() {
+        guard isAppActive else { return }
+        refreshTimer?.invalidate()
         refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
+                guard self?.isAppActive == true else { return }
                 await self?.refresh()
             }
         }

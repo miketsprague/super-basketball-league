@@ -236,11 +236,12 @@ enum MockData {
         for (index, name) in playerNames.enumerated() {
             let points: Int
             if index == playerNames.count - 1 {
-                points = remainingPoints
+                points = max(0, remainingPoints)
             } else {
-                points = Int(Double(remainingPoints) * Double.random(in: 0.2...0.35))
+                let allocated = Int(Double(remainingPoints) * Double.random(in: 0.2...0.35))
+                points = max(0, min(allocated, remainingPoints))
             }
-            remainingPoints -= points
+            remainingPoints = max(0, remainingPoints - points)
             
             players.append(PlayerStatistics(
                 id: "player-\(index + 1)",
