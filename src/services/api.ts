@@ -1,14 +1,23 @@
-import type { Match, MatchDetails, StandingsEntry } from '../types';
-import { mockMatches, mockStandings, getMockMatchDetails } from './mockData';
+import type { Match, MatchDetails, StandingsEntry, League } from '../types';
+import { mockMatches, mockStandings, getMockMatchDetails, euroleagueMockMatches, euroleagueMockStandings } from './mockData';
+import { LEAGUE_IDS, predefinedLeagues } from './leagues';
 
 // TheSportsDB API configuration
 const API_BASE_URL = 'https://www.thesportsdb.com/api/v1/json';
 const API_KEY = import.meta.env.VITE_SPORTSDB_API_KEY || '38dde0dae877d7b97cccc6ac32faacef';
-const LEAGUE_ID = '4431'; // Super League Basketball
 const CURRENT_SEASON = '2025-2026';
 
 // Flag to track if API is working (can be disabled for debugging)
 const useAPI = true;
+
+// Helper to get mock data based on league
+function getMockMatchesForLeague(leagueId: string): Match[] {
+  return leagueId === LEAGUE_IDS.EUROLEAGUE ? euroleagueMockMatches : mockMatches;
+}
+
+function getMockStandingsForLeague(leagueId: string): StandingsEntry[] {
+  return leagueId === LEAGUE_IDS.EUROLEAGUE ? euroleagueMockStandings : mockStandings;
+}
 
 interface SportsDBEvent {
   idEvent: string;
@@ -50,7 +59,7 @@ interface APIResponse {
 /**
  * Fetch data from TheSportsDB API
  */
-async function fetchFromAPI<T extends APIResponse>(endpoint: string): Promise<T | null> {
+async function fetchFromAPI<T>(endpoint: string): Promise<T | null> {
   if (!useAPI) {
     return null;
   }
@@ -129,15 +138,15 @@ function transformTableEntry(entry: SportsDBTableEntry, index: number): Standing
 }
 
 /**
- * Fetch upcoming and recent fixtures
+ * Fetch upcoming and recent fixtures for a specific league
  */
-export async function fetchMatches(): Promise<Match[]> {
+export async function fetchMatches(leagueId: string): Promise<Match[]> {
   try {
     // Try to fetch next fixtures
-    const nextData = await fetchFromAPI<APIResponse>(`eventsnextleague.php?id=${LEAGUE_ID}`);
+    const nextData = await fetchFromAPI<APIResponse>(`eventsnextleague.php?id=${leagueId}`);
     
     // Try to fetch past fixtures
-    const pastData = await fetchFromAPI<APIResponse>(`eventspastleague.php?id=${LEAGUE_ID}`);
+    const pastData = await fetchFromAPI<APIResponse>(`eventspastleague.php?id=${leagueId}`);
     
     const matches: Match[] = [];
     
@@ -163,19 +172,19 @@ export async function fetchMatches(): Promise<Match[]> {
     
     // Fall back to mock data
     console.info('Using mock data for fixtures');
-    return mockMatches;
+    return getMockMatchesForLeague(leagueId);
   } catch (error) {
     console.error('Error fetching matches:', error);
-    return mockMatches;
+    return getMockMatchesForLeague(leagueId);
   }
 }
 
 /**
- * Fetch league standings
+ * Fetch league standings for a specific league
  */
-export async function fetchStandings(): Promise<StandingsEntry[]> {
+export async function fetchStandings(leagueId: string): Promise<StandingsEntry[]> {
   try {
-    const data = await fetchFromAPI<APIResponse>(`lookuptable.php?l=${LEAGUE_ID}&s=${CURRENT_SEASON}`);
+    const data = await fetchFromAPI<APIResponse>(`lookuptable.php?l=${leagueId}&s=${CURRENT_SEASON}`);
     
     if (data?.table && Array.isArray(data.table)) {
       // Transform and sort by position/points
@@ -185,23 +194,23 @@ export async function fetchStandings(): Promise<StandingsEntry[]> {
     
     // Fall back to mock data
     console.info('Using mock data for standings');
-    return mockStandings;
+    return getMockStandingsForLeague(leagueId);
   } catch (error) {
     console.error('Error fetching standings:', error);
-    return mockStandings;
+    return getMockStandingsForLeague(leagueId);
   }
 }
 
 /**
- * Fetch both fixtures and standings
+ * Fetch both fixtures and standings for a specific league
  */
-export async function fetchAllData(): Promise<{
+export async function fetchAllData(leagueId: string): Promise<{
   matches: Match[];
   standings: StandingsEntry[];
 }> {
   const [matches, standings] = await Promise.all([
-    fetchMatches(),
-    fetchStandings(),
+    fetchMatches(leagueId),
+    fetchStandings(leagueId),
   ]);
   
   return { matches, standings };
@@ -239,5 +248,53 @@ export async function fetchMatchDetails(matchId: string): Promise<MatchDetails |
   } catch (error) {
     console.error('Error fetching match details:', error);
     return getMockMatchDetails(matchId);
+  }
+}
+
+interface SportsDBLeague {
+  idLeague: string;
+  strLeague: string;
+  strSport: string;
+  strLeagueAlternate?: string;
+  strCountry?: string;
+}
+
+interface LeaguesResponse {
+  leagues?: SportsDBLeague[];
+}
+
+/**
+ * Fetch available basketball leagues from API with fallback to predefined leagues
+ */
+export async function fetchLeagues(): Promise<League[]> {
+  try {
+    const data = await fetchFromAPI<LeaguesResponse>('all_leagues.php');
+    
+    if (data?.leagues && Array.isArray(data.leagues)) {
+      // Filter for basketball leagues that match our predefined leagues
+      const basketballLeagues = data.leagues
+        .filter((league) => league.strSport === 'Basketball')
+        .filter((league) => 
+          league.idLeague === LEAGUE_IDS.SUPER_LEAGUE || 
+          league.idLeague === LEAGUE_IDS.EUROLEAGUE
+        )
+        .map((league): League => ({
+          id: league.idLeague,
+          name: league.strLeague,
+          shortName: league.strLeagueAlternate || league.strLeague.split(' ')[0],
+          country: league.strCountry || 'International',
+        }));
+      
+      if (basketballLeagues.length > 0) {
+        return basketballLeagues;
+      }
+    }
+    
+    // Fall back to predefined leagues
+    console.info('Using predefined leagues');
+    return predefinedLeagues;
+  } catch (error) {
+    console.error('Error fetching leagues:', error);
+    return predefinedLeagues;
   }
 }

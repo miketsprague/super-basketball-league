@@ -3,8 +3,10 @@ import { Routes, Route } from 'react-router-dom';
 import { Fixtures } from './components/Fixtures';
 import { LeagueTable } from './components/LeagueTable';
 import { MatchDetail } from './components/MatchDetail';
-import type { Match, StandingsEntry } from './types';
-import { fetchAllData } from './services/api';
+import { LeagueSelector } from './components/LeagueSelector';
+import type { Match, StandingsEntry, League } from './types';
+import { fetchAllData, fetchLeagues } from './services/api';
+import { DEFAULT_LEAGUE } from './services/leagues';
 
 type Tab = 'fixtures' | 'table';
 
@@ -14,13 +16,40 @@ function HomePage() {
   const [standings, setStandings] = useState<StandingsEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // League state
+  const [leagues, setLeagues] = useState<League[]>([]);
+  const [selectedLeague, setSelectedLeague] = useState<League>(DEFAULT_LEAGUE);
+  const [leaguesLoading, setLeaguesLoading] = useState(true);
 
+  // Fetch available leagues on mount
+  useEffect(() => {
+    const loadLeagues = async () => {
+      setLeaguesLoading(true);
+      try {
+        const availableLeagues = await fetchLeagues();
+        setLeagues(availableLeagues);
+        // Set the first league as selected if default league is not in the list
+        if (availableLeagues.length > 0 && !availableLeagues.find(l => l.id === DEFAULT_LEAGUE.id)) {
+          setSelectedLeague(availableLeagues[0]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch leagues:', error);
+      } finally {
+        setLeaguesLoading(false);
+      }
+    };
+
+    loadLeagues();
+  }, []);
+
+  // Fetch data when selected league changes
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchAllData();
+        const data = await fetchAllData(selectedLeague.id);
         setMatches(data.matches);
         setStandings(data.standings);
       } catch (error) {
@@ -36,16 +65,28 @@ function HomePage() {
     // Optional: Auto-refresh every 5 minutes
     const interval = setInterval(fetchData, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedLeague]);
+
+  const handleLeagueChange = (league: League) => {
+    setSelectedLeague(league);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-gray-900 text-white py-4 px-4 shadow-lg">
         <h1 className="text-xl font-bold text-center">
-          🏀 Super Basketball League
+          🏀 Basketball Leagues
         </h1>
       </header>
+
+      {/* League Selector */}
+      <LeagueSelector
+        leagues={leagues}
+        selectedLeague={selectedLeague}
+        onLeagueChange={handleLeagueChange}
+        loading={leaguesLoading}
+      />
 
       {/* Tab Navigation */}
       <nav className="bg-white shadow sticky top-0 z-10">
@@ -88,7 +129,7 @@ function HomePage() {
 
       {/* Footer */}
       <footer className="text-center text-xs text-gray-400 py-4">
-        Super Basketball League © {new Date().getFullYear()}
+        Basketball Leagues © {new Date().getFullYear()}
       </footer>
     </div>
   );
