@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# iOS / Xcode
+ios/build/
+ios/DerivedData/
+ios/*.xcworkspace
+ios/*.xcuserdata/
+ios/**/xcuserdata/
+ios/**/*.xcuserstate
+*.ipa
+*.dSYM.zip
+*.dSYM
+Pods/
+Podfile.lock
+.build/
+Package.resolved
