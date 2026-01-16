@@ -135,6 +135,28 @@ The app is configured for automatic deployment to GitHub Pages via GitHub Action
 
 The app will be available at: `https://[username].github.io/super-basketball-league/`
 
+### Troubleshooting GitHub Pages Deployment
+
+If the GitHub Pages URL shows a blank page (404) or the deployment fails:
+
+1. **Verify GitHub Pages is enabled:**
+   - Go to repository Settings → Pages
+   - Under "Build and deployment", ensure **Source** is set to **GitHub Actions**
+   - Save the settings
+
+2. **Check the workflow status:**
+   - Go to the Actions tab
+   - Look for the "Deploy to GitHub Pages" workflow
+   - If it shows a failure, check the logs for error details
+
+3. **Verify API key is set:**
+   - Go to Settings → Secrets and variables → Actions
+   - Ensure `VITE_SPORTSDB_API_KEY` secret exists
+
+4. **Trigger a new deployment:**
+   - Make a small commit to `main` branch, or
+   - Go to Actions → "Deploy to GitHub Pages" → "Run workflow"
+
 ### Manual Deployment
 
 ```bash
