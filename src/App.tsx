@@ -5,8 +5,8 @@ import { LeagueTable } from './components/LeagueTable';
 import { MatchDetail } from './components/MatchDetail';
 import { LeagueSelector } from './components/LeagueSelector';
 import type { Match, StandingsEntry, League } from './types';
-import { fetchAllData, fetchLeagues } from './services/api';
-import { DEFAULT_LEAGUE } from './services/leagues';
+import { fetchAllData, fetchLeagues } from './services/dataProvider';
+import { DEFAULT_LEAGUE, predefinedLeagues } from './services/leagues';
 
 type Tab = 'fixtures' | 'table';
 
@@ -18,14 +18,16 @@ function HomePage() {
   const [error, setError] = useState<string | null>(null);
   
   // League state
-  const [leagues, setLeagues] = useState<League[]>([]);
+  const [leagues, setLeagues] = useState<League[]>(predefinedLeagues);
   const [selectedLeague, setSelectedLeague] = useState<League>(DEFAULT_LEAGUE);
   const [leaguesLoading, setLeaguesLoading] = useState(true);
+  const [leaguesError, setLeaguesError] = useState<string | null>(null);
 
   // Fetch available leagues on mount
   useEffect(() => {
     const loadLeagues = async () => {
       setLeaguesLoading(true);
+      setLeaguesError(null);
       try {
         const availableLeagues = await fetchLeagues();
         setLeagues(availableLeagues);
@@ -35,6 +37,8 @@ function HomePage() {
         }
       } catch (error) {
         console.error('Failed to fetch leagues:', error);
+        setLeaguesError('Failed to load leagues. Using default options.');
+        // Keep using predefinedLeagues as fallback
       } finally {
         setLeaguesLoading(false);
       }
@@ -54,7 +58,9 @@ function HomePage() {
         setStandings(data.standings);
       } catch (error) {
         console.error('Failed to fetch data:', error);
-        setError('Failed to load data. Please try again later.');
+        setError('Unable to load data. Please check your connection and try again.');
+        setMatches([]);
+        setStandings([]);
       } finally {
         setLoading(false);
       }
@@ -69,6 +75,21 @@ function HomePage() {
 
   const handleLeagueChange = (league: League) => {
     setSelectedLeague(league);
+  };
+
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    fetchAllData(selectedLeague.id)
+      .then(data => {
+        setMatches(data.matches);
+        setStandings(data.standings);
+      })
+      .catch(err => {
+        console.error('Retry failed:', err);
+        setError('Unable to load data. Please check your connection and try again.');
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -114,11 +135,26 @@ function HomePage() {
         </div>
       </nav>
 
+      {/* Leagues error banner (non-blocking) */}
+      {leaguesError && (
+        <div className="bg-yellow-50 border-b border-yellow-200 text-yellow-800 px-4 py-2 text-sm text-center">
+          {leaguesError}
+        </div>
+      )}
+
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">
         {error ? (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-            {error}
+            <div className="flex items-center justify-between">
+              <p>{error}</p>
+            </div>
+            <button
+              onClick={handleRetry}
+              className="mt-3 w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition-colors text-sm font-medium"
+            >
+              Try Again
+            </button>
           </div>
         ) : activeTab === 'fixtures' ? (
           <Fixtures matches={matches} loading={loading} />

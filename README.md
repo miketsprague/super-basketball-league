@@ -74,7 +74,9 @@ super-basketball-league/
 │   ├── services/         # API and data services
 │   │   ├── api.ts        # API integration
 │   │   ├── leagues.ts    # League configuration
-│   │   └── mockData.ts   # Fallback mock data
+│   │   ├── mockData.ts   # Mock data for testing
+│   │   ├── mockProvider.ts  # Mock data provider
+│   │   └── dataProvider.ts  # Main data abstraction layer
 │   ├── types/            # TypeScript type definitions
 │   ├── App.tsx           # Main application component
 │   └── main.tsx          # Application entry point
@@ -95,7 +97,15 @@ The app uses [TheSportsDB API](https://www.thesportsdb.com/) to fetch live data.
    VITE_SPORTSDB_API_KEY=your_api_key_here
    ```
 
-**Note:** If the API is unavailable or returns no data, the app automatically falls back to mock data.
+### Mock Data Fallback (Development)
+
+For development and testing, you can enable mock data fallback when the API is unavailable:
+
+```
+VITE_USE_MOCK_FALLBACK=true
+```
+
+When enabled, the app will automatically use mock data if API requests fail. In production, this should be disabled to show proper error states to users.
 
 ### For GitHub Pages Deployment
 
