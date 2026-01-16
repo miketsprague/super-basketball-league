@@ -54,8 +54,9 @@ interface StatBarProps {
 }
 
 function StatBar({ label, homeValue, awayValue, isPercentage = false }: StatBarProps) {
-  const total = homeValue + awayValue || 1;
-  const homePercent = (homeValue / total) * 100;
+  const total = homeValue + awayValue;
+  // Handle zero division - show 50/50 split when both values are 0
+  const homePercent = total === 0 ? 50 : (homeValue / total) * 100;
   const displayHome = isPercentage ? `${homeValue}%` : homeValue;
   const displayAway = isPercentage ? `${awayValue}%` : awayValue;
   

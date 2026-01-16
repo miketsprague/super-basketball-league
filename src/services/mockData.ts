@@ -320,12 +320,16 @@ export function getMockMatchDetails(matchId: string): MatchDetails | null {
   const homeTotal = match.homeScore ?? 0;
   const awayTotal = match.awayScore ?? 0;
   
-  // Generate quarter-by-quarter scores
+  // Generate quarter-by-quarter scores that sum to total
   const generateQuarterScores = (total: number) => {
-    const q1 = Math.round(total * (0.2 + Math.random() * 0.1));
-    const q2 = Math.round(total * (0.2 + Math.random() * 0.1));
-    const q3 = Math.round(total * (0.2 + Math.random() * 0.1));
-    const q4 = total - q1 - q2 - q3;
+    if (total === 0) {
+      return { q1: 0, q2: 0, q3: 0, q4: 0 };
+    }
+    // Use smaller multipliers to ensure q4 is never negative
+    const q1 = Math.round(total * (0.20 + Math.random() * 0.05));
+    const q2 = Math.round(total * (0.20 + Math.random() * 0.05));
+    const q3 = Math.round(total * (0.20 + Math.random() * 0.05));
+    const q4 = Math.max(0, total - q1 - q2 - q3);
     return { q1, q2, q3, q4 };
   };
   
