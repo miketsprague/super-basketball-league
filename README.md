@@ -122,36 +122,34 @@ Add the API key as a repository secret:
 
 The app is configured for automatic deployment to GitHub Pages via GitHub Actions.
 
-1. Ensure GitHub Pages is enabled in repository settings:
-   - Go to Settings → Pages
-   - Source: GitHub Actions
+**⚠️ IMPORTANT: GitHub Pages Setup**
 
-2. Push to the `main` branch:
-   ```bash
-   git push origin main
-   ```
+1. Go to repository **Settings → Pages**
+2. Under "Build and deployment":
+   - **Source**: Select **GitHub Actions** (NOT "Deploy from a branch")
+3. Push to the `main` branch to trigger deployment
 
-3. The workflow will automatically build and deploy the app
+If "Deploy from a branch" is selected, GitHub will try to use Jekyll which cannot build React/Vite apps, resulting in a **blank page**.
 
 The app will be available at: `https://[username].github.io/super-basketball-league/`
 
 ### Troubleshooting GitHub Pages Deployment
 
-If the GitHub Pages URL shows a blank page (404) or the deployment fails:
+**Blank White Page?** This is usually caused by one of these issues:
 
-1. **Verify GitHub Pages is enabled:**
+1. **GitHub Pages Source is set to "Deploy from a branch" instead of "GitHub Actions"**
    - Go to repository Settings → Pages
-   - Under "Build and deployment", ensure **Source** is set to **GitHub Actions**
-   - Save the settings
+   - Under "Build and deployment", change **Source** to **GitHub Actions**
+   - This is the most common cause of blank pages!
 
 2. **Check the workflow status:**
    - Go to the Actions tab
-   - Look for the "Deploy to GitHub Pages" workflow
+   - Look for the "Deploy to GitHub Pages" workflow (NOT "pages build and deployment")
    - If it shows a failure, check the logs for error details
 
 3. **Verify API key is set:**
    - Go to Settings → Secrets and variables → Actions
-   - Ensure `VITE_SPORTSDB_API_KEY` secret exists
+   - Ensure `VITE_SPORTSDB_API_KEY` secret exists (optional - app works without it but shows error message)
 
 4. **Trigger a new deployment:**
    - Make a small commit to `main` branch, or
