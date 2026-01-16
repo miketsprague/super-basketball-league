@@ -6,6 +6,7 @@ struct LeagueTableView: View {
     let isLoading: Bool
     
     private let playoffPositions = 4
+    private let relegationSpots = 2
     
     var body: some View {
         Group {
@@ -94,7 +95,7 @@ struct LeagueTableView: View {
     
     private func tableRow(for entry: StandingsEntry) -> some View {
         let isPlayoff = entry.position <= playoffPositions
-        let isRelegation = entry.position >= standings.count - 1 && standings.count > 2
+        let isRelegation = entry.position > standings.count - relegationSpots && standings.count > relegationSpots
         
         return HStack(spacing: 0) {
             Text("\(entry.position)")
