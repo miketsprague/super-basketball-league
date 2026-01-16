@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { Fixtures } from './components/Fixtures';
 import { LeagueTable } from './components/LeagueTable';
+import { MatchDetail } from './components/MatchDetail';
 import type { Match, StandingsEntry } from './types';
 import { fetchAllData } from './services/api';
 
 type Tab = 'fixtures' | 'table';
 
-function App() {
+function HomePage() {
   const [activeTab, setActiveTab] = useState<Tab>('fixtures');
   const [matches, setMatches] = useState<Match[]>([]);
   const [standings, setStandings] = useState<StandingsEntry[]>([]);
@@ -89,6 +91,15 @@ function App() {
         Super Basketball League © {new Date().getFullYear()}
       </footer>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/match/:matchId" element={<MatchDetail />} />
+    </Routes>
   );
 }
 
