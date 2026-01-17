@@ -5,13 +5,28 @@ import { fetchMatchDetails } from '../services/dataProvider';
 
 const LIVE_POLL_INTERVAL = 30000; // 30 seconds
 
+function isMatch(value: unknown): value is Match {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Match;
+  return typeof candidate.id === 'string'
+    && typeof candidate.date === 'string'
+    && typeof candidate.time === 'string'
+    && typeof candidate.venue === 'string'
+    && typeof candidate.status === 'string'
+    && typeof candidate.homeTeam === 'object'
+    && typeof candidate.awayTeam === 'object'
+    && typeof candidate.homeTeam.id === 'string'
+    && typeof candidate.awayTeam.id === 'string';
+}
+
 function getMatchFromState(state: unknown): Match | undefined {
   if (!state || typeof state !== 'object') return undefined;
   if (!('match' in state)) return undefined;
-  return (state as { match?: Match }).match;
+  const match = (state as { match?: unknown }).match;
+  return isMatch(match) ? match : undefined;
 }
 
-function doTeamsMatch(details: MatchDetails | null, fallbackMatch: MatchDetails | null): boolean {
+function areTeamIdsConsistent(details: MatchDetails | null, fallbackMatch: MatchDetails | null): boolean {
   if (!fallbackMatch) return true;
   if (!details) return false;
   return details.homeTeam.id === fallbackMatch.homeTeam.id
@@ -141,7 +156,7 @@ export function MatchDetail() {
     try {
       const fallbackMatch = buildFallbackMatch();
       const details = await fetchMatchDetails(matchId);
-      const matchesStateTeams = doTeamsMatch(details, fallbackMatch);
+      const matchesStateTeams = areTeamIdsConsistent(details, fallbackMatch);
       if (details && matchesStateTeams) {
         setMatch(details);
         setLastUpdated(new Date());

@@ -250,28 +250,23 @@ export async function fetchMatchDetails(matchId: string): Promise<MatchDetails |
  * Throws APIError on failure - caller should handle errors appropriately
  */
 export async function fetchLeagues(): Promise<League[]> {
-  const leagueIds = [LEAGUE_IDS.SUPER_LEAGUE, LEAGUE_IDS.EUROLEAGUE];
-  const responses = await Promise.allSettled(
-    leagueIds.map((leagueId) => fetchFromAPI<LeaguesResponse>(`lookupleague.php?id=${leagueId}`))
-  );
-
-  responses.forEach((response, index) => {
-    if (response.status === 'rejected') {
-      console.warn(`Failed to load league ${leagueIds[index]}:`, response.reason);
+  const data = await fetchFromAPI<LeaguesResponse>('all_leagues.php');
+  
+  if (data?.leagues && Array.isArray(data.leagues)) {
+    const leagueIds = new Set<string>([LEAGUE_IDS.SUPER_LEAGUE, LEAGUE_IDS.EUROLEAGUE]);
+    // Filter for basketball leagues that match our predefined leagues
+    const basketballLeagues = data.leagues
+      .filter((league) => league.strSport === 'Basketball' && leagueIds.has(league.idLeague))
+      .map((league): League => ({
+        id: league.idLeague,
+        name: league.strLeague,
+        shortName: league.strLeagueAlternate || league.strLeague.split(' ')[0],
+        country: league.strCountry || 'International',
+      }));
+    
+    if (basketballLeagues.length > 0) {
+      return basketballLeagues;
     }
-  });
-  
-  const leagues = responses
-    .flatMap((response) => response.status === 'fulfilled' ? response.value?.leagues ?? [] : [])
-    .map((league): League => ({
-      id: league.idLeague,
-      name: league.strLeague,
-      shortName: league.strLeagueAlternate || league.strLeague.split(' ')[0],
-      country: league.strCountry || 'International',
-    }));
-  
-  if (leagues.length > 0) {
-    return leagues;
   }
   
   // Return predefined leagues if API returns empty result (but no error)
