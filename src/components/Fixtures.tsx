@@ -43,7 +43,7 @@ export function Fixtures({ matches, loading }: FixturesProps) {
       {matches.map((match) => (
         <button
           key={match.id}
-           onClick={() => handleMatchClick(match)}
+          onClick={() => handleMatchClick(match)}
           className="w-full text-left bg-white rounded-lg shadow p-4 border-l-4 border-orange-500 hover:shadow-md hover:border-orange-600 transition-all cursor-pointer"
         >
           <div className="flex justify-between items-center text-xs text-gray-500 mb-2">

@@ -112,6 +112,12 @@ export function MatchDetail() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const matchFromState = (location.state as { match?: Match } | null)?.match;
 
+  const buildFallbackMatch = useCallback(() => {
+    return matchFromState
+      ? ({ ...matchFromState, lastUpdated: new Date().toISOString() } as MatchDetails)
+      : null;
+  }, [matchFromState]);
+
   const loadMatchDetails = useCallback(async (showLoading = true) => {
     if (!matchId) return;
     
@@ -119,13 +125,11 @@ export function MatchDetail() {
     setError(null);
     
     try {
-      const fallbackMatch = matchFromState
-        ? ({ ...matchFromState, lastUpdated: new Date().toISOString() } as MatchDetails)
-        : null;
+      const fallbackMatch = buildFallbackMatch();
       const details = await fetchMatchDetails(matchId);
-      const matchesStateTeams = !matchFromState
-        || (details?.homeTeam.id === matchFromState.homeTeam.id
-          && details?.awayTeam.id === matchFromState.awayTeam.id);
+      const matchesStateTeams = !fallbackMatch
+        || (details?.homeTeam.id === fallbackMatch.homeTeam.id
+          && details?.awayTeam.id === fallbackMatch.awayTeam.id);
       if (details && matchesStateTeams) {
         setMatch(details);
         setLastUpdated(new Date());
@@ -136,9 +140,7 @@ export function MatchDetail() {
         setError('Match not found');
       }
     } catch {
-      const fallbackMatch = matchFromState
-        ? ({ ...matchFromState, lastUpdated: new Date().toISOString() } as MatchDetails)
-        : null;
+      const fallbackMatch = buildFallbackMatch();
       if (fallbackMatch) {
         setMatch(fallbackMatch);
         setLastUpdated(new Date());
@@ -148,7 +150,7 @@ export function MatchDetail() {
     } finally {
       setLoading(false);
     }
-  }, [matchFromState, matchId]);
+  }, [buildFallbackMatch, matchId]);
 
   // Initial load
   useEffect(() => {
