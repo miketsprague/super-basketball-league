@@ -125,10 +125,11 @@ export function MatchDetail() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const matchFromState = getMatchFromState(location.state);
 
-  const buildFallbackMatch = useCallback(() => {
-    return matchFromState
-      ? ({ ...matchFromState, lastUpdated: new Date().toISOString() } as MatchDetails)
-      : null;
+  const buildFallbackMatch = useCallback((): MatchDetails | null => {
+    if (!matchFromState) {
+      return null;
+    }
+    return { ...matchFromState, lastUpdated: new Date().toISOString() };
   }, [matchFromState]);
 
   const loadMatchDetails = useCallback(async (showLoading = true) => {

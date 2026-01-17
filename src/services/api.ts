@@ -254,6 +254,12 @@ export async function fetchLeagues(): Promise<League[]> {
   const responses = await Promise.allSettled(
     leagueIds.map((leagueId) => fetchFromAPI<LeaguesResponse>(`lookupleague.php?id=${leagueId}`))
   );
+
+  responses.forEach((response, index) => {
+    if (response.status === 'rejected') {
+      console.warn(`Failed to load league ${leagueIds[index]}:`, response.reason);
+    }
+  });
   
   const leagues = responses
     .flatMap((response) => response.status === 'fulfilled' ? response.value?.leagues ?? [] : [])
