@@ -5,6 +5,19 @@ import { fetchMatchDetails } from '../services/dataProvider';
 
 const LIVE_POLL_INTERVAL = 30000; // 30 seconds
 
+function getMatchFromState(state: unknown): Match | undefined {
+  if (!state || typeof state !== 'object') return undefined;
+  if (!('match' in state)) return undefined;
+  return (state as { match?: Match }).match;
+}
+
+function doTeamsMatch(details: MatchDetails | null, fallbackMatch: MatchDetails | null): boolean {
+  if (!fallbackMatch) return true;
+  if (!details) return false;
+  return details.homeTeam.id === fallbackMatch.homeTeam.id
+    && details.awayTeam.id === fallbackMatch.awayTeam.id;
+}
+
 function MatchDetailSkeleton() {
   return (
     <div className="min-h-screen bg-gray-100 animate-pulse">
@@ -110,7 +123,7 @@ export function MatchDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const matchFromState = (location.state as { match?: Match } | null)?.match;
+  const matchFromState = getMatchFromState(location.state);
 
   const buildFallbackMatch = useCallback(() => {
     return matchFromState
@@ -127,9 +140,7 @@ export function MatchDetail() {
     try {
       const fallbackMatch = buildFallbackMatch();
       const details = await fetchMatchDetails(matchId);
-      const matchesStateTeams = !fallbackMatch
-        || (details?.homeTeam.id === fallbackMatch.homeTeam.id
-          && details?.awayTeam.id === fallbackMatch.awayTeam.id);
+      const matchesStateTeams = doTeamsMatch(details, fallbackMatch);
       if (details && matchesStateTeams) {
         setMatch(details);
         setLastUpdated(new Date());

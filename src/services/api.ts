@@ -251,12 +251,12 @@ export async function fetchMatchDetails(matchId: string): Promise<MatchDetails |
  */
 export async function fetchLeagues(): Promise<League[]> {
   const leagueIds = [LEAGUE_IDS.SUPER_LEAGUE, LEAGUE_IDS.EUROLEAGUE];
-  const responses = await Promise.all(
+  const responses = await Promise.allSettled(
     leagueIds.map((leagueId) => fetchFromAPI<LeaguesResponse>(`lookupleague.php?id=${leagueId}`))
   );
   
   const leagues = responses
-    .flatMap((response) => response?.leagues ?? [])
+    .flatMap((response) => response.status === 'fulfilled' ? response.value?.leagues ?? [] : [])
     .map((league): League => ({
       id: league.idLeague,
       name: league.strLeague,
