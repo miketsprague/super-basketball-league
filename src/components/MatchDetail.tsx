@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import type { MatchDetails, TeamStatistics } from '../types';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import type { Match, MatchDetails, TeamStatistics } from '../types';
 import { fetchMatchDetails } from '../services/dataProvider';
 
 const LIVE_POLL_INTERVAL = 30000; // 30 seconds
@@ -105,10 +105,12 @@ function TeamStatsComparison({ homeStats, awayStats }: TeamStatsComparisonProps)
 export function MatchDetail() {
   const { matchId } = useParams<{ matchId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [match, setMatch] = useState<MatchDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const matchFromState = (location.state as { match?: Match } | null)?.match;
 
   const loadMatchDetails = useCallback(async (showLoading = true) => {
     if (!matchId) return;
@@ -118,18 +120,35 @@ export function MatchDetail() {
     
     try {
       const details = await fetchMatchDetails(matchId);
-      if (details) {
+      const matchesStateTeams = !matchFromState
+        || (details?.homeTeam.id === matchFromState.homeTeam.id
+          && details?.awayTeam.id === matchFromState.awayTeam.id);
+      if (details && matchesStateTeams) {
         setMatch(details);
+        setLastUpdated(new Date());
+      } else if (matchFromState) {
+        setMatch({
+          ...matchFromState,
+          lastUpdated: new Date().toISOString(),
+        });
         setLastUpdated(new Date());
       } else {
         setError('Match not found');
       }
     } catch {
-      setError('Failed to load match details');
+      if (matchFromState) {
+        setMatch({
+          ...matchFromState,
+          lastUpdated: new Date().toISOString(),
+        });
+        setLastUpdated(new Date());
+      } else {
+        setError('Failed to load match details');
+      }
     } finally {
       setLoading(false);
     }
-  }, [matchId]);
+  }, [matchFromState, matchId]);
 
   // Initial load
   useEffect(() => {

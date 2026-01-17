@@ -3,7 +3,7 @@ import type { League } from '../types';
 // TheSportsDB League IDs
 export const LEAGUE_IDS = {
   SUPER_LEAGUE: '4431',
-  EUROLEAGUE: '4438',
+  EUROLEAGUE: '4546',
 } as const;
 
 // Predefined leagues as fallback
@@ -16,7 +16,7 @@ export const predefinedLeagues: League[] = [
   },
   {
     id: LEAGUE_IDS.EUROLEAGUE,
-    name: 'EuroLeague',
+    name: 'EuroLeague Basketball',
     shortName: 'EuroLeague',
     country: 'Europe',
   },

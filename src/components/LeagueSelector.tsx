@@ -37,7 +37,7 @@ export function LeagueSelector({ leagues, selectedLeague, onLeagueChange, loadin
               }`}
             >
               <span className="text-base">🏀</span>
-              <span>{league.shortName}</span>
+              <span>{league.name}</span>
             </button>
           );
         })}

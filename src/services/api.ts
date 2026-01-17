@@ -250,25 +250,22 @@ export async function fetchMatchDetails(matchId: string): Promise<MatchDetails |
  * Throws APIError on failure - caller should handle errors appropriately
  */
 export async function fetchLeagues(): Promise<League[]> {
-  const data = await fetchFromAPI<LeaguesResponse>('all_leagues.php');
+  const leagueIds = [LEAGUE_IDS.SUPER_LEAGUE, LEAGUE_IDS.EUROLEAGUE];
+  const responses = await Promise.all(
+    leagueIds.map((leagueId) => fetchFromAPI<LeaguesResponse>(`lookupleague.php?id=${leagueId}`))
+  );
   
-  if (data?.leagues && Array.isArray(data.leagues)) {
-    // Filter for basketball leagues that match our predefined leagues
-    const basketballLeagues = data.leagues
-      .filter((league) => 
-        league.strSport === 'Basketball' &&
-        (league.idLeague === LEAGUE_IDS.SUPER_LEAGUE || league.idLeague === LEAGUE_IDS.EUROLEAGUE)
-      )
-      .map((league): League => ({
-        id: league.idLeague,
-        name: league.strLeague,
-        shortName: league.strLeagueAlternate || league.strLeague.split(' ')[0],
-        country: league.strCountry || 'International',
-      }));
-    
-    if (basketballLeagues.length > 0) {
-      return basketballLeagues;
-    }
+  const leagues = responses
+    .flatMap((response) => response?.leagues ?? [])
+    .map((league): League => ({
+      id: league.idLeague,
+      name: league.strLeague,
+      shortName: league.strLeagueAlternate || league.strLeague,
+      country: league.strCountry || 'International',
+    }));
+  
+  if (leagues.length > 0) {
+    return leagues;
   }
   
   // Return predefined leagues if API returns empty result (but no error)
