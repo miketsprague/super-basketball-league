@@ -3,7 +3,8 @@ import { LEAGUE_IDS, predefinedLeagues } from './leagues';
 
 // TheSportsDB API configuration
 const API_BASE_URL = 'https://www.thesportsdb.com/api/v1/json';
-const API_KEY = import.meta.env.VITE_SPORTSDB_API_KEY || '38dde0dae877d7b97cccc6ac32faacef';
+// Use TheSportsDB's free public test API key as fallback
+const API_KEY = import.meta.env.VITE_SPORTSDB_API_KEY || '3';
 const CURRENT_SEASON = '2025-2026';
 
 // Custom error class for API failures
