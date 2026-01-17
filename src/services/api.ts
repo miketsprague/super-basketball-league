@@ -73,17 +73,29 @@ interface APIResponse {
 async function fetchFromAPI<T>(endpoint: string): Promise<T> {
   const url = `${API_BASE_URL}/${API_KEY}/${endpoint}`;
   
-  const response = await fetch(url);
+  let response: Response;
+  try {
+    response = await fetch(url);
+  } catch (fetchError) {
+    // Network error (connection refused, DNS failure, CORS, etc.)
+    const message = fetchError instanceof Error ? fetchError.message : 'Network request failed';
+    throw new APIError(`Network error for ${endpoint}: ${message}`);
+  }
   
   if (!response.ok) {
     throw new APIError(
-      `API request failed: ${response.status} ${response.statusText}`,
+      `API request failed for ${endpoint}: ${response.status} ${response.statusText}`,
       response.status
     );
   }
 
-  const data = await response.json();
-  return data;
+  try {
+    const data = await response.json();
+    return data;
+  } catch (parseError) {
+    const message = parseError instanceof Error ? parseError.message : 'Unknown parse error';
+    throw new APIError(`Invalid JSON response from ${endpoint}: ${message}`);
+  }
 }
 
 /**

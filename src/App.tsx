@@ -5,8 +5,20 @@ import { LeagueTable } from './components/LeagueTable';
 import { MatchDetail } from './components/MatchDetail';
 import { LeagueSelector } from './components/LeagueSelector';
 import type { Match, StandingsEntry, League } from './types';
-import { fetchAllData, fetchLeagues } from './services/dataProvider';
+import { fetchAllData, fetchLeagues, APIError } from './services/dataProvider';
 import { DEFAULT_LEAGUE, predefinedLeagues } from './services/leagues';
+
+// Helper function to extract detailed error message
+function getErrorMessage(error: unknown): string {
+  if (error instanceof APIError) {
+    const statusInfo = error.statusCode ? ` (Status: ${error.statusCode})` : '';
+    return `${error.message}${statusInfo}`;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return 'An unexpected error occurred';
+}
 
 type Tab = 'fixtures' | 'table';
 
@@ -38,7 +50,8 @@ function HomePage() {
         }
       } catch (error) {
         console.error('Failed to fetch leagues:', error);
-        setLeaguesError('Failed to load leagues. Using default options.');
+        const errorDetail = getErrorMessage(error);
+        setLeaguesError(`Failed to load leagues: ${errorDetail}. Using default options.`);
         // Keep using predefinedLeagues as fallback
       } finally {
         setLeaguesLoading(false);
@@ -59,7 +72,8 @@ function HomePage() {
         setStandings(data.standings);
       } catch (error) {
         console.error('Failed to fetch data:', error);
-        setError('Unable to load data. Please check your connection and try again.');
+        const errorDetail = getErrorMessage(error);
+        setError(`Unable to load data: ${errorDetail}`);
         setMatches([]);
         setStandings([]);
       } finally {
@@ -88,7 +102,8 @@ function HomePage() {
       })
       .catch(err => {
         console.error('Retry failed:', err);
-        setError('Unable to load data. Please check your connection and try again.');
+        const errorDetail = getErrorMessage(err);
+        setError(`Unable to load data: ${errorDetail}`);
       })
       .finally(() => setLoading(false));
   };
