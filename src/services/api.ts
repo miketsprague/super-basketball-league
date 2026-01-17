@@ -92,8 +92,9 @@ async function fetchFromAPI<T>(endpoint: string): Promise<T> {
   try {
     const data = await response.json();
     return data;
-  } catch {
-    throw new APIError(`Invalid JSON response from ${endpoint}`);
+  } catch (parseError) {
+    const message = parseError instanceof Error ? parseError.message : 'Unknown parse error';
+    throw new APIError(`Invalid JSON response from ${endpoint}: ${message}`);
   }
 }
 
