@@ -260,7 +260,7 @@ export async function fetchLeagues(): Promise<League[]> {
     .map((league): League => ({
       id: league.idLeague,
       name: league.strLeague,
-      shortName: league.strLeagueAlternate || league.strLeague,
+      shortName: league.strLeagueAlternate || league.strLeague.split(' ')[0],
       country: league.strCountry || 'International',
     }));
   

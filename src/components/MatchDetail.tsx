@@ -119,6 +119,9 @@ export function MatchDetail() {
     setError(null);
     
     try {
+      const fallbackMatch = matchFromState
+        ? ({ ...matchFromState, lastUpdated: new Date().toISOString() } as MatchDetails)
+        : null;
       const details = await fetchMatchDetails(matchId);
       const matchesStateTeams = !matchFromState
         || (details?.homeTeam.id === matchFromState.homeTeam.id
@@ -126,21 +129,18 @@ export function MatchDetail() {
       if (details && matchesStateTeams) {
         setMatch(details);
         setLastUpdated(new Date());
-      } else if (matchFromState) {
-        setMatch({
-          ...matchFromState,
-          lastUpdated: new Date().toISOString(),
-        });
+      } else if (fallbackMatch) {
+        setMatch(fallbackMatch);
         setLastUpdated(new Date());
       } else {
         setError('Match not found');
       }
     } catch {
-      if (matchFromState) {
-        setMatch({
-          ...matchFromState,
-          lastUpdated: new Date().toISOString(),
-        });
+      const fallbackMatch = matchFromState
+        ? ({ ...matchFromState, lastUpdated: new Date().toISOString() } as MatchDetails)
+        : null;
+      if (fallbackMatch) {
+        setMatch(fallbackMatch);
         setLastUpdated(new Date());
       } else {
         setError('Failed to load match details');
