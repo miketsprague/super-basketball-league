@@ -90,8 +90,15 @@ async function fetchFromAPI<T>(endpoint: string): Promise<T> {
     );
   }
 
+  // Check for empty response body before parsing JSON
+  const responseText = await response.text();
+  if (!responseText || responseText.trim() === '') {
+    // Return empty object for empty responses - the caller will handle missing data
+    return {} as T;
+  }
+
   try {
-    const data = await response.json();
+    const data = JSON.parse(responseText);
     return data;
   } catch (parseError) {
     const message = parseError instanceof Error ? parseError.message : 'Unknown parse error';
