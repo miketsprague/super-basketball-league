@@ -1,7 +1,7 @@
 import type { Match, MatchDetails, StandingsEntry, League } from '../types';
 import * as mockProvider from './mockProvider';
 import * as euroleagueApi from './euroleagueApi';
-import * as apiSportsApi from './apiSportsApi';
+import * as geniusSportsApi from './geniusSportsApi';
 import { predefinedLeagues, getApiProvider, LEAGUE_IDS, type LeagueConfig } from './leagues';
 
 /**
@@ -28,7 +28,7 @@ const USE_MOCK_FALLBACK = import.meta.env.VITE_USE_MOCK_FALLBACK === 'true';
  * Data provider that routes requests to the appropriate API based on league configuration.
  * 
  * API Providers:
- * - Super League Basketball: API-Sports.io (requires VITE_API_SPORTS_KEY)
+ * - Super League Basketball: Genius Sports (official SLB data, no API key needed)
  * - EuroLeague/EuroCup: Official EuroLeague API (api-live.euroleague.net) - free, no API key needed
  * - Mock: Fallback mock data for development/testing
  */
@@ -49,8 +49,8 @@ export async function fetchMatches(leagueId: string): Promise<Match[]> {
 
   try {
     switch (apiProvider) {
-      case 'apisports':
-        return await apiSportsApi.fetchApiSportsMatches();
+      case 'geniussports':
+        return await geniusSportsApi.fetchGeniusSportsMatches();
       case 'euroleague':
         return await euroleagueApi.fetchEuroLeagueMatches(leagueId);
       case 'mock':
@@ -72,8 +72,8 @@ export async function fetchStandings(leagueId: string): Promise<StandingsEntry[]
 
   try {
     switch (apiProvider) {
-      case 'apisports':
-        return await apiSportsApi.fetchApiSportsStandings();
+      case 'geniussports':
+        return await geniusSportsApi.fetchGeniusSportsStandings();
       case 'euroleague':
         return await euroleagueApi.fetchEuroLeagueStandings(leagueId);
       case 'mock':
@@ -97,8 +97,8 @@ export async function fetchAllData(leagueId: string): Promise<{
 
   try {
     switch (apiProvider) {
-      case 'apisports':
-        return await apiSportsApi.fetchApiSportsAllData();
+      case 'geniussports':
+        return await geniusSportsApi.fetchGeniusSportsAllData();
       case 'euroleague':
         return await euroleagueApi.fetchEuroLeagueAllData(leagueId);
       case 'mock':
@@ -121,8 +121,8 @@ export async function fetchMatchDetails(matchId: string, leagueId?: string): Pro
 
     try {
       switch (apiProvider) {
-        case 'apisports':
-          return await apiSportsApi.fetchApiSportsMatchDetails(matchId);
+        case 'geniussports':
+          return await geniusSportsApi.fetchGeniusSportsMatchDetails(matchId);
         case 'euroleague':
           return await euroleagueApi.fetchEuroLeagueMatchDetails(matchId, leagueId);
         case 'mock':
@@ -139,23 +139,22 @@ export async function fetchMatchDetails(matchId: string, leagueId?: string): Pro
   }
 
   // If no leagueId, try mock data first (which has all leagues)
-  // This maintains backward compatibility with the current routing
   const mockResult = await mockProvider.fetchMockMatchDetails(matchId);
   if (mockResult) {
     return mockResult;
   }
 
-  // If not found in mock data, try API-Sports first, then EuroLeague APIs
+  // Try Genius Sports first, then EuroLeague APIs
   try {
-    const apiSportsResult = await apiSportsApi.fetchApiSportsMatchDetails(matchId);
-    if (apiSportsResult) {
-      return apiSportsResult;
+    const geniusResult = await geniusSportsApi.fetchGeniusSportsMatchDetails(matchId);
+    if (geniusResult) {
+      return geniusResult;
     }
   } catch {
     // Continue to next provider
   }
 
-  // Try EuroLeague first, then EuroCup
+  // Try EuroLeague, then EuroCup
   for (const league of [LEAGUE_IDS.EUROLEAGUE, LEAGUE_IDS.EUROCUP]) {
     try {
       const result = await euroleagueApi.fetchEuroLeagueMatchDetails(matchId, league);
