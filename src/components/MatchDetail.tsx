@@ -32,7 +32,7 @@ function getMatchFromState(state: unknown): Match | undefined {
   return isMatch(match) ? match : undefined;
 }
 
-function doMatchesHaveSameTeams(details: MatchDetails | null, fallbackMatch: MatchDetails | null): boolean {
+function shouldUseApiDetails(details: MatchDetails | null, fallbackMatch: MatchDetails | null): boolean {
   if (!fallbackMatch) return true;
   if (!details) return false;
   return details.homeTeam.id === fallbackMatch.homeTeam.id
@@ -150,7 +150,18 @@ export function MatchDetail() {
     if (!matchFromState) {
       return null;
     }
-    return { ...matchFromState, lastUpdated: new Date().toISOString() };
+    return {
+      id: matchFromState.id,
+      homeTeam: matchFromState.homeTeam,
+      awayTeam: matchFromState.awayTeam,
+      homeScore: matchFromState.homeScore,
+      awayScore: matchFromState.awayScore,
+      date: matchFromState.date,
+      time: matchFromState.time,
+      venue: matchFromState.venue,
+      status: matchFromState.status,
+      lastUpdated: new Date().toISOString(),
+    };
   }, [matchFromState]);
 
   const loadMatchDetails = useCallback(async (showLoading = true) => {
@@ -162,7 +173,7 @@ export function MatchDetail() {
     try {
       const fallbackMatch = buildFallbackMatch();
       const details = await fetchMatchDetails(matchId);
-      const matchesStateTeams = doMatchesHaveSameTeams(details, fallbackMatch);
+      const matchesStateTeams = shouldUseApiDetails(details, fallbackMatch);
       if (details && matchesStateTeams) {
         setMatch(details);
         setLastUpdated(new Date());
