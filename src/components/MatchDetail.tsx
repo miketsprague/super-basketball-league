@@ -8,15 +8,21 @@ const LIVE_POLL_INTERVAL = 30000; // 30 seconds
 function isMatch(value: unknown): value is Match {
   if (!value || typeof value !== 'object') return false;
   const candidate = value as Match;
+  const homeTeam = candidate.homeTeam as { id?: unknown; name?: unknown; shortName?: unknown } | undefined;
+  const awayTeam = candidate.awayTeam as { id?: unknown; name?: unknown; shortName?: unknown } | undefined;
   return typeof candidate.id === 'string'
     && typeof candidate.date === 'string'
     && typeof candidate.time === 'string'
     && typeof candidate.venue === 'string'
     && typeof candidate.status === 'string'
-    && typeof candidate.homeTeam === 'object'
-    && typeof candidate.awayTeam === 'object'
-    && typeof candidate.homeTeam.id === 'string'
-    && typeof candidate.awayTeam.id === 'string';
+    && typeof homeTeam === 'object'
+    && typeof awayTeam === 'object'
+    && typeof homeTeam?.id === 'string'
+    && typeof homeTeam?.name === 'string'
+    && typeof homeTeam?.shortName === 'string'
+    && typeof awayTeam?.id === 'string'
+    && typeof awayTeam?.name === 'string'
+    && typeof awayTeam?.shortName === 'string';
 }
 
 function getMatchFromState(state: unknown): Match | undefined {
@@ -26,7 +32,7 @@ function getMatchFromState(state: unknown): Match | undefined {
   return isMatch(match) ? match : undefined;
 }
 
-function areTeamIdsConsistent(details: MatchDetails | null, fallbackMatch: MatchDetails | null): boolean {
+function doMatchesHaveSameTeams(details: MatchDetails | null, fallbackMatch: MatchDetails | null): boolean {
   if (!fallbackMatch) return true;
   if (!details) return false;
   return details.homeTeam.id === fallbackMatch.homeTeam.id
@@ -156,7 +162,7 @@ export function MatchDetail() {
     try {
       const fallbackMatch = buildFallbackMatch();
       const details = await fetchMatchDetails(matchId);
-      const matchesStateTeams = areTeamIdsConsistent(details, fallbackMatch);
+      const matchesStateTeams = doMatchesHaveSameTeams(details, fallbackMatch);
       if (details && matchesStateTeams) {
         setMatch(details);
         setLastUpdated(new Date());
