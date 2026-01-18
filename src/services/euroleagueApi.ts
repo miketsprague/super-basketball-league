@@ -1,5 +1,6 @@
 import type { Match, MatchDetails, StandingsEntry } from '../types';
 import { APIError } from './api';
+import { LEAGUE_IDS, LEGACY_LEAGUE_IDS } from './leagues';
 
 /**
  * EuroLeague/EuroCup Official API
@@ -171,10 +172,10 @@ function transformEuroLeagueStanding(standing: EuroLeagueStanding): StandingsEnt
  */
 function getCompetitionCode(leagueId: string): string {
   // Map our league IDs to EuroLeague competition codes
-  if (leagueId === 'euroleague' || leagueId === '4438') {
+  if (leagueId === LEAGUE_IDS.EUROLEAGUE || leagueId === LEGACY_LEAGUE_IDS.EUROLEAGUE) {
     return 'E';
   }
-  if (leagueId === 'eurocup') {
+  if (leagueId === LEAGUE_IDS.EUROCUP) {
     return 'U';
   }
   // Default to EuroLeague

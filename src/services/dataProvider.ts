@@ -1,7 +1,7 @@
 import type { Match, MatchDetails, StandingsEntry, League } from '../types';
 import * as mockProvider from './mockProvider';
 import * as euroleagueApi from './euroleagueApi';
-import { predefinedLeagues, getApiProvider, type LeagueConfig } from './leagues';
+import { predefinedLeagues, getApiProvider, LEAGUE_IDS, type LeagueConfig } from './leagues';
 
 /**
  * Environment variable to enable mock data fallback.
@@ -126,7 +126,7 @@ export async function fetchMatchDetails(matchId: string, leagueId?: string): Pro
 
   // If not found in mock data and in production, try EuroLeague APIs
   // Try EuroLeague first, then EuroCup
-  for (const league of ['euroleague', 'eurocup']) {
+  for (const league of [LEAGUE_IDS.EUROLEAGUE, LEAGUE_IDS.EUROCUP]) {
     try {
       const result = await euroleagueApi.fetchEuroLeagueMatchDetails(matchId, league);
       if (result) {

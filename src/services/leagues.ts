@@ -25,6 +25,12 @@ export const LEAGUE_IDS = {
   EUROCUP: 'eurocup',
 } as const;
 
+// Legacy TheSportsDB IDs (for backward compatibility)
+export const LEGACY_LEAGUE_IDS = {
+  SUPER_LEAGUE: '4431',
+  EUROLEAGUE: '4438',
+} as const;
+
 // Predefined leagues with their API configurations
 export const predefinedLeagues: LeagueConfig[] = [
   {
