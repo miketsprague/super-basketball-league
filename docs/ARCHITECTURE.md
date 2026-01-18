@@ -91,10 +91,9 @@ See the `docs/adr/` directory for detailed Architecture Decision Records.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `VITE_API_SPORTS_KEY` | No* | API-Sports.io key (not currently used) |
 | `VITE_USE_MOCK_FALLBACK` | No | Enable mock data fallback on API errors |
 
-*API-Sports was replaced with Genius Sports which requires no API key.
+All data providers (Genius Sports, EuroLeague) are free and require no API keys.
 
 ## Deployment
 

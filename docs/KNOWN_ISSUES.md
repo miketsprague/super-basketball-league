@@ -24,45 +24,22 @@ https://api-live.euroleague.net/v3/standings
 https://api-live.euroleague.net/v1/standings?seasoncode=E2025
 ```
 
-### API-Sports - Current Season Blocked
-**Symptom:** "Plan restriction" error for 2025-26 data  
-**Cause:** Free tier blocks current season despite documentation  
-**Solution:** Use Genius Sports for SLB current season data instead
-
-### API-Sports - Wrong League Data
-**Symptom:** Getting Romanian Women's League data instead of SLB  
-**Cause:** Wrong league ID  
-**Solution:** SLB league ID is `108` (not `79`)
-
 ## GitHub Actions Issues
 
 ### Environment Secrets Not Working
-**Symptom:** `VITE_API_SPORTS_KEY` is undefined during build  
+**Symptom:** Environment secrets not accessible during build  
 **Cause:** Job missing environment declaration  
 **Solution:** Add `environment: github-pages` to the job
 ```yaml
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: github-pages  # ← Required!
+    environment: github-pages  # ← Required for secrets!
     steps:
       # ...
 ```
 
-### Wrong Environment Variable Name
-**Symptom:** Build can't find API key  
-**Cause:** Env var name mismatch between workflow and code  
-**Solution:** Ensure exact match: `VITE_API_SPORTS_KEY`
-
 ## Data Parsing Issues
-
-### Standings Nested Array
-**Symptom:** "Cannot read properties of undefined" when accessing standings  
-**Cause:** API-Sports returns `[[...]]` instead of `[...]`  
-**Solution:** Flatten the response
-```typescript
-const standings = Array.isArray(data[0]) ? data[0] : data;
-```
 
 ### Match Scores Showing NaN
 **Symptom:** Scores display as NaN for scheduled matches  
