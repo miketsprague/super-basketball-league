@@ -13,7 +13,7 @@ The app uses free APIs for different leagues - **no API keys required**:
 | League | Provider | Notes |
 |--------|----------|-------|
 | Super League Basketball | Genius Sports | HTML parsing, use `roundNumber=-1` for full schedule |
-| EuroLeague/EuroCup | EuroLeague v1 | XML responses |
+| EuroLeague/EuroCup | EuroLeague v1 + v2 | v1 for results (XML), v2 for upcoming (JSON) |
 
 ### Critical API Details
 
@@ -24,10 +24,16 @@ The app uses free APIs for different leagues - **no API keys required**:
 - Match IDs: Extract from `id="extfix_XXXXXX"`
 - Status: CSS class `STATUS_COMPLETE` or `STATUS_SCHEDULED`
 
-**EuroLeague:**
-- Use v1 API (v3 returns 405 errors)
+**EuroLeague/EuroCup (dual API approach):**
+- **V1 API** (completed games): `https://api-live.euroleague.net/v1/results?seasoncode=E2025`
+  - Returns XML, parse with DOMParser
+  - Only has completed match results
+- **V2 API** (upcoming games): `https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/E2025/games`
+  - Returns JSON
+  - Only has scheduled/upcoming fixtures
+  - Includes team logos and venue info
 - Season codes: `E2025` (EuroLeague), `U2025` (EuroCup)
-- Returns XML, parse with DOMParser
+- **Note:** Both APIs must be combined for complete fixture list
 
 ### Known Issues & Solutions
 
