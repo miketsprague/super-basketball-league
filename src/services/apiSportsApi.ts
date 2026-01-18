@@ -26,11 +26,11 @@ const API_BASE_URL = 'https://v1.basketball.api-sports.io';
 // API key from environment variable
 const API_KEY = import.meta.env.VITE_API_SPORTS_KEY || '';
 
-// British Basketball League ID (Super League Basketball)
-// This is the BBL league ID in api-sports.io
-const BBL_LEAGUE_ID = 79;
+// Super League Basketball (SLB) - UK's top basketball league
+// League ID 108 in api-sports.io
+const SLB_LEAGUE_ID = 108;
 
-// Current season
+// Current season (free API plan only supports up to 2024-2025)
 const CURRENT_SEASON = '2024-2025';
 
 interface ApiSportsGame {
@@ -263,24 +263,28 @@ function getShortName(name: string): string {
  * Transform API-Sports standing to our StandingsEntry type
  */
 function transformStanding(standing: ApiSportsStanding): StandingsEntry {
-  const pointsDiff = standing.points.for - standing.points.against;
+  const ptsFor = standing.points?.for ?? 0;
+  const ptsAgainst = standing.points?.against ?? 0;
+  const pointsDiff = ptsFor - ptsAgainst;
   
   // Calculate points (wins count as 2 points in basketball)
-  const points = standing.group.points ?? (standing.games.win.total * 2);
+  const wins = standing.games?.win?.total ?? 0;
+  const losses = standing.games?.lose?.total ?? 0;
+  const points = standing.group?.points ?? (wins * 2);
   
   return {
     position: standing.position,
     team: {
-      id: String(standing.team.id),
-      name: standing.team.name,
-      shortName: getShortName(standing.team.name),
-      logo: standing.team.logo,
+      id: String(standing.team?.id ?? ''),
+      name: standing.team?.name ?? 'Unknown',
+      shortName: getShortName(standing.team?.name ?? 'Unknown'),
+      logo: standing.team?.logo,
     },
-    played: standing.games.played,
-    won: standing.games.win.total,
-    lost: standing.games.lose.total,
-    pointsFor: standing.points.for,
-    pointsAgainst: standing.points.against,
+    played: standing.games?.played ?? 0,
+    won: wins,
+    lost: losses,
+    pointsFor: ptsFor,
+    pointsAgainst: ptsAgainst,
     pointsDifference: pointsDiff,
     points,
   };
@@ -292,7 +296,7 @@ function transformStanding(standing: ApiSportsStanding): StandingsEntry {
 export async function fetchApiSportsMatches(): Promise<Match[]> {
   // Fetch current season games
   const games = await fetchFromApiSports<ApiSportsGame>('games', {
-    league: BBL_LEAGUE_ID,
+    league: SLB_LEAGUE_ID,
     season: CURRENT_SEASON,
   });
 
@@ -328,10 +332,19 @@ export async function fetchApiSportsMatches(): Promise<Match[]> {
  * Fetch standings from API-Sports for Super League Basketball
  */
 export async function fetchApiSportsStandings(): Promise<StandingsEntry[]> {
-  const standings = await fetchFromApiSports<ApiSportsStanding>('standings', {
-    league: BBL_LEAGUE_ID,
+  const response = await fetchFromApiSports<ApiSportsStanding[] | ApiSportsStanding>('standings', {
+    league: SLB_LEAGUE_ID,
     season: CURRENT_SEASON,
   });
+
+  if (!response || response.length === 0) {
+    return [];
+  }
+
+  // API returns nested array [[...standings...]], so we need to flatten
+  const standings = Array.isArray(response[0]) 
+    ? (response as ApiSportsStanding[][]).flat() 
+    : response as ApiSportsStanding[];
 
   if (!standings || standings.length === 0) {
     return [];
