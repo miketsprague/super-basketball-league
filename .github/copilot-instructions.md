@@ -63,6 +63,7 @@ dataProvider.ts  →  geniusSportsApi.ts (SLB)
 ## Documentation
 
 - `docs/GENIUS_SPORTS_API.md` - Detailed Genius Sports API docs
+- `docs/EUROLEAGUE_API.md` - EuroLeague/EuroCup API docs (V1 + V2 combined)
 - `docs/ARCHITECTURE.md` - System architecture
 - `docs/adr/` - Architecture Decision Records
 - `docs/session-history/` - Previous agent session summaries
