@@ -269,24 +269,11 @@ export async function fetchGeniusSportsMatches(): Promise<Match[]> {
   const html = await fetchFromGeniusSports('/schedule?roundNumber=-1');
   const matches = parseScheduleHTML(html);
   
-  // Sort: upcoming first (by date asc), then recent results (by date desc)
+  // Sort by date ascending (earliest first) - UI will auto-scroll to today
   return matches.sort((a, b) => {
     const dateA = new Date(a.date);
     const dateB = new Date(b.date);
-    
-    const aIsUpcoming = a.status === 'scheduled' || a.status === 'live';
-    const bIsUpcoming = b.status === 'scheduled' || b.status === 'live';
-    
-    // Upcoming matches come first
-    if (aIsUpcoming && !bIsUpcoming) return -1;
-    if (!aIsUpcoming && bIsUpcoming) return 1;
-    
-    // Both upcoming: sort by date ascending (nearest first)
-    if (aIsUpcoming) {
-      return dateA.getTime() - dateB.getTime();
-    }
-    // Both completed: sort by date descending (most recent first)
-    return dateB.getTime() - dateA.getTime();
+    return dateA.getTime() - dateB.getTime();
   });
 }
 

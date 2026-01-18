@@ -466,24 +466,12 @@ export async function fetchEuroLeagueMatches(leagueId: string): Promise<Match[]>
 
   const allMatches = Array.from(matchMap.values());
 
-  // Sort by date (upcoming first, then recent results)
-  const now = new Date();
+  // Sort by date ascending (earliest first) - UI will auto-scroll to today
   return allMatches.sort((a, b) => {
     const dateA = new Date(a.date);
     const dateB = new Date(b.date);
-
-    const aIsUpcoming = dateA >= now;
-    const bIsUpcoming = dateB >= now;
-
-    if (aIsUpcoming && !bIsUpcoming) return -1;
-    if (!aIsUpcoming && bIsUpcoming) return 1;
-
-    // For upcoming: soonest first; for past: most recent first
-    if (aIsUpcoming) {
-      return dateA.getTime() - dateB.getTime();
-    }
-    return dateB.getTime() - dateA.getTime();
-  }).slice(0, 30); // Show more matches since we now have both completed and upcoming
+    return dateA.getTime() - dateB.getTime();
+  });
 }
 
 /**

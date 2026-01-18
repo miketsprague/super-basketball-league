@@ -438,7 +438,7 @@ describe('EuroLeague API', () => {
       expect(duplicateMatch[0].homeScore).toBe(95); // Has the actual score from V1
     });
 
-    it('should sort with upcoming matches first', async () => {
+    it('should sort matches by date ascending', async () => {
       mockFetch
         .mockResolvedValueOnce({
           ok: true,
@@ -451,13 +451,11 @@ describe('EuroLeague API', () => {
 
       const matches = await fetchEuroLeagueMatches('euroleague');
 
-      // Upcoming matches should come before completed ones
-      const firstUpcomingIndex = matches.findIndex(m => m.status === 'scheduled');
-      const firstCompletedIndex = matches.findIndex(m => m.status === 'completed');
-
-      // If there are both types, upcoming should be first
-      if (firstUpcomingIndex !== -1 && firstCompletedIndex !== -1) {
-        expect(firstUpcomingIndex).toBeLessThan(firstCompletedIndex);
+      // Matches should be sorted by date ascending (earliest first)
+      for (let i = 1; i < matches.length; i++) {
+        const prevDate = new Date(matches[i - 1].date);
+        const currDate = new Date(matches[i].date);
+        expect(prevDate.getTime()).toBeLessThanOrEqual(currDate.getTime());
       }
     });
   });
