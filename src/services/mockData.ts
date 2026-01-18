@@ -560,6 +560,228 @@ export const euroleagueMockStandings: StandingsEntry[] = [
   },
 ];
 
+// EuroCup teams for 2025-26 season
+const eurocupTeams: { [key: string]: Team } = {
+  valencia: {
+    id: 'ec1',
+    name: 'Valencia Basket',
+    shortName: 'Valencia',
+  },
+  bursaspor: {
+    id: 'ec2',
+    name: 'Bursaspor',
+    shortName: 'Bursaspor',
+  },
+  paris: {
+    id: 'ec3',
+    name: 'Paris Basketball',
+    shortName: 'Paris',
+  },
+  virtus: {
+    id: 'ec4',
+    name: 'Virtus Bologna',
+    shortName: 'Virtus',
+  },
+  joventut: {
+    id: 'ec5',
+    name: 'Joventut Badalona',
+    shortName: 'Joventut',
+  },
+  gran_canaria: {
+    id: 'ec6',
+    name: 'Gran Canaria',
+    shortName: 'Gran Canaria',
+  },
+  unicaja: {
+    id: 'ec7',
+    name: 'Unicaja Malaga',
+    shortName: 'Unicaja',
+  },
+  london_lions: {
+    id: 'ec8',
+    name: 'London Lions',
+    shortName: 'Lions',
+  },
+};
+
+// EuroCup mock fixtures and results
+export const eurocupMockMatches: Match[] = [
+  // Recent results
+  {
+    id: 'ec1',
+    homeTeam: eurocupTeams.valencia,
+    awayTeam: eurocupTeams.paris,
+    homeScore: 85,
+    awayScore: 78,
+    date: '2026-01-12',
+    time: '20:30',
+    venue: 'La Fonteta, Valencia',
+    status: 'completed',
+  },
+  {
+    id: 'ec2',
+    homeTeam: eurocupTeams.virtus,
+    awayTeam: eurocupTeams.bursaspor,
+    homeScore: 91,
+    awayScore: 82,
+    date: '2026-01-13',
+    time: '20:45',
+    venue: 'Virtus Segafredo Arena, Bologna',
+    status: 'completed',
+  },
+  {
+    id: 'ec3',
+    homeTeam: eurocupTeams.joventut,
+    awayTeam: eurocupTeams.gran_canaria,
+    homeScore: 76,
+    awayScore: 84,
+    date: '2026-01-14',
+    time: '19:00',
+    venue: 'Palau Olimpic, Badalona',
+    status: 'completed',
+  },
+  {
+    id: 'ec4',
+    homeTeam: eurocupTeams.london_lions,
+    awayTeam: eurocupTeams.unicaja,
+    homeScore: 72,
+    awayScore: 89,
+    date: '2026-01-15',
+    time: '19:30',
+    venue: 'Copper Box Arena, London',
+    status: 'completed',
+  },
+  // Upcoming fixtures
+  {
+    id: 'ec5',
+    homeTeam: eurocupTeams.paris,
+    awayTeam: eurocupTeams.virtus,
+    date: '2026-01-18',
+    time: '20:00',
+    venue: 'Accor Arena, Paris',
+    status: 'scheduled',
+  },
+  {
+    id: 'ec6',
+    homeTeam: eurocupTeams.bursaspor,
+    awayTeam: eurocupTeams.valencia,
+    date: '2026-01-19',
+    time: '18:00',
+    venue: 'Tofas Sports Hall, Bursa',
+    status: 'scheduled',
+  },
+  {
+    id: 'ec7',
+    homeTeam: eurocupTeams.gran_canaria,
+    awayTeam: eurocupTeams.london_lions,
+    date: '2026-01-19',
+    time: '19:00',
+    venue: 'Gran Canaria Arena, Las Palmas',
+    status: 'scheduled',
+  },
+  {
+    id: 'ec8',
+    homeTeam: eurocupTeams.unicaja,
+    awayTeam: eurocupTeams.joventut,
+    date: '2026-01-20',
+    time: '20:30',
+    venue: 'Palacio de los Deportes, Malaga',
+    status: 'scheduled',
+  },
+];
+
+// EuroCup mock standings
+export const eurocupMockStandings: StandingsEntry[] = [
+  {
+    position: 1,
+    team: eurocupTeams.virtus,
+    played: 14,
+    won: 12,
+    lost: 2,
+    pointsFor: 1190,
+    pointsAgainst: 1050,
+    pointsDifference: 140,
+    points: 24,
+  },
+  {
+    position: 2,
+    team: eurocupTeams.valencia,
+    played: 14,
+    won: 11,
+    lost: 3,
+    pointsFor: 1180,
+    pointsAgainst: 1080,
+    pointsDifference: 100,
+    points: 22,
+  },
+  {
+    position: 3,
+    team: eurocupTeams.unicaja,
+    played: 14,
+    won: 10,
+    lost: 4,
+    pointsFor: 1150,
+    pointsAgainst: 1090,
+    pointsDifference: 60,
+    points: 20,
+  },
+  {
+    position: 4,
+    team: eurocupTeams.paris,
+    played: 14,
+    won: 9,
+    lost: 5,
+    pointsFor: 1120,
+    pointsAgainst: 1100,
+    pointsDifference: 20,
+    points: 18,
+  },
+  {
+    position: 5,
+    team: eurocupTeams.gran_canaria,
+    played: 14,
+    won: 7,
+    lost: 7,
+    pointsFor: 1100,
+    pointsAgainst: 1110,
+    pointsDifference: -10,
+    points: 14,
+  },
+  {
+    position: 6,
+    team: eurocupTeams.joventut,
+    played: 14,
+    won: 5,
+    lost: 9,
+    pointsFor: 1070,
+    pointsAgainst: 1140,
+    pointsDifference: -70,
+    points: 10,
+  },
+  {
+    position: 7,
+    team: eurocupTeams.bursaspor,
+    played: 14,
+    won: 3,
+    lost: 11,
+    pointsFor: 1030,
+    pointsAgainst: 1180,
+    pointsDifference: -150,
+    points: 6,
+  },
+  {
+    position: 8,
+    team: eurocupTeams.london_lions,
+    played: 14,
+    won: 1,
+    lost: 13,
+    pointsFor: 990,
+    pointsAgainst: 1230,
+    pointsDifference: -240,
+    points: 2,
+  },
+];
+
 // Mock statistics data generator
 function generateMockStats(): TeamStatistics {
   return {
@@ -604,7 +826,7 @@ function generateMockPlayers(teamName: string, totalScore: number): PlayerStatis
 }
 
 // Combined array for searching across all leagues
-const allMockMatches = [...mockMatches, ...euroleagueMockMatches];
+const allMockMatches = [...mockMatches, ...euroleagueMockMatches, ...eurocupMockMatches];
 
 /**
  * Get mock match details for a given match ID

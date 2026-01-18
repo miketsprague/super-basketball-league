@@ -1,6 +1,21 @@
 import type { Match, MatchDetails, StandingsEntry, League } from '../types';
-import * as api from './api';
 import * as mockProvider from './mockProvider';
+import * as euroleagueApi from './euroleagueApi';
+import * as apiSportsApi from './apiSportsApi';
+import { predefinedLeagues, getApiProvider, LEAGUE_IDS, type LeagueConfig } from './leagues';
+
+/**
+ * Custom error class for API failures
+ */
+export class APIError extends Error {
+  statusCode?: number;
+  
+  constructor(message: string, statusCode?: number) {
+    super(message);
+    this.name = 'APIError';
+    this.statusCode = statusCode;
+  }
+}
 
 /**
  * Environment variable to enable mock data fallback.
@@ -10,29 +25,42 @@ import * as mockProvider from './mockProvider';
 const USE_MOCK_FALLBACK = import.meta.env.VITE_USE_MOCK_FALLBACK === 'true';
 
 /**
- * Data provider that wraps the API with optional mock fallback.
- * In production, API errors are thrown for proper error handling in the UI.
- * In development (with VITE_USE_MOCK_FALLBACK=true), mock data is used as fallback.
+ * Data provider that routes requests to the appropriate API based on league configuration.
+ * 
+ * API Providers:
+ * - Super League Basketball: API-Sports.io (requires VITE_API_SPORTS_KEY)
+ * - EuroLeague/EuroCup: Official EuroLeague API (api-live.euroleague.net) - free, no API key needed
+ * - Mock: Fallback mock data for development/testing
  */
 
 export async function fetchLeagues(): Promise<League[]> {
-  try {
-    return await api.fetchLeagues();
-  } catch (error) {
-    if (USE_MOCK_FALLBACK) {
-      console.info('API failed, using mock data for leagues');
-      return mockProvider.fetchMockLeagues();
-    }
-    throw error;
-  }
+  // Return predefined leagues (convert LeagueConfig to League type)
+  return predefinedLeagues.map((league: LeagueConfig): League => ({
+    id: league.id,
+    name: league.name,
+    shortName: league.shortName,
+    country: league.country,
+    logo: league.logo,
+  }));
 }
 
 export async function fetchMatches(leagueId: string): Promise<Match[]> {
+  const apiProvider = getApiProvider(leagueId);
+
   try {
-    return await api.fetchMatches(leagueId);
+    switch (apiProvider) {
+      case 'apisports':
+        return await apiSportsApi.fetchApiSportsMatches();
+      case 'euroleague':
+        return await euroleagueApi.fetchEuroLeagueMatches(leagueId);
+      case 'mock':
+      default:
+        // For leagues without an API, use mock data
+        return mockProvider.fetchMockMatches(leagueId);
+    }
   } catch (error) {
     if (USE_MOCK_FALLBACK) {
-      console.info('API failed, using mock data for matches');
+      console.info(`API failed for ${leagueId}, using mock data for matches`);
       return mockProvider.fetchMockMatches(leagueId);
     }
     throw error;
@@ -40,11 +68,21 @@ export async function fetchMatches(leagueId: string): Promise<Match[]> {
 }
 
 export async function fetchStandings(leagueId: string): Promise<StandingsEntry[]> {
+  const apiProvider = getApiProvider(leagueId);
+
   try {
-    return await api.fetchStandings(leagueId);
+    switch (apiProvider) {
+      case 'apisports':
+        return await apiSportsApi.fetchApiSportsStandings();
+      case 'euroleague':
+        return await euroleagueApi.fetchEuroLeagueStandings(leagueId);
+      case 'mock':
+      default:
+        return mockProvider.fetchMockStandings(leagueId);
+    }
   } catch (error) {
     if (USE_MOCK_FALLBACK) {
-      console.info('API failed, using mock data for standings');
+      console.info(`API failed for ${leagueId}, using mock data for standings`);
       return mockProvider.fetchMockStandings(leagueId);
     }
     throw error;
@@ -55,28 +93,79 @@ export async function fetchAllData(leagueId: string): Promise<{
   matches: Match[];
   standings: StandingsEntry[];
 }> {
+  const apiProvider = getApiProvider(leagueId);
+
   try {
-    return await api.fetchAllData(leagueId);
+    switch (apiProvider) {
+      case 'apisports':
+        return await apiSportsApi.fetchApiSportsAllData();
+      case 'euroleague':
+        return await euroleagueApi.fetchEuroLeagueAllData(leagueId);
+      case 'mock':
+      default:
+        return mockProvider.fetchMockAllData(leagueId);
+    }
   } catch (error) {
     if (USE_MOCK_FALLBACK) {
-      console.info('API failed, using mock data');
+      console.info(`API failed for ${leagueId}, using mock data`);
       return mockProvider.fetchMockAllData(leagueId);
     }
     throw error;
   }
 }
 
-export async function fetchMatchDetails(matchId: string): Promise<MatchDetails | null> {
-  try {
-    return await api.fetchMatchDetails(matchId);
-  } catch (error) {
-    if (USE_MOCK_FALLBACK) {
-      console.info('API failed, using mock data for match details');
-      return mockProvider.fetchMockMatchDetails(matchId);
-    }
-    throw error;
-  }
-}
+export async function fetchMatchDetails(matchId: string, leagueId?: string): Promise<MatchDetails | null> {
+  // If leagueId is provided, use the appropriate provider
+  if (leagueId) {
+    const apiProvider = getApiProvider(leagueId);
 
-// Re-export the APIError for consumers that need to handle it
-export { APIError } from './api';
+    try {
+      switch (apiProvider) {
+        case 'apisports':
+          return await apiSportsApi.fetchApiSportsMatchDetails(matchId);
+        case 'euroleague':
+          return await euroleagueApi.fetchEuroLeagueMatchDetails(matchId, leagueId);
+        case 'mock':
+        default:
+          return mockProvider.fetchMockMatchDetails(matchId);
+      }
+    } catch (error) {
+      if (USE_MOCK_FALLBACK) {
+        console.info(`API failed for match ${matchId}, using mock data`);
+        return mockProvider.fetchMockMatchDetails(matchId);
+      }
+      throw error;
+    }
+  }
+
+  // If no leagueId, try mock data first (which has all leagues)
+  // This maintains backward compatibility with the current routing
+  const mockResult = await mockProvider.fetchMockMatchDetails(matchId);
+  if (mockResult) {
+    return mockResult;
+  }
+
+  // If not found in mock data, try API-Sports first, then EuroLeague APIs
+  try {
+    const apiSportsResult = await apiSportsApi.fetchApiSportsMatchDetails(matchId);
+    if (apiSportsResult) {
+      return apiSportsResult;
+    }
+  } catch {
+    // Continue to next provider
+  }
+
+  // Try EuroLeague first, then EuroCup
+  for (const league of [LEAGUE_IDS.EUROLEAGUE, LEAGUE_IDS.EUROCUP]) {
+    try {
+      const result = await euroleagueApi.fetchEuroLeagueMatchDetails(matchId, league);
+      if (result) {
+        return result;
+      }
+    } catch {
+      // Continue to next provider
+    }
+  }
+
+  return null;
+}
