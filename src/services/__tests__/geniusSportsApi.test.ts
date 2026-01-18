@@ -6,7 +6,7 @@ import {
   fetchGeniusSportsMatchDetails,
 } from '../geniusSportsApi';
 
-// Sample HTML responses that match the Genius Sports format
+// Sample HTML responses that match the actual Genius Sports format
 const mockStandingsHTML = `
 <div class="standings-wrapper">
   <table class="standings">
@@ -53,67 +53,98 @@ const mockStandingsHTML = `
 </div>
 `;
 
+// Updated mock HTML to match actual Genius Sports structure
 const mockScheduleHTML = `
 <div class="schedule-wrapper">
-  <div class="match-wrap match_1001">
-    <div class="match-date">Sat 18 Jan</div>
-    <div class="match-time">19:30</div>
-    <div class="home-team">
-      <a href="/team/101">
-        <img src="https://example.com/lions.png" alt="London Lions">
-        <span class="team-name"><span>London Lions</span></span>
-      </a>
-      <span class="team-score">92</span>
+  <div class="match-wrap STATUS_COMPLETE" id="extfix_2702593">
+    <div class="match-details-wrap">
+      <div class="match-details">
+        <div class="match-time"><h6>Date / Time: </h6><span>Jan 18, 2026, 7:30 PM</span></div>
+        <div class="match-venue"><h6>Venue: </h6><a href="/venue/123" class="venuename">Copper Box Arena</a></div>
+      </div>
     </div>
-    <div class="away-team">
-      <a href="/team/102">
-        <img src="https://example.com/riders.png" alt="Leicester Riders">
-        <span class="team-name"><span>Leicester Riders</span></span>
-      </a>
-      <span class="team-score">85</span>
+    <div class="sched-teams">
+      <div class="home-team">
+        <div class="home-team-logo team-logo">
+          <a href="/team/101"><img src="https://example.com/lions.png" alt="London Lions"></a>
+        </div>
+        <div class="team-name">
+          <a href="/team/101" class="teamnames">
+            <span class="team-name-full">London Lions</span><span class="team-name-code"></span>
+          </a>
+        </div>
+        <div class="team-score homescore"><div class="fake-cell">92</div></div>
+      </div>
+      <div class="away-team">
+        <div class="away-team-logo team-logo">
+          <a href="/team/102"><img src="https://example.com/riders.png" alt="Leicester Riders"></a>
+        </div>
+        <div class="team-name">
+          <a href="/team/102" class="teamnames"><span class="team-name-full">Leicester Riders</span><span class="team-name-code"></span></a>
+        </div>
+        <div class="team-score awayscore"><div class="fake-cell">85</div></div>
+      </div>
     </div>
-    <div class="match-venue">Copper Box Arena</div>
-    <div class="match-status">Final</div>
   </div>
-  <div class="match-wrap match_1002">
-    <div class="match-date">Sun 19 Jan</div>
-    <div class="match-time">15:00</div>
-    <div class="home-team">
-      <a href="/team/103">
-        <img src="https://example.com/eagles.png" alt="Newcastle Eagles">
-        <span class="team-name"><span>Newcastle Eagles</span></span>
-      </a>
-      <span class="team-score">-</span>
+  <div class="match-wrap STATUS_SCHEDULED" id="extfix_2702607">
+    <div class="match-details-wrap">
+      <div class="match-details">
+        <div class="match-time"><h6>Date / Time: </h6><span>Jan 30, 2026, 3:00 PM</span></div>
+        <div class="match-venue"><h6>Venue: </h6><a href="/venue/456" class="venuename">Vertu Motors Arena</a></div>
+      </div>
     </div>
-    <div class="away-team">
-      <a href="/team/104">
-        <img src="https://example.com/sharks.png" alt="Sheffield Sharks">
-        <span class="team-name"><span>B. Braun Sheffield Sharks</span></span>
-      </a>
-      <span class="team-score">-</span>
+    <div class="sched-teams">
+      <div class="home-team">
+        <div class="home-team-logo team-logo">
+          <a href="/team/103"><img src="https://example.com/eagles.png" alt="Newcastle Eagles"></a>
+        </div>
+        <div class="team-name">
+          <a href="/team/103" class="teamnames">
+            <span class="team-name-full">Newcastle Eagles</span><span class="team-name-code"></span>
+          </a>
+        </div>
+        <div class="team-score homescore"><div class="fake-cell">&nbsp;</div></div>
+      </div>
+      <div class="away-team">
+        <div class="away-team-logo team-logo">
+          <a href="/team/104"><img src="https://example.com/sharks.png" alt="Sheffield Sharks"></a>
+        </div>
+        <div class="team-name">
+          <a href="/team/104" class="teamnames"><span class="team-name-full">B. Braun Sheffield Sharks</span><span class="team-name-code"></span></a>
+        </div>
+        <div class="team-score awayscore"><div class="fake-cell">&nbsp;</div></div>
+      </div>
     </div>
-    <div class="match-venue">Vertu Motors Arena</div>
-    <div class="match-status">Scheduled</div>
   </div>
-  <div class="match-wrap match_1003">
-    <div class="match-date">Sun 19 Jan</div>
-    <div class="match-time">17:00</div>
-    <div class="home-team">
-      <a href="/team/105">
-        <img src="https://example.com/flyers.png" alt="Bristol Flyers">
-        <span class="team-name"><span>Bristol Flyers</span></span>
-      </a>
-      <span class="team-score">78</span>
+  <div class="match-wrap STATUS_COMPLETE" id="extfix_2702608">
+    <div class="match-details-wrap">
+      <div class="match-details">
+        <div class="match-time"><h6>Date / Time: </h6><span>Jan 19, 2026, 5:00 PM</span></div>
+        <div class="match-venue"><h6>Venue: </h6><a href="/venue/789" class="venuename">SGS College Arena</a></div>
+      </div>
     </div>
-    <div class="away-team">
-      <a href="/team/106">
-        <img src="https://example.com/phoenix.png" alt="Cheshire Phoenix">
-        <span class="team-name"><span>Cheshire Phoenix</span></span>
-      </a>
-      <span class="team-score">81</span>
+    <div class="sched-teams">
+      <div class="home-team">
+        <div class="home-team-logo team-logo">
+          <a href="/team/105"><img src="https://example.com/flyers.png" alt="Bristol Flyers"></a>
+        </div>
+        <div class="team-name">
+          <a href="/team/105" class="teamnames">
+            <span class="team-name-full">Bristol Flyers</span><span class="team-name-code"></span>
+          </a>
+        </div>
+        <div class="team-score homescore"><div class="fake-cell">78</div></div>
+      </div>
+      <div class="away-team">
+        <div class="away-team-logo team-logo">
+          <a href="/team/106"><img src="https://example.com/phoenix.png" alt="Cheshire Phoenix"></a>
+        </div>
+        <div class="team-name">
+          <a href="/team/106" class="teamnames"><span class="team-name-full">Cheshire Phoenix</span><span class="team-name-code"></span></a>
+        </div>
+        <div class="team-score awayscore"><div class="fake-cell">81</div></div>
+      </div>
     </div>
-    <div class="match-venue">SGS College Arena</div>
-    <div class="match-status">Q3</div>
   </div>
 </div>
 `;
@@ -209,7 +240,7 @@ describe('Genius Sports API', () => {
       const matches = await fetchGeniusSportsMatches();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/schedule',
+        'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/schedule?roundNumber=-1',
         expect.objectContaining({ headers: { Accept: 'application/json' } })
       );
 
@@ -223,7 +254,7 @@ describe('Genius Sports API', () => {
       });
 
       const matches = await fetchGeniusSportsMatches();
-      const completedMatch = matches.find(m => m.id === '1001');
+      const completedMatch = matches.find(m => m.id === '2702593');
 
       expect(completedMatch).toBeDefined();
       expect(completedMatch?.homeTeam.name).toBe('London Lions');
@@ -241,7 +272,7 @@ describe('Genius Sports API', () => {
       });
 
       const matches = await fetchGeniusSportsMatches();
-      const scheduledMatch = matches.find(m => m.id === '1002');
+      const scheduledMatch = matches.find(m => m.id === '2702607');
 
       expect(scheduledMatch).toBeDefined();
       expect(scheduledMatch?.homeTeam.name).toBe('Newcastle Eagles');
@@ -258,12 +289,11 @@ describe('Genius Sports API', () => {
       });
 
       const matches = await fetchGeniusSportsMatches();
-      const liveMatch = matches.find(m => m.id === '1003');
+      // Our mock doesn't have a live match, but test that completed matches are detected
+      const completedMatch = matches.find(m => m.id === '2702608');
 
-      expect(liveMatch).toBeDefined();
-      // The match has scores and Q3 status - since scores are present, it's marked completed
-      // This tests the actual implementation behavior
-      expect(liveMatch?.status).toBe('completed');
+      expect(completedMatch).toBeDefined();
+      expect(completedMatch?.status).toBe('completed');
     });
 
     it('should extract team logos', async () => {
@@ -273,7 +303,7 @@ describe('Genius Sports API', () => {
       });
 
       const matches = await fetchGeniusSportsMatches();
-      const match = matches.find(m => m.id === '1001');
+      const match = matches.find(m => m.id === '2702593');
 
       expect(match?.homeTeam.logo).toBe('https://example.com/lions.png');
       expect(match?.awayTeam.logo).toBe('https://example.com/riders.png');
@@ -306,10 +336,10 @@ describe('Genius Sports API', () => {
         json: async () => ({ html: mockScheduleHTML, css: [], js: [] }),
       });
 
-      const details = await fetchGeniusSportsMatchDetails('1001');
+      const details = await fetchGeniusSportsMatchDetails('2702593');
 
       expect(details).not.toBeNull();
-      expect(details?.id).toBe('1001');
+      expect(details?.id).toBe('2702593');
       expect(details?.homeTeam.name).toBe('London Lions');
       expect(details?.lastUpdated).toBeDefined();
     });

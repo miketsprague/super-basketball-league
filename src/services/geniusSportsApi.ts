@@ -9,7 +9,7 @@ import type { Match, MatchDetails, StandingsEntry } from '../types';
  * Base URL: https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/
  * Endpoints:
  *   - /standings - League standings
- *   - /schedule - Fixtures and results
+ *   - /schedule?roundNumber=-1 - All fixtures and results (past and upcoming)
  */
 
 const GENIUS_SPORTS_BASE = 'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en';
@@ -121,27 +121,39 @@ function parseScheduleHTML(html: string): Match[] {
   const matchElements = doc.querySelectorAll('.match-wrap');
   
   matchElements.forEach((matchEl) => {
-    // Extract match ID from class or data attribute
-    const matchClass = matchEl.className;
-    const matchIdMatch = matchClass.match(/match_(\d+)/);
+    // Extract match ID from id attribute (e.g., "extfix_2702593")
+    const matchIdAttr = matchEl.getAttribute('id') || '';
+    const matchIdMatch = matchIdAttr.match(/extfix_(\d+)/);
     const matchId = matchIdMatch ? matchIdMatch[1] : `match-${matches.length}`;
+    
+    // Extract status from class (STATUS_COMPLETE or STATUS_SCHEDULED)
+    const matchClass = matchEl.className || '';
+    let status: 'scheduled' | 'live' | 'completed' = 'scheduled';
+    if (matchClass.includes('STATUS_COMPLETE')) {
+      status = 'completed';
+    } else if (matchClass.includes('STATUS_LIVE')) {
+      status = 'live';
+    }
     
     // Extract teams
     const homeTeamEl = matchEl.querySelector('.home-team');
     const awayTeamEl = matchEl.querySelector('.away-team');
     
-    const homeTeamName = homeTeamEl?.querySelector('.team-name span')?.textContent?.trim() || 
+    const homeTeamName = homeTeamEl?.querySelector('.team-name-full')?.textContent?.trim() || 
+                         homeTeamEl?.querySelector('.team-name span')?.textContent?.trim() || 
                          homeTeamEl?.querySelector('.team-name')?.textContent?.trim() || 'Home';
-    const awayTeamName = awayTeamEl?.querySelector('.team-name span')?.textContent?.trim() ||
+    const awayTeamName = awayTeamEl?.querySelector('.team-name-full')?.textContent?.trim() ||
+                         awayTeamEl?.querySelector('.team-name span')?.textContent?.trim() ||
                          awayTeamEl?.querySelector('.team-name')?.textContent?.trim() || 'Away';
     
-    // Extract scores
-    const homeScoreEl = homeTeamEl?.querySelector('.team-score');
-    const awayScoreEl = awayTeamEl?.querySelector('.team-score');
+    // Extract scores - look for .team-score or .homescore/.awayscore
+    const homeScoreEl = homeTeamEl?.querySelector('.team-score .fake-cell, .team-score');
+    const awayScoreEl = awayTeamEl?.querySelector('.team-score .fake-cell, .team-score');
     const homeScoreText = homeScoreEl?.textContent?.trim();
     const awayScoreText = awayScoreEl?.textContent?.trim();
-    const homeScore = homeScoreText && homeScoreText !== '-' ? parseInt(homeScoreText, 10) : undefined;
-    const awayScore = awayScoreText && awayScoreText !== '-' ? parseInt(awayScoreText, 10) : undefined;
+    // Score is valid if it's a number (not empty, not &nbsp;)
+    const homeScore = homeScoreText && /^\d+$/.test(homeScoreText) ? parseInt(homeScoreText, 10) : undefined;
+    const awayScore = awayScoreText && /^\d+$/.test(awayScoreText) ? parseInt(awayScoreText, 10) : undefined;
     
     // Extract logos
     const homeLogo = homeTeamEl?.querySelector('img')?.getAttribute('src') || undefined;
@@ -155,30 +167,17 @@ function parseScheduleHTML(html: string): Match[] {
     const homeId = homeIdMatch ? homeIdMatch[1] : getShortName(homeTeamName);
     const awayId = awayIdMatch ? awayIdMatch[1] : getShortName(awayTeamName);
     
-    // Extract date and time
-    const dateEl = matchEl.querySelector('.match-date');
-    const timeEl = matchEl.querySelector('.match-time');
-    const dateText = dateEl?.textContent?.trim() || '';
-    const timeText = timeEl?.textContent?.trim() || 'TBC';
+    // Extract date and time from .match-time span (format: "Jan 30, 2026, 7:30 PM")
+    const dateTimeEl = matchEl.querySelector('.match-time span');
+    const dateTimeText = dateTimeEl?.textContent?.trim() || '';
+    const { date, time } = parseDateTimeString(dateTimeText);
     
-    // Parse date - format varies, try to normalize
-    const date = parseDateString(dateText);
-    
-    // Extract venue
-    const venueEl = matchEl.querySelector('.match-venue');
-    const venue = venueEl?.textContent?.trim() || 'TBC';
-    
-    // Determine status
-    const statusEl = matchEl.querySelector('.match-status');
-    const statusText = statusEl?.textContent?.trim().toLowerCase() || '';
-    let status: 'scheduled' | 'live' | 'completed' = 'scheduled';
-    
-    if (statusText.includes('final') || statusText.includes('ft') || (homeScore !== undefined && awayScore !== undefined)) {
-      status = 'completed';
-    } else if (statusText.includes('live') || statusText.includes('q1') || statusText.includes('q2') || 
-               statusText.includes('q3') || statusText.includes('q4') || statusText.includes('half')) {
-      status = 'live';
-    }
+    // Extract venue - prefer the venue link text, fall back to venue div
+    const venueLinkEl = matchEl.querySelector('.match-venue a.venuename');
+    const venueContainerEl = matchEl.querySelector('.match-venue');
+    const venue = venueLinkEl?.textContent?.trim() || 
+                  venueContainerEl?.querySelector('a')?.textContent?.trim() ||
+                  'TBC';
     
     matches.push({
       id: matchId,
@@ -197,7 +196,7 @@ function parseScheduleHTML(html: string): Match[] {
       homeScore,
       awayScore,
       date,
-      time: timeText,
+      time,
       venue,
       status,
     });
@@ -207,36 +206,30 @@ function parseScheduleHTML(html: string): Match[] {
 }
 
 /**
- * Parse date string from various formats
+ * Parse combined date/time string from Genius Sports
+ * Format: "Jan 30, 2026, 7:30 PM"
+ * Returns: { date: "2026-01-30", time: "19:30" }
  */
-function parseDateString(dateStr: string): string {
-  if (!dateStr) return new Date().toISOString().split('T')[0];
-  
-  // Try parsing common formats
-  try {
-    // Format: "Sat 18 Jan" or "Saturday 18 January"
-    const dateWithYear = `${dateStr} 2026`; // Add current year
-    const parsed = new Date(dateWithYear);
-    if (!isNaN(parsed.getTime())) {
-      return parsed.toISOString().split('T')[0];
-    }
-    
-    // Format: "18/01/2026" (British format)
-    const britishMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if (britishMatch) {
-      const [, day, month, year] = britishMatch;
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    }
-    
-    // Format: "2026-01-18"
-    if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      return dateStr;
-    }
-  } catch {
-    // Fall through to default
+function parseDateTimeString(dateTimeStr: string): { date: string; time: string } {
+  if (!dateTimeStr) {
+    return { date: new Date().toISOString().split('T')[0], time: 'TBC' };
   }
   
-  return new Date().toISOString().split('T')[0];
+  try {
+    // Parse "Jan 30, 2026, 7:30 PM" format
+    const parsed = new Date(dateTimeStr);
+    if (!isNaN(parsed.getTime())) {
+      const date = parsed.toISOString().split('T')[0];
+      const hours = parsed.getHours();
+      const minutes = parsed.getMinutes();
+      const time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      return { date, time };
+    }
+  } catch {
+    // Fall through to defaults
+  }
+  
+  return { date: new Date().toISOString().split('T')[0], time: 'TBC' };
 }
 
 /**
@@ -272,24 +265,27 @@ export async function fetchGeniusSportsStandings(): Promise<StandingsEntry[]> {
  * Fetch matches/fixtures from Genius Sports
  */
 export async function fetchGeniusSportsMatches(): Promise<Match[]> {
-  const html = await fetchFromGeniusSports('/schedule');
+  // Use roundNumber=-1 to get ALL matches (past and upcoming), not just recent
+  const html = await fetchFromGeniusSports('/schedule?roundNumber=-1');
   const matches = parseScheduleHTML(html);
   
-  // Sort: upcoming first, then recent results
-  const now = new Date();
+  // Sort: upcoming first (by date asc), then recent results (by date desc)
   return matches.sort((a, b) => {
     const dateA = new Date(a.date);
     const dateB = new Date(b.date);
     
-    const aIsUpcoming = dateA >= now || a.status === 'scheduled' || a.status === 'live';
-    const bIsUpcoming = dateB >= now || b.status === 'scheduled' || b.status === 'live';
+    const aIsUpcoming = a.status === 'scheduled' || a.status === 'live';
+    const bIsUpcoming = b.status === 'scheduled' || b.status === 'live';
     
+    // Upcoming matches come first
     if (aIsUpcoming && !bIsUpcoming) return -1;
     if (!aIsUpcoming && bIsUpcoming) return 1;
     
+    // Both upcoming: sort by date ascending (nearest first)
     if (aIsUpcoming) {
       return dateA.getTime() - dateB.getTime();
     }
+    // Both completed: sort by date descending (most recent first)
     return dateB.getTime() - dateA.getTime();
   });
 }
