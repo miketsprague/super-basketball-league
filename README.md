@@ -79,6 +79,7 @@ super-basketball-league/
 ├── docs/                 # Documentation
 │   ├── ARCHITECTURE.md   # System architecture
 │   ├── GENIUS_SPORTS_API.md  # Genius Sports API docs
+│   ├── EUROLEAGUE_API.md # EuroLeague API docs
 │   └── adr/              # Architecture Decision Records
 ├── public/               # Static assets
 └── .github/workflows/    # GitHub Actions workflows
