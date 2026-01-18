@@ -2,14 +2,11 @@ import type { League } from '../types';
 
 /**
  * API Provider types for different basketball leagues
+ * - 'apisports': API-Sports.io Basketball API (requires API key)
  * - 'euroleague': Official EuroLeague/EuroCup API (api-live.euroleague.net)
  * - 'mock': Mock data (fallback when no API is available)
- * 
- * Note: TheSportsDB does not properly support Super League Basketball or EuroCup.
- * The Super League Basketball official site (superleaguebasketballm.co.uk) does not
- * have a public API, so we use mock data as a fallback.
  */
-export type ApiProvider = 'euroleague' | 'mock';
+export type ApiProvider = 'apisports' | 'euroleague' | 'mock';
 
 export interface LeagueConfig extends League {
   /** The API provider to use for this league */
@@ -25,12 +22,6 @@ export const LEAGUE_IDS = {
   EUROCUP: 'eurocup',
 } as const;
 
-// Legacy TheSportsDB IDs (for backward compatibility)
-export const LEGACY_LEAGUE_IDS = {
-  SUPER_LEAGUE: '4431',
-  EUROLEAGUE: '4438',
-} as const;
-
 // Predefined leagues with their API configurations
 export const predefinedLeagues: LeagueConfig[] = [
   {
@@ -38,7 +29,7 @@ export const predefinedLeagues: LeagueConfig[] = [
     name: 'Super League Basketball',
     shortName: 'Super League',
     country: 'England',
-    apiProvider: 'mock', // No public API available, using mock data
+    apiProvider: 'apisports', // API-Sports.io Basketball API
   },
   {
     id: LEAGUE_IDS.EUROLEAGUE,

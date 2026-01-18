@@ -17,7 +17,7 @@ Built with React, TypeScript, Vite, and Tailwind CSS.
 
 ## 🏀 Supported Leagues
 
-- **Super League Basketball** - UK's top domestic basketball league (mock data - no public API available)
+- **Super League Basketball** - UK's top domestic basketball league (live data from API-Sports.io)
 - **EuroLeague** - Europe's premier basketball competition (live data from official API)
 - **EuroCup** - Europe's second-tier basketball competition (live data from official API)
 
@@ -93,9 +93,26 @@ The app uses multiple data sources depending on the league:
 
 | League | Data Source | API Key Required |
 |--------|-------------|------------------|
+| **Super League Basketball** | [API-Sports.io](https://api-sports.io/documentation/basketball/v1) | Yes |
 | **EuroLeague** | [Official EuroLeague API](https://api-live.euroleague.net/swagger/index.html) | No |
 | **EuroCup** | [Official EuroLeague API](https://api-live.euroleague.net/swagger/index.html) | No |
-| **Super League Basketball** | Mock data (no public API available) | No |
+
+### Super League Basketball (API-Sports.io)
+
+The app uses the API-Sports.io Basketball API for Super League Basketball data:
+- Game schedules and results
+- League standings
+- Live scores
+
+**Setting up the API key:**
+1. Sign up for a free account at [API-Sports.io](https://api-sports.io/)
+2. Copy your API key from the dashboard
+3. Add it to your environment:
+   ```
+   VITE_API_SPORTS_KEY=your_api_key_here
+   ```
+
+The free tier includes 100 requests per day, which is sufficient for personal use.
 
 ### EuroLeague/EuroCup API
 
@@ -105,12 +122,6 @@ The app uses the official EuroLeague API which provides free access to:
 - Team information
 
 No API key is required - the API is publicly accessible.
-
-### Super League Basketball
-
-The Super League Basketball official site (superleaguebasketballm.co.uk) does not provide a public API. The app currently uses mock data for this league. Contributions to add web scraping support are welcome!
-
-**Note:** The previously used TheSportsDB API has been removed as it does not properly support these basketball leagues.
 
 ### Mock Data Fallback (Development)
 
@@ -213,6 +224,7 @@ This project is open source and available under the MIT License.
 - [Super League Basketball Official Site](https://www.superleaguebasketballm.co.uk/)
 - [EuroLeague Official Site](https://www.euroleaguebasketball.net/)
 - [EuroCup Official Site](https://www.euroleaguebasketball.net/eurocup/)
+- [API-Sports.io Documentation](https://api-sports.io/documentation/basketball/v1)
 - [EuroLeague API Documentation](https://api-live.euroleague.net/swagger/index.html)
 
 ## 🤝 Contributing
