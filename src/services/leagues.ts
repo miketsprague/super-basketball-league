@@ -4,10 +4,9 @@ import type { League } from '../types';
  * API Provider types for different basketball leagues
  * - 'geniussports': Genius Sports API (official SLB data provider, no API key needed)
  * - 'euroleague': Official EuroLeague/EuroCup API (api-live.euroleague.net)
- * - 'apisports': API-Sports.io Basketball API (requires API key, limited free tier)
  * - 'mock': Mock data (fallback when no API is available)
  */
-export type ApiProvider = 'geniussports' | 'apisports' | 'euroleague' | 'mock';
+export type ApiProvider = 'geniussports' | 'euroleague' | 'mock';
 
 export interface LeagueConfig extends League {
   /** The API provider to use for this league */

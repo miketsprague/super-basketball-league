@@ -8,14 +8,12 @@ A mobile-first web app for tracking Super League Basketball (SLB) scores and sta
 
 ### Data Providers
 
-The app uses multiple APIs for different leagues:
+The app uses free APIs for different leagues - **no API keys required**:
 
 | League | Provider | Notes |
 |--------|----------|-------|
-| Super League Basketball | Genius Sports | HTML parsing, no API key, use `roundNumber=-1` for full schedule |
-| EuroLeague/EuroCup | EuroLeague v1 | XML responses, no API key |
-
-**Important:** Do NOT use API-Sports for current SLB season data - free tier blocks it.
+| Super League Basketball | Genius Sports | HTML parsing, use `roundNumber=-1` for full schedule |
+| EuroLeague/EuroCup | EuroLeague v1 | XML responses |
 
 ### Critical API Details
 
@@ -31,23 +29,12 @@ The app uses multiple APIs for different leagues:
 - Season codes: `E2025` (EuroLeague), `U2025` (EuroCup)
 - Returns XML, parse with DOMParser
 
-### GitHub Actions
-
-Environment secrets require explicit environment declaration:
-```yaml
-jobs:
-  build:
-    environment: github-pages  # Required for secrets!
-```
-
 ### Known Issues & Solutions
 
 | Issue | Solution |
 |-------|----------|
 | Only 6 matches showing | Add `roundNumber=-1` to schedule endpoint |
 | EuroLeague 405 errors | Use v1 API instead of v3 |
-| Env vars not working in CI | Add `environment: github-pages` to job |
-| SLB wrong data | League ID is 108 (not 79) |
 
 ## User Preferences
 
