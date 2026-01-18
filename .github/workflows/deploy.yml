@@ -36,7 +36,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_SPORTSDB_API_KEY: ${{ secrets.VITE_SPORTSDB_API_KEY }}
+          VITE_API_SPORTS_KEY: ${{ secrets.VITE_API_SPORTS_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
