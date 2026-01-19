@@ -57,18 +57,6 @@ function HomePage() {
       try {
         const availableLeagues = await fetchLeagues();
         setLeagues(availableLeagues);
-        // If the current URL has a league that's not in the available leagues, and default league is also not in list,
-        // update the URL to use the first available league
-        const currentLeagueId = searchParams.get(LEAGUE_PARAM);
-        const hasCurrentLeague = currentLeagueId && availableLeagues.some(l => l.id === currentLeagueId);
-        const hasDefaultLeague = availableLeagues.some(l => l.id === DEFAULT_LEAGUE.id);
-        if (availableLeagues.length > 0 && !hasCurrentLeague && !hasDefaultLeague) {
-          setSearchParams(prev => {
-            const newParams = new URLSearchParams(prev);
-            newParams.set(LEAGUE_PARAM, availableLeagues[0].id);
-            return newParams;
-          }, { replace: true });
-        }
       } catch (error) {
         console.error('Failed to fetch leagues:', error);
         const errorDetail = getErrorMessage(error);
@@ -80,7 +68,7 @@ function HomePage() {
     };
 
     loadLeagues();
-  }, [searchParams, setSearchParams]);
+  }, []);
 
   // Fetch data when selected league changes
   useEffect(() => {
