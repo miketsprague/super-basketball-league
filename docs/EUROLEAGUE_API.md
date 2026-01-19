@@ -20,7 +20,7 @@ EuroLeague data is split across **two separate APIs**:
 | EuroLeague | E{year} | E2025 (2025-26 season) |
 | EuroCup | U{year} | U2025 (2025-26 season) |
 
-## V1 API (Completed Games + Standings)
+## V1 API (Completed Games + Standings + Match Details)
 
 ### Base URL
 ```
@@ -61,6 +61,74 @@ curl -H "Accept: application/xml" \
   </game>
 </results>
 ```
+
+### Game Details Endpoint
+```
+GET /games?gameCode={gameCode}&seasonCode={seasonCode}
+```
+
+Returns detailed statistics for a single game including quarter scores and player stats.
+
+**Example Request:**
+```bash
+curl "https://api-live.euroleague.net/v1/games?gameCode=170&seasonCode=E2025"
+```
+
+**Response Format (XML):**
+```xml
+<game seasoncode="E2025" code="170" played="true">
+  <audience>14627</audience>
+  <referees>
+    <referee name="DIFALLAH, MEHDI" code="OJLL" countrycode="FRA" />
+  </referees>
+  <localclub code="ZAL" name="Zalgiris Kaunas" score="109" coachname="MASIULIS, TOMAS">
+    <partials Partial1="28" Partial2="25" Partial3="29" Partial4="27" 
+              ExtraPeriod1="0" ExtraPeriod2="0" />
+    <playerstats>
+      <stat>
+        <TimePlayed>20:22</TimePlayed>
+        <PlayerCode>007982</PlayerCode>
+        <PlayerName>WILLIAMS-GOSS, NIGEL</PlayerName>
+        <Score>12</Score>
+        <FieldGoalsMade2>4</FieldGoalsMade2>
+        <FieldGoalsAttempted2>7</FieldGoalsAttempted2>
+        <FieldGoalsMade3>1</FieldGoalsMade3>
+        <FieldGoalsAttempted3>2</FieldGoalsAttempted3>
+        <FreeThrowsMade>1</FreeThrowsMade>
+        <FreeThrowsAttempted>1</FreeThrowsAttempted>
+        <TotalRebounds>3</TotalRebounds>
+        <DefensiveRebounds>3</DefensiveRebounds>
+        <OffensiveRebounds>0</OffensiveRebounds>
+        <Assistances>3</Assistances>
+        <Steals>1</Steals>
+        <Turnovers>2</Turnovers>
+        <BlocksFavour>0</BlocksFavour>
+        <PlusMinus>19</PlusMinus>
+      </stat>
+    </playerstats>
+  </localclub>
+  <roadclub code="PAR" name="Partizan Mozzart Bet Belgrade" score="68">
+    <!-- Same structure as localclub -->
+  </roadclub>
+</game>
+```
+
+**Available Player Stats:**
+- TimePlayed (format: "MM:SS")
+- Score (points)
+- FieldGoalsMade2/Attempted2 (2-point shots)
+- FieldGoalsMade3/Attempted3 (3-point shots)
+- FreeThrowsMade/Attempted
+- TotalRebounds, DefensiveRebounds, OffensiveRebounds
+- Assistances (assists)
+- Steals
+- Turnovers
+- BlocksFavour (blocks)
+- PlusMinus (+/-)
+
+**Quarter Scores (Partials):**
+- Partial1 through Partial4 for regular quarters
+- ExtraPeriod1-5 for overtime periods
 
 ### Standings Endpoint
 ```

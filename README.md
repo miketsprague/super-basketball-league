@@ -10,10 +10,11 @@ Built with React, TypeScript, Vite, and Tailwind CSS.
 - 🌍 **Multi-league support** - Switch between different basketball leagues
 - 🏆 Live league standings with playoff and relegation indicators
 - 📅 Fixtures and results with British date formatting
-- 🔄 Auto-refresh data every 5 minutes
+- 📊 **Detailed match stats** - Box scores, quarter scores, top performers
+- 🔄 Auto-refresh data every 5 minutes (15 seconds for live matches)
 - ⚡ Fast loading with Vite
 - 🎨 Modern UI with Tailwind CSS (FotMob-inspired league selector)
-- 📊 API integration with fallback to mock data
+- 📈 API integration with fallback to mock data
 
 ## 🏀 Supported Leagues
 

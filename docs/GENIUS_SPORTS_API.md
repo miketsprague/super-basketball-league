@@ -165,7 +165,110 @@ Dates are provided in US format within the HTML:
 The API does not appear to have strict rate limits for reasonable usage, but:
 - No API key is required
 - Responses are cached on their CDN
-- Avoid excessive polling (refresh every 30-60 seconds max for live data)
+- Avoid excessive polling (refresh every 15-30 seconds max for live data)
+
+### Box Score (Match Statistics)
+
+```
+GET /competition/41897/match/{matchId}/boxscore
+```
+
+Returns detailed player statistics and team totals for a completed match.
+
+**Response Format:** Same JSON structure with HTML content.
+
+**HTML Structure:**
+```html
+<table class="tableClass footable">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Player</th>
+      <th>Mins</th>
+      <th>FGM</th><th>FGA</th><th>FG%</th>
+      <th>3PM</th><th>3PA</th><th>3P%</th>
+      <th>FTM</th><th>FTA</th><th>FT%</th>
+      <th>OFF</th><th>DEF</th><th>REB</th>
+      <th>AST</th><th>STL</th><th>BLK</th>
+      <th>PF</th><th>TO</th><th>Pts</th><th>+/-</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="playerNumber">2</td>
+      <td class="playerName">
+        <a href="/person/2315157">Duke Shelton</a>
+      </td>
+      <td data-sort-value="18.833333">18:49</td>
+      <td data-sort-value="3">3</td>
+      <!-- ... more stats ... -->
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>Totals</td>
+      <td>&nbsp;</td>
+      <td></td>
+      <td>24</td><td>49</td><td>49.0</td>
+      <!-- ... team totals ... -->
+    </tr>
+  </tfoot>
+</table>
+```
+
+**Available Stats:**
+- Minutes played (Mins)
+- Field Goals Made/Attempted/Percentage (FGM, FGA, FG%)
+- 3-Pointers Made/Attempted/Percentage (3PM, 3PA, 3P%)
+- Free Throws Made/Attempted/Percentage (FTM, FTA, FT%)
+- Offensive/Defensive/Total Rebounds (OFF, DEF, REB)
+- Assists (AST)
+- Steals (STL)
+- Blocks (BLK)
+- Personal Fouls (PF)
+- Turnovers (TO)
+- Points (Pts)
+- Plus/Minus (+/-)
+
+### Play-by-Play
+
+```
+GET /competition/41897/match/{matchId}/playbyplay
+```
+
+Returns play-by-play data with running scores.
+
+**Response Format:** Same JSON structure with HTML content.
+
+**HTML Structure:**
+```html
+<div class="pbpa pbpt0 pbptyperiod per_1 per_reg">
+  <div class="pbp-action">Period start</div>
+  <span class="pbpsc">0-0</span>
+</div>
+<div class="pbpa">
+  <div class="pbp-action">3 Point Shot Made</div>
+  <span class="pbpsc">3-0</span>
+</div>
+<!-- ... more plays ... -->
+<div class="pbpa">
+  <div class="pbp-action">Period end</div>
+  <span class="pbpsc">14-18</span>
+</div>
+```
+
+**Deriving Quarter Scores:**
+1. Find all actions with "Period end" text
+2. Extract the score at each period end from `.pbpsc` (format: "home-away")
+3. Calculate individual quarter scores by subtracting cumulative totals
+
+### Shot Chart
+
+```
+GET /competition/41897/match/{matchId}/shotchart
+```
+
+Returns shot chart data (not currently used in our app).
 
 ## Error Handling
 
