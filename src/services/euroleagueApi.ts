@@ -1,4 +1,4 @@
-import type { Match, MatchDetails, StandingsEntry } from '../types';
+import type { Match, MatchDetails, StandingsEntry, QuarterScores, TeamStatistics, PlayerStatistics } from '../types';
 import { LEAGUE_IDS } from './leagues';
 
 /**
@@ -517,22 +517,205 @@ export async function fetchEuroLeagueAllData(leagueId: string): Promise<{
 }
 
 /**
+ * Parse detailed game XML from EuroLeague V1 API
+ * Returns quarter scores, team stats, and player stats
+ */
+function parseGameDetailsXML(xml: string): {
+  quarterScores: QuarterScores;
+  homeStats: TeamStatistics | null;
+  awayStats: TeamStatistics | null;
+  homePlayers: PlayerStatistics[];
+  awayPlayers: PlayerStatistics[];
+} {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xml, 'text/xml');
+  
+  const quarterScores: QuarterScores = {};
+  const homePlayers: PlayerStatistics[] = [];
+  const awayPlayers: PlayerStatistics[] = [];
+  
+  // Parse quarter scores from partials
+  const localClub = doc.querySelector('localclub');
+  const roadClub = doc.querySelector('roadclub');
+  
+  const homePartials = localClub?.querySelector('partials');
+  const awayPartials = roadClub?.querySelector('partials');
+  
+  if (homePartials && awayPartials) {
+    const getPartial = (el: Element, attr: string) => parseInt(el.getAttribute(attr) || '0', 10);
+    
+    quarterScores.q1 = {
+      home: getPartial(homePartials, 'Partial1'),
+      away: getPartial(awayPartials, 'Partial1'),
+    };
+    quarterScores.q2 = {
+      home: getPartial(homePartials, 'Partial2'),
+      away: getPartial(awayPartials, 'Partial2'),
+    };
+    quarterScores.q3 = {
+      home: getPartial(homePartials, 'Partial3'),
+      away: getPartial(awayPartials, 'Partial3'),
+    };
+    quarterScores.q4 = {
+      home: getPartial(homePartials, 'Partial4'),
+      away: getPartial(awayPartials, 'Partial4'),
+    };
+    
+    // Check for overtime
+    const homeOT = getPartial(homePartials, 'ExtraPeriod1');
+    const awayOT = getPartial(awayPartials, 'ExtraPeriod1');
+    if (homeOT > 0 || awayOT > 0) {
+      quarterScores.ot = { home: homeOT, away: awayOT };
+    }
+  }
+  
+  // Parse player stats and calculate team totals
+  const parseTeamStats = (clubEl: Element | null, playersArray: PlayerStatistics[]): TeamStatistics | null => {
+    if (!clubEl) return null;
+    
+    const playerStats = clubEl.querySelectorAll('playerstats stat');
+    let totalFGM = 0, totalFGA = 0;
+    let total3PM = 0, total3PA = 0;
+    let totalFTM = 0, totalFTA = 0;
+    let totalRebounds = 0, totalOffReb = 0, totalDefReb = 0;
+    let totalAssists = 0, totalTurnovers = 0, totalSteals = 0, totalBlocks = 0;
+    
+    playerStats.forEach((stat) => {
+      const getText = (tag: string) => stat.querySelector(tag)?.textContent || '0';
+      const getNum = (tag: string) => parseInt(getText(tag), 10) || 0;
+      
+      const playerName = getText('PlayerName');
+      const playerId = getText('PlayerCode');
+      const points = getNum('Score');
+      const rebounds = getNum('TotalRebounds');
+      const assists = getNum('Assistances');
+      const minutesStr = getText('TimePlayed'); // format: "20:22"
+      const minutes = parseInt(minutesStr.split(':')[0], 10) || 0;
+      
+      playersArray.push({
+        id: playerId,
+        name: playerName,
+        points,
+        rebounds,
+        assists,
+        minutes,
+      });
+      
+      // Accumulate team totals
+      totalFGM += getNum('FieldGoalsMadeTotal');
+      totalFGA += getNum('FieldGoalsAttemptedTotal');
+      total3PM += getNum('FieldGoalsMade3');
+      total3PA += getNum('FieldGoalsAttempted3');
+      totalFTM += getNum('FreeThrowsMade');
+      totalFTA += getNum('FreeThrowsAttempted');
+      totalRebounds += rebounds;
+      totalOffReb += getNum('OffensiveRebounds');
+      totalDefReb += getNum('DefensiveRebounds');
+      totalAssists += assists;
+      totalTurnovers += getNum('Turnovers');
+      totalSteals += getNum('Steals');
+      totalBlocks += getNum('BlocksFavour');
+    });
+    
+    // Sort players by points
+    playersArray.sort((a, b) => b.points - a.points);
+    
+    // Calculate percentages
+    const fieldGoalPct = totalFGA > 0 ? Math.round((totalFGM / totalFGA) * 100 * 10) / 10 : 0;
+    const threePointPct = total3PA > 0 ? Math.round((total3PM / total3PA) * 100 * 10) / 10 : 0;
+    const freeThrowPct = totalFTA > 0 ? Math.round((totalFTM / totalFTA) * 100 * 10) / 10 : 0;
+    
+    return {
+      fieldGoalPct,
+      threePointPct,
+      freeThrowPct,
+      rebounds: totalRebounds,
+      offensiveRebounds: totalOffReb,
+      defensiveRebounds: totalDefReb,
+      assists: totalAssists,
+      turnovers: totalTurnovers,
+      steals: totalSteals,
+      blocks: totalBlocks,
+    };
+  };
+  
+  const homeStats = parseTeamStats(localClub, homePlayers);
+  const awayStats = parseTeamStats(roadClub, awayPlayers);
+  
+  return { quarterScores, homeStats, awayStats, homePlayers, awayPlayers };
+}
+
+/**
+ * Fetch detailed game data from EuroLeague V1 API
+ */
+async function fetchGameDetails(gameCode: string, competitionCode: string): Promise<{
+  quarterScores: QuarterScores;
+  homeStats: TeamStatistics | null;
+  awayStats: TeamStatistics | null;
+  homePlayers: PlayerStatistics[];
+  awayPlayers: PlayerStatistics[];
+} | null> {
+  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const url = `${EUROLEAGUE_V1_API_BASE}/games?gameCode=${gameCode}&seasonCode=${seasonCode}`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`Failed to fetch game details: ${response.status}`);
+      return null;
+    }
+    
+    const xml = await response.text();
+    return parseGameDetailsXML(xml);
+  } catch (error) {
+    console.error('Error fetching game details:', error);
+    return null;
+  }
+}
+
+/**
  * Fetch match details from EuroLeague API
  */
 export async function fetchEuroLeagueMatchDetails(
   matchId: string,
   leagueId: string
 ): Promise<MatchDetails | null> {
-  // The v1 API doesn't have a single-game endpoint, so we fetch all and find
+  // Get basic match info
   const matches = await fetchEuroLeagueMatches(leagueId);
   const match = matches.find(m => m.id === matchId);
   
-  if (match) {
-    return {
-      ...match,
-      lastUpdated: new Date().toISOString(),
-    };
+  if (!match) {
+    return null;
   }
-
-  return null;
+  
+  // For completed matches, try to fetch detailed stats
+  if (match.status === 'completed') {
+    // Determine competition code from league ID
+    const competitionCode = leagueId === LEAGUE_IDS.EUROLEAGUE ? 'E' : 'U';
+    
+    // The match ID might be in format "E2025_170" or just "170" or an identifier
+    // Extract the game code (numeric part)
+    const gameCodeMatch = matchId.match(/(\d+)$/);
+    const gameCode = gameCodeMatch ? gameCodeMatch[1] : matchId;
+    
+    const details = await fetchGameDetails(gameCode, competitionCode);
+    
+    if (details) {
+      return {
+        ...match,
+        quarterScores: details.quarterScores,
+        homeStats: details.homeStats || undefined,
+        awayStats: details.awayStats || undefined,
+        homePlayers: details.homePlayers.length > 0 ? details.homePlayers : undefined,
+        awayPlayers: details.awayPlayers.length > 0 ? details.awayPlayers : undefined,
+        lastUpdated: new Date().toISOString(),
+      };
+    }
+  }
+  
+  // Return basic match info if detailed stats not available
+  return {
+    ...match,
+    lastUpdated: new Date().toISOString(),
+  };
 }
