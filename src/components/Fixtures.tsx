@@ -19,7 +19,11 @@ export function Fixtures({ matches, loading }: FixturesProps) {
   const activeTab = (searchParams.get('tab') as FilterTab) || 'fixtures';
   
   const setActiveTab = useCallback((tab: FilterTab) => {
-    setSearchParams({ tab }, { replace: true });
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set('tab', tab);
+      return newParams;
+    }, { replace: true });
     // Reset scroll position when changing tabs
     sessionStorage.removeItem(SCROLL_KEY);
   }, [setSearchParams]);

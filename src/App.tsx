@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { Routes, Route, useSearchParams } from 'react-router-dom';
 import { Fixtures } from './components/Fixtures';
 import { LeagueTable } from './components/LeagueTable';
 import { MatchDetail } from './components/MatchDetail';
@@ -22,7 +22,10 @@ function getErrorMessage(error: unknown): string {
 
 type Tab = 'fixtures' | 'table';
 
+const LEAGUE_PARAM = 'league';
+
 function HomePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>('fixtures');
   const [matches, setMatches] = useState<Match[]>([]);
   const [standings, setStandings] = useState<StandingsEntry[]>([]);
@@ -31,9 +34,20 @@ function HomePage() {
   
   // League state
   const [leagues, setLeagues] = useState<League[]>(predefinedLeagues);
-  const [selectedLeague, setSelectedLeague] = useState<League>(DEFAULT_LEAGUE);
   const [leaguesLoading, setLeaguesLoading] = useState(true);
   const [leaguesError, setLeaguesError] = useState<string | null>(null);
+
+  // Get selected league from URL params, falling back to default
+  const getSelectedLeague = useCallback((): League => {
+    const leagueId = searchParams.get(LEAGUE_PARAM);
+    if (leagueId) {
+      const found = leagues.find(l => l.id === leagueId);
+      if (found) return found;
+    }
+    return DEFAULT_LEAGUE;
+  }, [searchParams, leagues]);
+
+  const selectedLeague = getSelectedLeague();
 
   // Fetch available leagues on mount
   useEffect(() => {
@@ -43,10 +57,17 @@ function HomePage() {
       try {
         const availableLeagues = await fetchLeagues();
         setLeagues(availableLeagues);
-        // Set the first league as selected if default league is not in the list
+        // If the current URL has a league that's not in the available leagues, and default league is also not in list,
+        // update the URL to use the first available league
+        const currentLeagueId = searchParams.get(LEAGUE_PARAM);
+        const hasCurrentLeague = currentLeagueId && availableLeagues.some(l => l.id === currentLeagueId);
         const hasDefaultLeague = availableLeagues.some(l => l.id === DEFAULT_LEAGUE.id);
-        if (availableLeagues.length > 0 && !hasDefaultLeague) {
-          setSelectedLeague(availableLeagues[0]);
+        if (availableLeagues.length > 0 && !hasCurrentLeague && !hasDefaultLeague) {
+          setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set(LEAGUE_PARAM, availableLeagues[0].id);
+            return newParams;
+          }, { replace: true });
         }
       } catch (error) {
         console.error('Failed to fetch leagues:', error);
@@ -59,7 +80,7 @@ function HomePage() {
     };
 
     loadLeagues();
-  }, []);
+  }, [searchParams, setSearchParams]);
 
   // Fetch data when selected league changes
   useEffect(() => {
@@ -89,7 +110,12 @@ function HomePage() {
   }, [selectedLeague]);
 
   const handleLeagueChange = (league: League) => {
-    setSelectedLeague(league);
+    // Update URL params to persist league selection
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set(LEAGUE_PARAM, league.id);
+      return newParams;
+    }, { replace: true });
   };
 
   const handleRetry = () => {
