@@ -293,7 +293,11 @@ function transformParsedGame(game: ParsedGame): Match {
     try {
       const date = new Date(dateStr);
       if (!isNaN(date.getTime())) {
-        return date.toISOString().split('T')[0];
+        // Use local date to avoid timezone issues
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
       }
     } catch {
       // Fall through to return original
@@ -302,7 +306,7 @@ function transformParsedGame(game: ParsedGame): Match {
   };
 
   const dateStr = parseDate(game.date);
-  const gameDate = new Date(dateStr);
+  const gameDate = new Date(dateStr + 'T12:00:00'); // Parse as noon to avoid timezone edge cases
   const now = new Date();
   const isPast = gameDate < now;
 
@@ -333,7 +337,11 @@ function transformParsedGame(game: ParsedGame): Match {
 function transformV2Game(game: V2Game): Match {
   // V2 date is ISO format like "2026-01-21T19:00:00.000Z"
   const gameDate = new Date(game.date);
-  const dateStr = gameDate.toISOString().split('T')[0];
+  // Use local date to avoid timezone issues
+  const year = gameDate.getFullYear();
+  const month = String(gameDate.getMonth() + 1).padStart(2, '0');
+  const day = String(gameDate.getDate()).padStart(2, '0');
+  const dateStr = `${year}-${month}-${day}`;
   const timeStr = gameDate.toLocaleTimeString('en-GB', { 
     hour: '2-digit', 
     minute: '2-digit',

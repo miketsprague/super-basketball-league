@@ -183,7 +183,8 @@ export function MatchDetail() {
   }
 
   const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
+    // Parse as noon local time to avoid timezone edge cases
+    const date = new Date(dateStr + 'T12:00:00');
     return date.toLocaleDateString('en-GB', {
       weekday: 'long',
       day: 'numeric',
