@@ -152,7 +152,8 @@ export function MatchDetail() {
   };
 
   const handleBack = () => {
-    navigate('/');
+    // Use browser history to preserve URL params (like league selection)
+    navigate(-1);
   };
 
   if (loading) {
@@ -251,8 +252,8 @@ export function MatchDetail() {
             </div>
             
             {/* Teams and Score */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex-1 text-center">
+            <div className="flex items-start justify-center gap-2">
+              <div className="flex-1 text-center min-w-0 max-w-[35%]">
                 {match.homeTeam.logo && (
                   <img 
                     src={match.homeTeam.logo} 
@@ -261,17 +262,17 @@ export function MatchDetail() {
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 )}
-                <p className="font-bold text-lg text-gray-900">{match.homeTeam.shortName}</p>
-                <p className="text-xs text-gray-500 truncate">{match.homeTeam.name}</p>
+                <p className="font-bold text-lg text-gray-900 break-words">{match.homeTeam.shortName}</p>
+                <p className="text-xs text-gray-500 break-words">{match.homeTeam.name}</p>
               </div>
               
-              <div className="px-2 flex-shrink-0">
-                <div className="text-3xl font-bold text-gray-900">
+              <div className="px-2 flex-shrink-0 min-w-[90px] text-center pt-3">
+                <div className="text-3xl font-bold text-gray-900 whitespace-nowrap">
                   {match.homeScore ?? '-'} - {match.awayScore ?? '-'}
                 </div>
               </div>
               
-              <div className="flex-1 text-center">
+              <div className="flex-1 text-center min-w-0 max-w-[35%]">
                 {match.awayTeam.logo && (
                   <img 
                     src={match.awayTeam.logo} 
@@ -280,8 +281,8 @@ export function MatchDetail() {
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 )}
-                <p className="font-bold text-lg text-gray-900">{match.awayTeam.shortName}</p>
-                <p className="text-xs text-gray-500 truncate">{match.awayTeam.name}</p>
+                <p className="font-bold text-lg text-gray-900 break-words">{match.awayTeam.shortName}</p>
+                <p className="text-xs text-gray-500 break-words">{match.awayTeam.name}</p>
               </div>
             </div>
             
