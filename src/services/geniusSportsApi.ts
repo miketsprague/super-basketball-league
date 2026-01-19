@@ -206,20 +206,30 @@ function parseScheduleHTML(html: string): Match[] {
 }
 
 /**
+ * Helper to format date as YYYY-MM-DD in local timezone
+ */
+function toLocalDateString(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * Parse combined date/time string from Genius Sports
  * Format: "Jan 30, 2026, 7:30 PM"
  * Returns: { date: "2026-01-30", time: "19:30" }
  */
 function parseDateTimeString(dateTimeStr: string): { date: string; time: string } {
   if (!dateTimeStr) {
-    return { date: new Date().toISOString().split('T')[0], time: 'TBC' };
+    return { date: toLocalDateString(new Date()), time: 'TBC' };
   }
   
   try {
     // Parse "Jan 30, 2026, 7:30 PM" format
     const parsed = new Date(dateTimeStr);
     if (!isNaN(parsed.getTime())) {
-      const date = parsed.toISOString().split('T')[0];
+      const date = toLocalDateString(parsed);
       const hours = parsed.getHours();
       const minutes = parsed.getMinutes();
       const time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
@@ -229,7 +239,7 @@ function parseDateTimeString(dateTimeStr: string): { date: string; time: string 
     // Fall through to defaults
   }
   
-  return { date: new Date().toISOString().split('T')[0], time: 'TBC' };
+  return { date: toLocalDateString(new Date()), time: 'TBC' };
 }
 
 /**
