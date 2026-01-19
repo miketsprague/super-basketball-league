@@ -96,6 +96,8 @@ export function Fixtures({ matches, loading }: FixturesProps) {
         setTimeout(() => {
           window.scrollTo(0, parseInt(savedPosition, 10));
         }, 50);
+        // Clear saved position after restoring to prevent stale scroll on refresh
+        sessionStorage.removeItem(SCROLL_KEY);
       }
     }
   }, [loading, matches.length]);
