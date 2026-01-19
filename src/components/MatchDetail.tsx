@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { MatchDetails, TeamStatistics } from '../types';
 import { fetchMatchDetails } from '../services/dataProvider';
 
-const LIVE_POLL_INTERVAL = 30000; // 30 seconds
+const LIVE_POLL_INTERVAL = 15000; // 15 seconds for live matches
 
 function MatchDetailSkeleton() {
   return (
@@ -251,21 +251,37 @@ export function MatchDetail() {
             </div>
             
             {/* Teams and Score */}
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-2">
               <div className="flex-1 text-center">
+                {match.homeTeam.logo && (
+                  <img 
+                    src={match.homeTeam.logo} 
+                    alt="" 
+                    className="w-12 h-12 mx-auto mb-2 object-contain"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                )}
                 <p className="font-bold text-lg text-gray-900">{match.homeTeam.shortName}</p>
-                <p className="text-xs text-gray-500">{match.homeTeam.name}</p>
+                <p className="text-xs text-gray-500 truncate">{match.homeTeam.name}</p>
               </div>
               
-              <div className="px-4">
+              <div className="px-2 flex-shrink-0">
                 <div className="text-3xl font-bold text-gray-900">
                   {match.homeScore ?? '-'} - {match.awayScore ?? '-'}
                 </div>
               </div>
               
               <div className="flex-1 text-center">
+                {match.awayTeam.logo && (
+                  <img 
+                    src={match.awayTeam.logo} 
+                    alt="" 
+                    className="w-12 h-12 mx-auto mb-2 object-contain"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                )}
                 <p className="font-bold text-lg text-gray-900">{match.awayTeam.shortName}</p>
-                <p className="text-xs text-gray-500">{match.awayTeam.name}</p>
+                <p className="text-xs text-gray-500 truncate">{match.awayTeam.name}</p>
               </div>
             </div>
             
@@ -278,7 +294,7 @@ export function MatchDetail() {
         </div>
 
         {/* Quarter Scores */}
-        {match.quarterScores && (match.status === 'completed' || match.status === 'live') && (
+        {match.quarterScores && Object.keys(match.quarterScores).length > 0 && (match.status === 'completed' || match.status === 'live') && (
           <div className="bg-white rounded-lg shadow p-4 mt-4">
             <h3 className="font-semibold text-gray-900 mb-3">Score by Quarter</h3>
             <div className="overflow-x-auto">
@@ -322,38 +338,48 @@ export function MatchDetail() {
         {/* Team Statistics */}
         {match.homeStats && match.awayStats ? (
           <TeamStatsComparison homeStats={match.homeStats} awayStats={match.awayStats} />
-        ) : (match.status === 'scheduled') && (
+        ) : (match.status === 'scheduled') ? (
           <div className="bg-white rounded-lg shadow p-4 mt-4">
             <p className="text-gray-500 text-sm text-center">
               Statistics will be available once the match begins
             </p>
           </div>
+        ) : (match.status === 'completed' || match.status === 'live') && (
+          <div className="bg-white rounded-lg shadow p-4 mt-4">
+            <p className="text-gray-500 text-sm text-center">
+              Loading statistics...
+            </p>
+          </div>
         )}
 
         {/* Player Statistics (Top Performers) */}
-        {match.homePlayers && match.awayPlayers && (
+        {match.homePlayers && match.homePlayers.length > 0 && match.awayPlayers && match.awayPlayers.length > 0 && (
           <div className="bg-white rounded-lg shadow p-4 mt-4">
             <h3 className="font-semibold text-gray-900 mb-3">Top Performers</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-gray-500 mb-2 font-medium">{match.homeTeam.shortName}</p>
-                {match.homePlayers.slice(0, 3).map((player) => (
-                  <div key={player.id} className="mb-2 text-sm">
-                    <p className="font-medium">{player.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {player.points} pts • {player.rebounds} reb • {player.assists} ast
-                    </p>
+                <p className="text-xs text-gray-500 mb-2 font-medium border-b pb-1">{match.homeTeam.shortName}</p>
+                {match.homePlayers.slice(0, 3).map((player, index) => (
+                  <div key={player.id} className={`py-2 ${index < 2 ? 'border-b border-gray-100' : ''}`}>
+                    <p className="font-medium text-sm truncate">{player.name}</p>
+                    <div className="flex gap-2 text-xs text-gray-500 mt-0.5">
+                      <span className="font-semibold text-orange-600">{player.points} pts</span>
+                      <span>{player.rebounds} reb</span>
+                      <span>{player.assists} ast</span>
+                    </div>
                   </div>
                 ))}
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-2 font-medium">{match.awayTeam.shortName}</p>
-                {match.awayPlayers.slice(0, 3).map((player) => (
-                  <div key={player.id} className="mb-2 text-sm">
-                    <p className="font-medium">{player.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {player.points} pts • {player.rebounds} reb • {player.assists} ast
-                    </p>
+                <p className="text-xs text-gray-500 mb-2 font-medium border-b pb-1">{match.awayTeam.shortName}</p>
+                {match.awayPlayers.slice(0, 3).map((player, index) => (
+                  <div key={player.id} className={`py-2 ${index < 2 ? 'border-b border-gray-100' : ''}`}>
+                    <p className="font-medium text-sm truncate">{player.name}</p>
+                    <div className="flex gap-2 text-xs text-gray-500 mt-0.5">
+                      <span className="font-semibold text-orange-600">{player.points} pts</span>
+                      <span>{player.rebounds} reb</span>
+                      <span>{player.assists} ast</span>
+                    </div>
                   </div>
                 ))}
               </div>
