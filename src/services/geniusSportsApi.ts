@@ -1,4 +1,4 @@
-import type { Match, MatchDetails, StandingsEntry } from '../types';
+import type { Match, MatchDetails, StandingsEntry, QuarterScores, TeamStatistics, PlayerStatistics } from '../types';
 
 /**
  * Genius Sports Data Provider for Super League Basketball
@@ -10,9 +10,12 @@ import type { Match, MatchDetails, StandingsEntry } from '../types';
  * Endpoints:
  *   - /standings - League standings
  *   - /schedule?roundNumber=-1 - All fixtures and results (past and upcoming)
+ *   - /competition/41897/match/{matchId}/boxscore - Full box score with player stats
+ *   - /competition/41897/match/{matchId}/playbyplay - Play-by-play with running scores
  */
 
 const GENIUS_SPORTS_BASE = 'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en';
+const SLB_COMPETITION_ID = '41897';
 
 interface GeniusSportsResponse {
   css: string[];
@@ -303,19 +306,248 @@ export async function fetchGeniusSportsAllData(): Promise<{
 }
 
 /**
+ * Parse box score HTML to extract player stats and team totals
+ */
+function parseBoxScoreHTML(html: string): {
+  homeStats: TeamStatistics | null;
+  awayStats: TeamStatistics | null;
+  homePlayers: PlayerStatistics[];
+  awayPlayers: PlayerStatistics[];
+} {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  
+  const tables = doc.querySelectorAll('table.tableClass');
+  const homePlayers: PlayerStatistics[] = [];
+  const awayPlayers: PlayerStatistics[] = [];
+  let homeStats: TeamStatistics | null = null;
+  let awayStats: TeamStatistics | null = null;
+  
+  tables.forEach((table, tableIndex) => {
+    const isHomeTeam = tableIndex === 0;
+    const players = isHomeTeam ? homePlayers : awayPlayers;
+    
+    // Parse player rows from tbody
+    const playerRows = table.querySelectorAll('tbody tr');
+    playerRows.forEach((row) => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length < 10) return;
+      
+      const playerNameEl = row.querySelector('.playerName a');
+      const playerName = playerNameEl?.textContent?.trim() || '';
+      if (!playerName) return;
+      
+      // Extract player ID from link
+      const playerHref = playerNameEl?.getAttribute('href') || '';
+      const playerIdMatch = playerHref.match(/\/person\/(\d+)/);
+      const playerId = playerIdMatch ? playerIdMatch[1] : `player-${players.length}`;
+      
+      // Parse minutes (format: "34:01" -> 34)
+      const minsCell = cells[2];
+      const minsText = minsCell?.textContent?.trim() || '0';
+      const minutes = parseInt(minsText.split(':')[0], 10) || 0;
+      
+      // Points is typically the 21st column (index 20)
+      // Column order: No, Player, Mins, FGM, FGA, FG%, 3PM, 3PA, 3P%, FTM, FTA, FT%, OFF, DEF, REB, AST, STL, BLK, PF, TO, Pts, +/-
+      const ptsIndex = 20;
+      const rebIndex = 14;
+      const astIndex = 15;
+      
+      const points = parseInt(cells[ptsIndex]?.textContent?.trim() || '0', 10) || 0;
+      const rebounds = parseInt(cells[rebIndex]?.textContent?.trim() || '0', 10) || 0;
+      const assists = parseInt(cells[astIndex]?.textContent?.trim() || '0', 10) || 0;
+      
+      players.push({
+        id: playerId,
+        name: playerName,
+        points,
+        rebounds,
+        assists,
+        minutes,
+      });
+    });
+    
+    // Parse team totals from tfoot
+    const totalsRow = table.querySelector('tfoot tr');
+    if (totalsRow) {
+      const cells = totalsRow.querySelectorAll('td');
+      // Column indices (0-indexed, skipping No and Player columns):
+      // 2=Mins, 3=FGM, 4=FGA, 5=FG%, 6=3PM, 7=3PA, 8=3P%, 9=FTM, 10=FTA, 11=FT%
+      // 12=OFF, 13=DEF, 14=REB, 15=AST, 16=STL, 17=BLK, 18=PF, 19=TO, 20=Pts
+      const fgPct = parseFloat(cells[5]?.textContent?.trim() || '0') || 0;
+      const threePct = parseFloat(cells[8]?.textContent?.trim() || '0') || 0;
+      const ftPct = parseFloat(cells[11]?.textContent?.trim() || '0') || 0;
+      const offReb = parseInt(cells[12]?.textContent?.trim() || '0', 10) || 0;
+      const defReb = parseInt(cells[13]?.textContent?.trim() || '0', 10) || 0;
+      const totalReb = parseInt(cells[14]?.textContent?.trim() || '0', 10) || 0;
+      const assists = parseInt(cells[15]?.textContent?.trim() || '0', 10) || 0;
+      const steals = parseInt(cells[16]?.textContent?.trim() || '0', 10) || 0;
+      const blocks = parseInt(cells[17]?.textContent?.trim() || '0', 10) || 0;
+      const turnovers = parseInt(cells[19]?.textContent?.trim() || '0', 10) || 0;
+      
+      const teamStats: TeamStatistics = {
+        fieldGoalPct: fgPct,
+        threePointPct: threePct,
+        freeThrowPct: ftPct,
+        rebounds: totalReb,
+        offensiveRebounds: offReb,
+        defensiveRebounds: defReb,
+        assists,
+        turnovers,
+        steals,
+        blocks,
+      };
+      
+      if (isHomeTeam) {
+        homeStats = teamStats;
+      } else {
+        awayStats = teamStats;
+      }
+    }
+  });
+  
+  // Sort players by points (top scorers first)
+  homePlayers.sort((a, b) => b.points - a.points);
+  awayPlayers.sort((a, b) => b.points - a.points);
+  
+  return { homeStats, awayStats, homePlayers, awayPlayers };
+}
+
+/**
+ * Parse play-by-play HTML to extract quarter scores
+ * Looks for scores at "Period end" events
+ */
+function parsePlayByPlayHTML(html: string): QuarterScores {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  
+  const quarterScores: QuarterScores = {};
+  
+  // Find all period end actions and get the score just before them
+  const allActions = doc.querySelectorAll('.pbpa');
+  const periodEndScores: { home: number; away: number }[] = [];
+  
+  let lastScore = { home: 0, away: 0 };
+  
+  allActions.forEach((action) => {
+    // Check for score in this action
+    const scoreEl = action.querySelector('.pbpsc');
+    if (scoreEl) {
+      const scoreText = scoreEl.textContent?.trim() || '';
+      const scoreMatch = scoreText.match(/(\d+)-(\d+)/);
+      if (scoreMatch) {
+        lastScore = {
+          home: parseInt(scoreMatch[1], 10),
+          away: parseInt(scoreMatch[2], 10),
+        };
+      }
+    }
+    
+    // Check if this is a period end
+    const actionText = action.querySelector('.pbp-action')?.textContent?.trim() || '';
+    if (actionText.toLowerCase().includes('period end')) {
+      periodEndScores.push({ ...lastScore });
+    }
+  });
+  
+  // Calculate individual quarter scores from cumulative scores
+  if (periodEndScores.length >= 1) {
+    quarterScores.q1 = periodEndScores[0];
+  }
+  if (periodEndScores.length >= 2) {
+    quarterScores.q2 = {
+      home: periodEndScores[1].home - periodEndScores[0].home,
+      away: periodEndScores[1].away - periodEndScores[0].away,
+    };
+  }
+  if (periodEndScores.length >= 3) {
+    quarterScores.q3 = {
+      home: periodEndScores[2].home - periodEndScores[1].home,
+      away: periodEndScores[2].away - periodEndScores[1].away,
+    };
+  }
+  if (periodEndScores.length >= 4) {
+    quarterScores.q4 = {
+      home: periodEndScores[3].home - periodEndScores[2].home,
+      away: periodEndScores[3].away - periodEndScores[2].away,
+    };
+  }
+  // Handle overtime if there are more than 4 periods
+  if (periodEndScores.length >= 5) {
+    quarterScores.ot = {
+      home: periodEndScores[4].home - periodEndScores[3].home,
+      away: periodEndScores[4].away - periodEndScores[3].away,
+    };
+  }
+  
+  return quarterScores;
+}
+
+/**
+ * Fetch box score data for a specific match
+ */
+async function fetchBoxScore(matchId: string): Promise<{
+  homeStats: TeamStatistics | null;
+  awayStats: TeamStatistics | null;
+  homePlayers: PlayerStatistics[];
+  awayPlayers: PlayerStatistics[];
+}> {
+  try {
+    const html = await fetchFromGeniusSports(`/competition/${SLB_COMPETITION_ID}/match/${matchId}/boxscore`);
+    return parseBoxScoreHTML(html);
+  } catch (error) {
+    console.error('Failed to fetch box score:', error);
+    return { homeStats: null, awayStats: null, homePlayers: [], awayPlayers: [] };
+  }
+}
+
+/**
+ * Fetch play-by-play data to extract quarter scores
+ */
+async function fetchQuarterScores(matchId: string): Promise<QuarterScores> {
+  try {
+    const html = await fetchFromGeniusSports(`/competition/${SLB_COMPETITION_ID}/match/${matchId}/playbyplay`);
+    return parsePlayByPlayHTML(html);
+  } catch (error) {
+    console.error('Failed to fetch play-by-play:', error);
+    return {};
+  }
+}
+
+/**
  * Fetch match details from Genius Sports
+ * Combines basic match info with box score and quarter scores
  */
 export async function fetchGeniusSportsMatchDetails(matchId: string): Promise<MatchDetails | null> {
-  // For now, get from the schedule list - individual match endpoints may exist
+  // Get basic match info from schedule
   const matches = await fetchGeniusSportsMatches();
   const match = matches.find(m => m.id === matchId);
   
-  if (match) {
+  if (!match) {
+    return null;
+  }
+  
+  // For completed or live matches, fetch detailed stats
+  if (match.status === 'completed' || match.status === 'live') {
+    const [boxScoreData, quarterScores] = await Promise.all([
+      fetchBoxScore(matchId),
+      fetchQuarterScores(matchId),
+    ]);
+    
     return {
       ...match,
+      quarterScores,
+      homeStats: boxScoreData.homeStats || undefined,
+      awayStats: boxScoreData.awayStats || undefined,
+      homePlayers: boxScoreData.homePlayers.length > 0 ? boxScoreData.homePlayers : undefined,
+      awayPlayers: boxScoreData.awayPlayers.length > 0 ? boxScoreData.awayPlayers : undefined,
       lastUpdated: new Date().toISOString(),
     };
   }
   
-  return null;
+  // For scheduled matches, just return basic info
+  return {
+    ...match,
+    lastUpdated: new Date().toISOString(),
+  };
 }
