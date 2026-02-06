@@ -13,23 +13,42 @@ export interface LeagueConfig extends League {
   apiProvider: ApiProvider;
   /** Competition code for EuroLeague API (E = EuroLeague, U = EuroCup) */
   competitionCode?: string;
+  /** Competition ID for Genius Sports API (SLB competitions) */
+  geniusSportsCompetitionId?: string;
 }
 
 // League IDs for internal use
 export const LEAGUE_IDS = {
   SUPER_LEAGUE: 'super-league',
+  SLB_TROPHY: 'slb-trophy',
   EUROLEAGUE: 'euroleague',
   EUROCUP: 'eurocup',
+} as const;
+
+// Genius Sports competition IDs for SLB
+export const SLB_COMPETITION_IDS = {
+  CHAMPIONSHIP: '41897',
+  TROPHY: '42212',
+  CUP: '47714',
 } as const;
 
 // Predefined leagues with their API configurations
 export const predefinedLeagues: LeagueConfig[] = [
   {
     id: LEAGUE_IDS.SUPER_LEAGUE,
-    name: 'Super League Basketball',
-    shortName: 'Super League',
+    name: 'SLB Championship',
+    shortName: 'Championship',
     country: 'England',
-    apiProvider: 'geniussports', // Official SLB data via Genius Sports
+    apiProvider: 'geniussports',
+    geniusSportsCompetitionId: SLB_COMPETITION_IDS.CHAMPIONSHIP,
+  },
+  {
+    id: LEAGUE_IDS.SLB_TROPHY,
+    name: 'SLB Trophy',
+    shortName: 'Trophy',
+    country: 'England',
+    apiProvider: 'geniussports',
+    geniusSportsCompetitionId: SLB_COMPETITION_IDS.TROPHY,
   },
   {
     id: LEAGUE_IDS.EUROLEAGUE,
