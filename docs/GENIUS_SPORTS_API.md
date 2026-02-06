@@ -17,15 +17,34 @@ We parse the HTML content from these responses to extract structured data for ou
 
 The JSON API (`/embednf/`) returns parseable responses while the HTML pages are full web pages.
 
+## Competition IDs
+
+SLB has multiple competitions, each with a unique ID:
+
+| Competition | ID | Description |
+|-------------|-----|-------------|
+| Championship | `41897` | Regular season (32 games per team) |
+| Trophy | `42212` | Group stage + knockout tournament |
+| Cup | `47714` | Knockout tournament |
+| Playoffs | TBD | Top 8 knockout (created closer to May) |
+
+**Important:** Each competition has its own schedule and standings. Trophy and Cup matches are **not** included in the main Championship schedule.
+
 ## Endpoints
 
 ### Standings
 
 ```
 GET /standings
+GET /competition/{competitionId}/standings
 ```
 
-Returns current league standings.
+Returns current league standings. Use the competition-specific endpoint for Trophy/Cup standings.
+
+**Examples:**
+- Championship: `/standings` or `/competition/41897/standings`
+- Trophy: `/competition/42212/standings` (group standings)
+- Cup: `/competition/47714/standings` (empty - knockout format)
 
 **Response Format:**
 ```json
@@ -62,11 +81,17 @@ Returns current league standings.
 
 ```
 GET /schedule?roundNumber=-1
+GET /competition/{competitionId}/schedule?roundNumber=-1
 ```
 
-Returns all fixtures for the season (completed and upcoming).
+Returns all fixtures for the competition (completed and upcoming).
 
 **Important:** Without `roundNumber=-1`, only recent matches are returned (typically ~6). Use this parameter to get the full season schedule.
+
+**Examples:**
+- Championship: `/schedule?roundNumber=-1` (~145 matches)
+- Trophy: `/competition/42212/schedule?roundNumber=-1` (~15 matches)
+- Cup: `/competition/47714/schedule?roundNumber=-1` (~10 matches)
 
 **Response Format:**
 ```json

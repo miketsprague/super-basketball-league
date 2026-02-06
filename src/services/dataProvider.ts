@@ -2,7 +2,7 @@ import type { Match, MatchDetails, StandingsEntry, League } from '../types';
 import * as mockProvider from './mockProvider';
 import * as euroleagueApi from './euroleagueApi';
 import * as geniusSportsApi from './geniusSportsApi';
-import { predefinedLeagues, getApiProvider, LEAGUE_IDS, type LeagueConfig } from './leagues';
+import { predefinedLeagues, getApiProvider, getLeagueConfig, LEAGUE_IDS, type LeagueConfig } from './leagues';
 
 /**
  * Custom error class for API failures
@@ -46,11 +46,12 @@ export async function fetchLeagues(): Promise<League[]> {
 
 export async function fetchMatches(leagueId: string): Promise<Match[]> {
   const apiProvider = getApiProvider(leagueId);
+  const leagueConfig = getLeagueConfig(leagueId);
 
   try {
     switch (apiProvider) {
       case 'geniussports':
-        return await geniusSportsApi.fetchGeniusSportsMatches();
+        return await geniusSportsApi.fetchGeniusSportsMatches(leagueConfig?.geniusSportsCompetitionId);
       case 'euroleague':
         return await euroleagueApi.fetchEuroLeagueMatches(leagueId);
       case 'mock':
@@ -69,11 +70,12 @@ export async function fetchMatches(leagueId: string): Promise<Match[]> {
 
 export async function fetchStandings(leagueId: string): Promise<StandingsEntry[]> {
   const apiProvider = getApiProvider(leagueId);
+  const leagueConfig = getLeagueConfig(leagueId);
 
   try {
     switch (apiProvider) {
       case 'geniussports':
-        return await geniusSportsApi.fetchGeniusSportsStandings();
+        return await geniusSportsApi.fetchGeniusSportsStandings(leagueConfig?.geniusSportsCompetitionId);
       case 'euroleague':
         return await euroleagueApi.fetchEuroLeagueStandings(leagueId);
       case 'mock':
@@ -94,11 +96,12 @@ export async function fetchAllData(leagueId: string): Promise<{
   standings: StandingsEntry[];
 }> {
   const apiProvider = getApiProvider(leagueId);
+  const leagueConfig = getLeagueConfig(leagueId);
 
   try {
     switch (apiProvider) {
       case 'geniussports':
-        return await geniusSportsApi.fetchGeniusSportsAllData();
+        return await geniusSportsApi.fetchGeniusSportsAllData(leagueConfig?.geniusSportsCompetitionId);
       case 'euroleague':
         return await euroleagueApi.fetchEuroLeagueAllData(leagueId);
       case 'mock':
@@ -118,11 +121,12 @@ export async function fetchMatchDetails(matchId: string, leagueId?: string): Pro
   // If leagueId is provided, use the appropriate provider
   if (leagueId) {
     const apiProvider = getApiProvider(leagueId);
+    const leagueConfig = getLeagueConfig(leagueId);
 
     try {
       switch (apiProvider) {
         case 'geniussports':
-          return await geniusSportsApi.fetchGeniusSportsMatchDetails(matchId);
+          return await geniusSportsApi.fetchGeniusSportsMatchDetails(matchId, leagueConfig?.geniusSportsCompetitionId);
         case 'euroleague':
           return await euroleagueApi.fetchEuroLeagueMatchDetails(matchId, leagueId);
         case 'mock':
@@ -144,14 +148,17 @@ export async function fetchMatchDetails(matchId: string, leagueId?: string): Pro
     return mockResult;
   }
 
-  // Try Genius Sports first, then EuroLeague APIs
-  try {
-    const geniusResult = await geniusSportsApi.fetchGeniusSportsMatchDetails(matchId);
-    if (geniusResult) {
-      return geniusResult;
+  // Try Genius Sports competitions (Championship, Trophy, Cup)
+  const geniusSportsLeagues = predefinedLeagues.filter(l => l.apiProvider === 'geniussports');
+  for (const league of geniusSportsLeagues) {
+    try {
+      const result = await geniusSportsApi.fetchGeniusSportsMatchDetails(matchId, league.geniusSportsCompetitionId);
+      if (result) {
+        return result;
+      }
+    } catch {
+      // Continue to next competition
     }
-  } catch {
-    // Continue to next provider
   }
 
   // Try EuroLeague, then EuroCup

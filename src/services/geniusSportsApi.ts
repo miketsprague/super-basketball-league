@@ -7,15 +7,23 @@ import type { Match, MatchDetails, StandingsEntry, QuarterScores, TeamStatistics
  * The API returns JSON with HTML content that we parse to extract standings and fixtures.
  * 
  * Base URL: https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/
+ * 
+ * Competition IDs:
+ *   - 41897: Championship (regular season)
+ *   - 42212: Trophy (group stage + knockout)
+ *   - 47714: Cup (knockout tournament)
+ * 
  * Endpoints:
- *   - /standings - League standings
- *   - /schedule?roundNumber=-1 - All fixtures and results (past and upcoming)
- *   - /competition/41897/match/{matchId}/boxscore - Full box score with player stats
- *   - /competition/41897/match/{matchId}/playbyplay - Play-by-play with running scores
+ *   - /standings - League standings (Championship only)
+ *   - /competition/{compId}/standings - Competition-specific standings
+ *   - /schedule?roundNumber=-1 - All Championship fixtures
+ *   - /competition/{compId}/schedule?roundNumber=-1 - Competition-specific fixtures
+ *   - /competition/{compId}/match/{matchId}/boxscore - Full box score with player stats
+ *   - /competition/{compId}/match/{matchId}/playbyplay - Play-by-play with running scores
  */
 
 const GENIUS_SPORTS_BASE = 'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en';
-const SLB_COMPETITION_ID = '41897';
+const DEFAULT_COMPETITION_ID = '41897'; // Championship
 
 interface GeniusSportsResponse {
   css: string[];
@@ -268,18 +276,27 @@ function getShortName(name: string): string {
 
 /**
  * Fetch standings from Genius Sports
+ * @param competitionId - Competition ID (default: Championship)
  */
-export async function fetchGeniusSportsStandings(): Promise<StandingsEntry[]> {
-  const html = await fetchFromGeniusSports('/standings');
+export async function fetchGeniusSportsStandings(competitionId: string = DEFAULT_COMPETITION_ID): Promise<StandingsEntry[]> {
+  // Use competition-specific endpoint for non-default competitions
+  const endpoint = competitionId === DEFAULT_COMPETITION_ID 
+    ? '/standings'
+    : `/competition/${competitionId}/standings`;
+  const html = await fetchFromGeniusSports(endpoint);
   return parseStandingsHTML(html);
 }
 
 /**
  * Fetch matches/fixtures from Genius Sports
+ * @param competitionId - Competition ID (default: Championship)
  */
-export async function fetchGeniusSportsMatches(): Promise<Match[]> {
-  // Use roundNumber=-1 to get ALL matches (past and upcoming), not just recent
-  const html = await fetchFromGeniusSports('/schedule?roundNumber=-1');
+export async function fetchGeniusSportsMatches(competitionId: string = DEFAULT_COMPETITION_ID): Promise<Match[]> {
+  // Use competition-specific endpoint for non-default competitions
+  const endpoint = competitionId === DEFAULT_COMPETITION_ID
+    ? '/schedule?roundNumber=-1'
+    : `/competition/${competitionId}/schedule?roundNumber=-1`;
+  const html = await fetchFromGeniusSports(endpoint);
   const matches = parseScheduleHTML(html);
   
   // Sort by date ascending (earliest first) - UI will auto-scroll to today
@@ -292,14 +309,15 @@ export async function fetchGeniusSportsMatches(): Promise<Match[]> {
 
 /**
  * Fetch all data from Genius Sports
+ * @param competitionId - Competition ID (default: Championship)
  */
-export async function fetchGeniusSportsAllData(): Promise<{
+export async function fetchGeniusSportsAllData(competitionId: string = DEFAULT_COMPETITION_ID): Promise<{
   matches: Match[];
   standings: StandingsEntry[];
 }> {
   const [matches, standings] = await Promise.all([
-    fetchGeniusSportsMatches(),
-    fetchGeniusSportsStandings(),
+    fetchGeniusSportsMatches(competitionId),
+    fetchGeniusSportsStandings(competitionId),
   ]);
   
   return { matches, standings };
@@ -485,15 +503,17 @@ function parsePlayByPlayHTML(html: string): QuarterScores {
 
 /**
  * Fetch box score data for a specific match
+ * @param matchId - Match ID
+ * @param competitionId - Competition ID (default: Championship)
  */
-async function fetchBoxScore(matchId: string): Promise<{
+async function fetchBoxScore(matchId: string, competitionId: string = DEFAULT_COMPETITION_ID): Promise<{
   homeStats: TeamStatistics | null;
   awayStats: TeamStatistics | null;
   homePlayers: PlayerStatistics[];
   awayPlayers: PlayerStatistics[];
 }> {
   try {
-    const html = await fetchFromGeniusSports(`/competition/${SLB_COMPETITION_ID}/match/${matchId}/boxscore`);
+    const html = await fetchFromGeniusSports(`/competition/${competitionId}/match/${matchId}/boxscore`);
     return parseBoxScoreHTML(html);
   } catch (error) {
     console.error('Failed to fetch box score:', error);
@@ -503,10 +523,12 @@ async function fetchBoxScore(matchId: string): Promise<{
 
 /**
  * Fetch play-by-play data to extract quarter scores
+ * @param matchId - Match ID
+ * @param competitionId - Competition ID (default: Championship)
  */
-async function fetchQuarterScores(matchId: string): Promise<QuarterScores> {
+async function fetchQuarterScores(matchId: string, competitionId: string = DEFAULT_COMPETITION_ID): Promise<QuarterScores> {
   try {
-    const html = await fetchFromGeniusSports(`/competition/${SLB_COMPETITION_ID}/match/${matchId}/playbyplay`);
+    const html = await fetchFromGeniusSports(`/competition/${competitionId}/match/${matchId}/playbyplay`);
     return parsePlayByPlayHTML(html);
   } catch (error) {
     console.error('Failed to fetch play-by-play:', error);
@@ -517,10 +539,12 @@ async function fetchQuarterScores(matchId: string): Promise<QuarterScores> {
 /**
  * Fetch match details from Genius Sports
  * Combines basic match info with box score and quarter scores
+ * @param matchId - Match ID
+ * @param competitionId - Competition ID (default: Championship)
  */
-export async function fetchGeniusSportsMatchDetails(matchId: string): Promise<MatchDetails | null> {
+export async function fetchGeniusSportsMatchDetails(matchId: string, competitionId: string = DEFAULT_COMPETITION_ID): Promise<MatchDetails | null> {
   // Get basic match info from schedule
-  const matches = await fetchGeniusSportsMatches();
+  const matches = await fetchGeniusSportsMatches(competitionId);
   const match = matches.find(m => m.id === matchId);
   
   if (!match) {
@@ -530,8 +554,8 @@ export async function fetchGeniusSportsMatchDetails(matchId: string): Promise<Ma
   // For completed or live matches, fetch detailed stats
   if (match.status === 'completed' || match.status === 'live') {
     const [boxScoreData, quarterScores] = await Promise.all([
-      fetchBoxScore(matchId),
-      fetchQuarterScores(matchId),
+      fetchBoxScore(matchId, competitionId),
+      fetchQuarterScores(matchId, competitionId),
     ]);
     
     return {
