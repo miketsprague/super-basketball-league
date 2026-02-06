@@ -21,6 +21,7 @@ export interface LeagueConfig extends League {
 export const LEAGUE_IDS = {
   SUPER_LEAGUE: 'super-league',
   SLB_TROPHY: 'slb-trophy',
+  SLB_CUP: 'slb-cup',
   EUROLEAGUE: 'euroleague',
   EUROCUP: 'eurocup',
 } as const;
@@ -49,6 +50,14 @@ export const predefinedLeagues: LeagueConfig[] = [
     country: 'England',
     apiProvider: 'geniussports',
     geniusSportsCompetitionId: SLB_COMPETITION_IDS.TROPHY,
+  },
+  {
+    id: LEAGUE_IDS.SLB_CUP,
+    name: 'SLB Cup',
+    shortName: 'Cup',
+    country: 'England',
+    apiProvider: 'geniussports',
+    geniusSportsCompetitionId: SLB_COMPETITION_IDS.CUP,
   },
   {
     id: LEAGUE_IDS.EUROLEAGUE,
