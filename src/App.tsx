@@ -6,7 +6,7 @@ import { MatchDetail } from './components/MatchDetail';
 import { LeagueSelector } from './components/LeagueSelector';
 import type { Match, StandingsEntry, League } from './types';
 import { fetchAllData, fetchLeagues, APIError } from './services/dataProvider';
-import { DEFAULT_LEAGUE, predefinedLeagues } from './services/leagues';
+import { DEFAULT_LEAGUE, predefinedLeagues, getLeagueConfig } from './services/leagues';
 
 // Helper function to extract detailed error message
 function getErrorMessage(error: unknown): string {
@@ -48,6 +48,16 @@ function HomePage() {
   }, [searchParams, leagues]);
 
   const selectedLeague = getSelectedLeague();
+
+  // Check if selected league supports standings
+  const leagueHasStandings = getLeagueConfig(selectedLeague.id)?.hasStandings !== false;
+
+  // Auto-switch to fixtures tab when league doesn't support standings
+  useEffect(() => {
+    if (!leagueHasStandings && activeTab === 'table') {
+      setActiveTab('fixtures');
+    }
+  }, [leagueHasStandings, activeTab]);
 
   // Fetch available leagues on mount
   useEffect(() => {
@@ -152,16 +162,18 @@ function HomePage() {
           >
             Fixtures & Results
           </button>
-          <button
-            onClick={() => setActiveTab('table')}
-            className={`flex-1 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'table'
-                ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            League Table
-          </button>
+          {leagueHasStandings && (
+            <button
+              onClick={() => setActiveTab('table')}
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                activeTab === 'table'
+                  ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              League Table
+            </button>
+          )}
         </div>
       </nav>
 

@@ -17,7 +17,8 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
   if (standings.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500">
-        No standings available
+        <p className="text-lg mb-2">No standings available</p>
+        <p className="text-sm">This competition may have progressed beyond the group stage.</p>
       </div>
     );
   }
