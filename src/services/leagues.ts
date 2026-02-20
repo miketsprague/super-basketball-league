@@ -15,6 +15,8 @@ export interface LeagueConfig extends League {
   competitionCode?: string;
   /** Competition ID for Genius Sports API (SLB competitions) */
   geniusSportsCompetitionId?: string;
+  /** Whether this competition has league table standings (default: true). False for knockout-only formats. */
+  hasStandings?: boolean;
 }
 
 // League IDs for internal use
@@ -58,6 +60,7 @@ export const predefinedLeagues: LeagueConfig[] = [
     country: 'England',
     apiProvider: 'geniussports',
     geniusSportsCompetitionId: SLB_COMPETITION_IDS.CUP,
+    hasStandings: false,
   },
   {
     id: LEAGUE_IDS.EUROLEAGUE,
