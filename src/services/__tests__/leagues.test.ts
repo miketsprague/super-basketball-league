@@ -7,7 +7,7 @@ import {
 
 describe('League Configuration', () => {
   describe('hasStandings', () => {
-    it('should default to true (undefined) for Championship', () => {
+    it('should default to true (undefined) for Super League (Championship)', () => {
       const config = getLeagueConfig(LEAGUE_IDS.SUPER_LEAGUE);
       expect(config).toBeDefined();
       expect(config?.hasStandings).toBeUndefined();
