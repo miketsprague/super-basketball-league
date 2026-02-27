@@ -3,6 +3,7 @@ import * as mockProvider from './mockProvider';
 import * as euroleagueApi from './euroleagueApi';
 import * as geniusSportsApi from './geniusSportsApi';
 import { predefinedLeagues, getApiProvider, getLeagueConfig, LEAGUE_IDS, type LeagueConfig } from './leagues';
+import { matchInvolvesTeam } from './teamStorage';
 
 /**
  * Custom error class for API failures
@@ -174,4 +175,30 @@ export async function fetchMatchDetails(matchId: string, leagueId?: string): Pro
   }
 
   return null;
+}
+
+/**
+ * Fetch matches from all leagues and filter by team name.
+ * Each match is annotated with leagueId and leagueName.
+ */
+export async function fetchMatchesForTeam(teamName: string): Promise<Match[]> {
+  const results = await Promise.allSettled(
+    predefinedLeagues.map(async (league) => {
+      const matches = await fetchMatches(league.id);
+      return matches.map((m) => ({
+        ...m,
+        leagueId: league.id,
+        leagueName: league.shortName,
+      }));
+    }),
+  );
+
+  const allMatches: Match[] = [];
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      allMatches.push(...result.value);
+    }
+  }
+
+  return allMatches.filter((m) => matchInvolvesTeam(m, teamName));
 }
