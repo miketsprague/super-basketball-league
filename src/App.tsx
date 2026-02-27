@@ -4,9 +4,11 @@ import { Fixtures } from './components/Fixtures';
 import { LeagueTable } from './components/LeagueTable';
 import { MatchDetail } from './components/MatchDetail';
 import { LeagueSelector } from './components/LeagueSelector';
+import { TeamView } from './components/TeamView';
 import type { Match, StandingsEntry, League } from './types';
 import { fetchAllData, fetchLeagues, APIError } from './services/dataProvider';
 import { DEFAULT_LEAGUE, predefinedLeagues, getLeagueConfig } from './services/leagues';
+import { getFollowedTeam } from './services/teamStorage';
 
 // Helper function to extract detailed error message
 function getErrorMessage(error: unknown): string {
@@ -36,6 +38,9 @@ function HomePage() {
   const [leagues, setLeagues] = useState<League[]>(predefinedLeagues);
   const [leaguesLoading, setLeaguesLoading] = useState(true);
   const [leaguesError, setLeaguesError] = useState<string | null>(null);
+
+  // Followed team
+  const followedTeam = getFollowedTeam();
 
   // Get selected league from URL params, falling back to default
   const getSelectedLeague = useCallback((): League => {
@@ -147,6 +152,7 @@ function HomePage() {
         selectedLeague={selectedLeague}
         onLeagueChange={handleLeagueChange}
         loading={leaguesLoading}
+        followedTeamName={followedTeam?.name}
       />
 
       {/* Tab Navigation */}
@@ -218,6 +224,7 @@ function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/match/:matchId" element={<MatchDetail />} />
+      <Route path="/team/:teamName" element={<TeamView />} />
     </Routes>
   );
 }

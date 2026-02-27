@@ -262,7 +262,12 @@ export function MatchDetail() {
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 )}
-                <p className="font-bold text-lg text-gray-900 break-words">{match.homeTeam.shortName}</p>
+                <button
+                  onClick={() => navigate(`/team/${encodeURIComponent(match.homeTeam.name)}`)}
+                  className="font-bold text-lg text-gray-900 break-words hover:text-orange-600 transition-colors"
+                >
+                  {match.homeTeam.shortName}
+                </button>
                 <p className="text-xs text-gray-500 break-words">{match.homeTeam.name}</p>
               </div>
               
@@ -281,7 +286,12 @@ export function MatchDetail() {
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 )}
-                <p className="font-bold text-lg text-gray-900 break-words">{match.awayTeam.shortName}</p>
+                <button
+                  onClick={() => navigate(`/team/${encodeURIComponent(match.awayTeam.name)}`)}
+                  className="font-bold text-lg text-gray-900 break-words hover:text-orange-600 transition-colors"
+                >
+                  {match.awayTeam.shortName}
+                </button>
                 <p className="text-xs text-gray-500 break-words">{match.awayTeam.name}</p>
               </div>
             </div>

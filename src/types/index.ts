@@ -26,6 +26,8 @@ export interface Match {
   time: string;
   venue: string;
   status: MatchStatus;
+  leagueId?: string;
+  leagueName?: string;
 }
 
 export interface QuarterScores {

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import type { StandingsEntry } from '../types';
 
 interface LeagueTableProps {
@@ -6,6 +7,8 @@ interface LeagueTableProps {
 }
 
 export function LeagueTable({ standings, loading }: LeagueTableProps) {
+  const navigate = useNavigate();
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -47,7 +50,12 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
             >
               <td className="py-3 px-2 font-medium text-gray-600">{entry.position}</td>
               <td className="py-3 px-2">
-                <span className="font-medium text-gray-900">{entry.team.shortName}</span>
+                <button
+                  onClick={() => navigate(`/team/${encodeURIComponent(entry.team.name)}`)}
+                  className="font-medium text-gray-900 hover:text-orange-600 transition-colors text-left"
+                >
+                  {entry.team.shortName}
+                </button>
               </td>
               <td className="py-3 px-2 text-center text-gray-600">{entry.played}</td>
               <td className="py-3 px-2 text-center text-gray-600">{entry.won}</td>
