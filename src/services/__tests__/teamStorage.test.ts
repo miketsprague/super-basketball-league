@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getFollowedTeam,
   setFollowedTeam,
@@ -7,8 +7,21 @@ import {
   matchInvolvesTeam,
 } from '../teamStorage';
 
+// Node.js 25+ exposes a native localStorage stub that shadows jsdom's implementation.
+// We need to provide a proper mock to ensure tests work across all environments.
+const storageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] ?? null,
+    setItem: (key: string, value: string) => { store[key] = value; },
+    removeItem: (key: string) => { delete store[key]; },
+    clear: () => { store = {}; },
+  };
+})();
+
 describe('Team Storage', () => {
   beforeEach(() => {
+    vi.stubGlobal('localStorage', storageMock);
     localStorage.clear();
   });
 
