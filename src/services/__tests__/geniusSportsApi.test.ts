@@ -357,6 +357,15 @@ describe('Genius Sports API', () => {
 });
 
 describe('Helper Functions', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', mockFetch);
+    mockFetch.mockReset();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   describe('getShortName', () => {
     it('should return known short names for SLB teams', async () => {
       mockFetch.mockResolvedValueOnce({
