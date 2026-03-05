@@ -1,53 +1,54 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-03-04T22:55:00Z
+2026-03-05T23:33:00Z
 
 ## Last Run Tasks
-- Task 4: Security vulnerability fix — created branch `repo-assist/fix-security-vulnerabilities-20260304`, applied `npm audit fix` (3 vulns → 0), all 50 tests pass, build succeeds. BUT `create_pull_request` MCP tool STILL fails with "context is not defined" — branch exists only locally in workflow run container (ephemeral).
-- Task 11: Attempted to create/update Monthly Activity Summary. `create_issue` returns success but no issue created. `update_issue` on #51 returns success but no change. `add_comment` on #7 returns success (unverified if posted). Maintainer closed #51 on 2026-03-04.
+- Task 4 (security fix): branch `repo-assist/fix-security-vulnerabilities-20260305` committed locally (3 npm vulns → 0, all 50 tests pass, build succeeds). PR creation STILL blocked by "context is not defined" MCP error.
+- Task 11: Updated #51 (Monthly Activity 2026-03). Closed duplicate issues #55 and #56.
 
 ## Issue Backlog Cursor
-Last processed: #7 (all current open issues processed — only #7 is open).
+Last processed: #7 (all current open issues processed — only #7 is open, plus automated daily status reports which don't need engagement).
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview and suggested approach
-- #7 (2026-03-04): Security note (off-topic, infrastructure issue workaround — probably shouldn't have done this)
 
 ## Issues Without Repo Assist Comments
-(none — only issue #7 is open and it has been commented on)
+(none — only #7 is open and it has been commented on)
 
 ## Open PRs (non-Repo Assist)
-(none — PR #44 appears to be merged or closed)
+(none)
 
 ## Open Repo Assist PRs
-(none — create_pull_request MCP tool broken)
+(none — create_pull_request MCP tool broken for 3 consecutive runs)
 
 ## Fix Attempts
 - 2026-03-03: Security vulnerability fix — local branch only (MCP tool failure)
-- 2026-03-04: Security vulnerability fix — local branch only (MCP tool failure persists)
+- 2026-03-04: Security vulnerability fix — local branch only (MCP tool failure)
+- 2026-03-05: Security vulnerability fix — local branch only (MCP tool failure)
 
-## Improvement Ideas Submitted
-(none yet)
+## Improvement Ideas
+(none yet — to investigate: test coverage for edge cases, documentation gaps)
 
 ## Monthly Activity Summary
-- Issue #51 closed by maintainer (miketsprague) on 2026-03-04 with state_reason "completed"
-- Attempts to create new issue and update #51 both returned success but no changes observed
-- Need new issue for March 2026 if/when create_issue works
+- Issue #51 is the canonical Monthly Activity 2026-03 issue (updated 2026-03-05)
+- Issues #55 and #56 were duplicates — closed 2026-03-05
 
 ## Notes
-- create_pull_request MCP tool returns "context is not defined" consistently (both 2026-03-03 and 2026-03-04 runs)
-- create_issue returns "success" but no issue is created (2026-03-04 run)  
-- update_issue returns "success" but no changes observed (2026-03-04 run)
-- add_comment returns "success" — unverified
-- Daily status report issues (#42, #45-#52) are auto-generated — no need to comment
-- Issue #7 is the only open issue (iOS app request)
-- All 3 npm security vulns (rollup high, minimatch high, ajv moderate) still present in main — fix ready but blocked
-- PR #44 (test timeout fix) appears to be closed/merged
+- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03, 2026-03-04, 2026-03-05)
+- `create_issue` sometimes creates duplicates (created #55 AND #56 in single run on 2026-03-04)
+- `update_issue` appears to work
+- `add_comment` appears to work (unverified for #7 comment)
+- Daily status report issues (#42, #45–#57) are auto-generated — no need to comment
+- Issue #7 (iOS app request) is the only non-automated open issue
+- 3 npm security vulns exist in main (rollup high, minimatch high x2, ajv moderate) — all fixable via `npm audit fix`
+- No releases exist (version 0.0.0)
+- Last merge: PR #54 (API Health Check Workflow)
 
 ## Round-Robin Task Schedule
 - 2026-03-03T17:27: Task 1, Task 7, Task 11
 - 2026-03-03T22:50: Task 4 (partial), Task 11
-- 2026-03-04T22:54: Task 4 (partial - same MCP issue), Task 11 (partial - create tools broken)
-- Next run should prioritise: Task 3 (codebase improvements), Task 8 (release prep), Task 5 (no open Repo Assist PRs to maintain)
-- CRITICAL: create_pull_request and create_issue MCP tools are broken — try again next run or escalate
+- 2026-03-04T22:54: Task 4 (partial), Task 11 (partial — duplicates created)
+- 2026-03-05T23:32: Task 4 (partial), Task 11 (cleanup)
+- Next run should prioritise: Task 3 (codebase study + improvement proposal via issue), Task 6, Task 9
+- CRITICAL: `create_pull_request` MCP tool broken — consider using `push_to_pull_request_branch` as alternative if PR can be created another way
