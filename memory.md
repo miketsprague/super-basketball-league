@@ -1,12 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-03-07T22:44:10Z
+2026-03-08T22:45:44Z
 
 ## Last Run Tasks
-- Task 2/4 (security fix): branch `repo-assist/fix-security-vulnerabilities-20260307` committed locally (3 npm vulns → 0, all 50 tests pass, build succeeds). PR creation STILL blocked by "context is not defined" MCP error — 5th consecutive run failure.
-- Task 3: Created issue #61 (test coverage improvement for dataProvider.ts)
-- Task 11: Updated #51 (Monthly Activity 2026-03) body comprehensively with all runs.
+- Task 2/4 (security fix): branch `repo-assist/fix-security-vulnerabilities-20260308` committed locally (3 npm vulns → 0, all 50 tests pass, build succeeds). PR creation STILL blocked by "context is not defined" MCP error — 6th consecutive run failure.
+- Task 11: Updated #51 (Monthly Activity 2026-03) body with current run.
 
 ## Issue Backlog Cursor
 Last processed: #7 (all current open issues processed — only #7 is open non-automated)
@@ -22,7 +21,7 @@ Last processed: #7 (all current open issues processed — only #7 is open non-au
 (none)
 
 ## Open Repo Assist PRs
-(none — create_pull_request MCP tool broken for 5 consecutive runs)
+(none — create_pull_request MCP tool broken for 6 consecutive runs)
 
 ## Fix Attempts
 - 2026-03-03: Security vulnerability fix — local branch only (MCP tool failure)
@@ -30,17 +29,18 @@ Last processed: #7 (all current open issues processed — only #7 is open non-au
 - 2026-03-05: Security vulnerability fix — local branch only (run failed)
 - 2026-03-06: Security vulnerability fix — local branch only (MCP tool failure, 4th attempt)
 - 2026-03-07: Security vulnerability fix — local branch `repo-assist/fix-security-vulnerabilities-20260307` — local branch only (MCP tool failure, 5th attempt)
+- 2026-03-08: Security vulnerability fix — local branch `repo-assist/fix-security-vulnerabilities-20260308` — local branch only (MCP tool failure, 6th attempt)
 
 ## Improvement Ideas
 - dataProvider.ts has no tests — issue #61 created for this (2026-03-07)
 
 ## Monthly Activity Summary
-- Issue #51 is the canonical Monthly Activity 2026-03 issue (body updated comprehensively 2026-03-07)
+- Issue #51 is the canonical Monthly Activity 2026-03 issue (body updated 2026-03-08)
 - Issue #56 was a duplicate — CLOSED 2026-03-06 (confirmed)
 - Issue #55 was a duplicate — CLOSED (confirmed)
 
 ## Notes
-- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03, 2026-03-04, 2026-03-05, 2026-03-06, 2026-03-07)
+- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-03-08, 6 runs)
 - `update_issue` max 1 per run — use `add_comment` for additional issue updates
 - `add_comment` appears to work reliably
 - `create_issue` appears to work reliably
@@ -58,4 +58,5 @@ Last processed: #7 (all current open issues processed — only #7 is open non-au
 - 2026-03-05T23:32: Task 4 (partial), Task 11 (cleanup)
 - 2026-03-06T22:51: Task 2/4 (partial — branch created, PR blocked), Task 11 (comment + closed #56)
 - 2026-03-07T22:44: Task 2/4 (partial — branch created, PR blocked), Task 3 (filed #61), Task 11 (updated body)
-- Next run should prioritise: Task 8 (release preparation), Task 9 (new contributors check), and investigate if PR tool is fixed
+- 2026-03-08T22:45: Task 2/4 (partial — branch created, PR blocked), Task 9 (no new contributors), Task 11 (updated body)
+- Next run should prioritise: Task 8 (release preparation), Task 10 (codebase improvements)
