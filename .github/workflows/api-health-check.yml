@@ -87,8 +87,14 @@ jobs:
             exit 1
           fi
 
-          # Extract a sample match ID for the boxscore check
-          MATCH_ID=$(echo "$HTML_CONTENT" | grep -oP 'extfix_\K[0-9]+' | head -1)
+          # Extract a completed/live match for the boxscore check when possible
+          MATCH_ID=$(printf '%s' "$HTML_CONTENT" | python3 -c "import re, sys; html = sys.stdin.read(); matches = re.findall(r'class\\s*=\\s*\"([^\"]*\\bmatch-wrap\\b[^\"]*)\"[^>]*id\\s*=\\s*\"extfix_(\\d+)\"', html); preferred = next((match_id for classes, match_id in matches if 'STATUS_COMPLETE' in classes or 'STATUS_LIVE' in classes), ''); fallback = matches[0][1] if matches else ''; print(preferred or fallback, end='')")
+          if [ -z "$MATCH_ID" ]; then
+            echo "::error::Could not extract a sample match ID from schedule HTML"
+            exit 1
+          fi
+
+          echo "Selected sample match ID: $MATCH_ID"
           echo "sample_match_id=$MATCH_ID" >> "$GITHUB_OUTPUT"
 
           echo "✅ Genius Sports Schedule endpoint healthy"
@@ -101,7 +107,7 @@ jobs:
           MATCH_ID="${{ steps.genius_schedule.outputs.sample_match_id }}"
           echo "Testing boxscore for match ID: $MATCH_ID"
 
-          RESPONSE=$(curl -s -w "\n%{http_code}" \
+          RESPONSE=$(curl --retry 3 --retry-delay 5 --retry-all-errors -s -w "\n%{http_code}" \
             -H "Accept: application/json" \
             -H "User-Agent: $USER_AGENT" \
             "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/41897/match/${MATCH_ID}/boxscore")
