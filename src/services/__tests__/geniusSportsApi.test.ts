@@ -353,6 +353,25 @@ describe('Genius Sports API', () => {
       const details = await fetchGeniusSportsMatchDetails('9999');
       expect(details).toBeNull();
     });
+
+    it('should not fetch boxscore or play-by-play for scheduled matches', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ html: mockScheduleHTML, css: [], js: [] }),
+      });
+
+      const details = await fetchGeniusSportsMatchDetails('2702607');
+
+      expect(details).not.toBeNull();
+      expect(details?.id).toBe('2702607');
+      expect(details?.status).toBe('scheduled');
+      expect(details?.homeStats).toBeUndefined();
+      expect(details?.awayStats).toBeUndefined();
+      expect(details?.homePlayers).toBeUndefined();
+      expect(details?.awayPlayers).toBeUndefined();
+      expect(details?.quarterScores).toBeUndefined();
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
   });
 });
 
