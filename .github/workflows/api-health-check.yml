@@ -107,6 +107,7 @@ jobs:
           MATCH_ID="${{ steps.genius_schedule.outputs.sample_match_id }}"
           echo "Testing boxscore for match ID: $MATCH_ID"
 
+          # Retry a few times because the upstream boxscore endpoint occasionally returns transient 5xx responses.
           RESPONSE=$(curl --retry 3 --retry-delay 5 --retry-all-errors -s -w "\n%{http_code}" \
             -H "Accept: application/json" \
             -H "User-Agent: $USER_AGENT" \
