@@ -188,7 +188,7 @@ export async function fetchMatchesForTeam(teamName: string): Promise<Match[]> {
       return matches.map((m) => ({
         ...m,
         leagueId: league.id,
-        leagueName: league.shortName,
+        leagueName: league.name,
       }));
     }),
   );
