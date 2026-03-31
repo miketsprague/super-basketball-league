@@ -408,8 +408,11 @@ describe('fetchMatchesForTeam', () => {
     const result = await fetchMatchesForTeam('Home Team');
 
     const annotated = result.find((m) => m.id === match.id);
-    expect(annotated?.leagueId).toBeDefined();
-    expect(annotated?.leagueName).toBeDefined();
+    expect(annotated).toBeDefined();
+
+    const league = predefinedLeagues.find((l) => l.id === annotated!.leagueId);
+    expect(league).toBeDefined();
+    expect(annotated!.leagueName).toBe(league!.name);
   });
 
   it('should handle individual league failures gracefully via allSettled', async () => {
