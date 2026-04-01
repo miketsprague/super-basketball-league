@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-03-31T23:00:00Z
+2026-04-01T23:03:00Z
 
 ## Last Run Tasks
-- Task 2: Prepared match detail perf fix branch `repo-assist/improve-match-detail-league-context-20260331` (pass league context in URL, eliminate up to 5 redundant API calls; 81/81 tests pass) — PR creation still broken (34th failure)
-- Task 11: Created new Monthly Activity 2026-04 issue (issue #51 for March was closed by maintainer on 2026-03-31)
+- Task 3: Implemented match detail perf fix on branch `repo-assist/improve-match-detail-league-context-20260401` (pass league context in URL, eliminate up to 5 redundant API calls; 81/81 tests pass) — create_pull_request still broken (35th failure)
+- Task 11: Updated Monthly Activity 2026-04 issue (#94) with run history
 
 ## Issue Backlog Cursor
 Last processed: #7 (only open non-automated issue)
@@ -20,38 +20,35 @@ Last processed: #7 (only open non-automated issue)
 (none)
 
 ## Open Repo Assist PRs
-(none — create_pull_request MCP tool broken for 34+ consecutive runs)
+(none — create_pull_request MCP tool broken for 35+ consecutive runs)
 
 ## Monthly Activity Summary
-- Issue #51 was closed by maintainer (miketsprague) on 2026-03-31 as "not_planned"
-- New issue for April 2026 created this run (create_issue returned success; exact number unknown - search didn't index in time)
-- April issue title: [Repo Assist] Monthly Activity 2026-04
+- Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated this run
 
-## Recent Maintainer Activity (2026-03-31)
+## Recent Maintainer Activity (2026-04-01)
+- Issue #95 created: Daily Status Report — 1 April 2026 (auto-generated, labelled report, daily-status)
 - PR #91 merged: "Fix 6 npm security vulnerabilities in dev dependencies" (0 vulns now!)
 - PR #92 merged: "Add unit tests for dataProvider.ts" (51→81 tests; included #93 fix)
 - PR #93 merged: "Fix leagueName annotation using league.name instead of league.shortName"
-- Issue #90 closed: Daily status report for March 31
 - Issue #51 closed: Monthly Activity 2026-03 (marked "not_planned")
 
 ## Current Repo State
 - npm vulnerabilities: **0** (all fixed)
 - Tests: **81** passing
-- Open issues: 1 (#7 - Native Swift iOS app)
+- Open issues: 3 (#94 monthly summary, #95 daily report, #7 iOS app request)
 - Open PRs: 0
 
 ## Local Branches Ready (awaiting PR creation tool fix)
-- NOTE: These branches are recreated each run since CI environment is ephemeral
-- Match detail perf fix: `repo-assist/improve-match-detail-league-context-20260331`
+- Match detail perf fix: `repo-assist/improve-match-detail-league-context-20260401`
   - Fixtures.tsx: handleMatchClick passes leagueId as ?league= query param
-  - MatchDetail.tsx: reads league search param, passes to fetchMatchDetails(matchId, leagueId)
+  - MatchDetail.tsx: reads league search param via useSearchParams, passes to fetchMatchDetails(matchId, leagueId)
   - Eliminates up to 5 redundant API calls per match detail page load
-  - 81/81 tests pass, lint clean
+  - 81/81 tests pass, lint clean, build clean
 
 ## Fix Attempts
 - 2026-03-03 to 2026-03-31: Security vulnerability fix — MERGED as PR #91 (maintainer did it)
 - 2026-03-09 to 2026-03-31: dataProvider.ts tests — MERGED as PR #92 (maintainer did it)
-- 2026-03-28 to 2026-03-31: Match detail perf fix — local branch only (34th PR failure)
+- 2026-03-28 to 2026-04-01: Match detail perf fix — local branch only (35th PR failure)
 
 ## Improvement Ideas
 - dataProvider.ts tests — DONE: merged as PR #92
@@ -59,7 +56,7 @@ Last processed: #7 (only open non-automated issue)
 - Match detail perf fix — PENDING: branch ready, PR creation still broken
 
 ## Notes
-- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-03-31, 34+ runs)
+- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-04-01, 35+ runs)
 - `update_issue` max 1 per run — use `add_comment` for additional issue updates
 - `add_comment` appears to work reliably
 - `create_issue` appears to work reliably
@@ -71,10 +68,12 @@ Last processed: #7 (only open non-automated issue)
 - NOTE: MatchDetails extends Match; has homeStats/awayStats/homePlayers/awayPlayers (not homeTeamStats/awayTeamStats); quarterScores is optional
 - Daily status report issues are auto-closed by maintainer; labelled `report`, `daily-status`
 - Branch `fix/show-all-fixtures` exists on origin (pushed Jan 18 2026, no PR, 1 commit by miketsprague); content already incorporated into main; stale branch
+- App.tsx uses `?league=` URL param for home page; Fixtures.tsx reads it via useSearchParams
 
 ## Round-Robin Task Schedule
 - 2026-03-28T22:51: Task 7 (#87 labelled), Task 2 (security fix branch), Task 10 (match detail investigation + perf fix), Task 11
 - 2026-03-29T22:53: Task 7 (#88 labelled), Task 2 (security fix branch), Task 11
 - 2026-03-30T23:00: Task 7 (#89 labelled), Task 2 (security fix branch), Task 11
 - 2026-03-31T23:00: Task 2 (match detail perf fix branch), Task 11 (new April summary)
-- Next run should prioritise: Task 3 (explore codebase improvements), Task 7 (label any new issues), Task 9 (welcome new contributors if any)
+- 2026-04-01T23:00: Task 3 (match detail perf fix implemented), Task 11 (updated April summary)
+- Next run should prioritise: Task 7 (label any new issues like #95), Task 1 (check #7 for new comments), Task 4 (dep updates check)
