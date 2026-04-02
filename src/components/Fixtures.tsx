@@ -106,7 +106,8 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
   // Save scroll position before navigating away
   const handleMatchClick = (matchId: string) => {
     sessionStorage.setItem(SCROLL_KEY, window.scrollY.toString());
-    navigate(`/match/${matchId}`);
+    const league = searchParams.get('league');
+    navigate(`/match/${matchId}${league ? `?league=${encodeURIComponent(league)}` : ''}`);
   };
 
   if (loading) {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import type { MatchDetails, TeamStatistics } from '../types';
 import { fetchMatchDetails } from '../services/dataProvider';
 
@@ -104,6 +104,8 @@ function TeamStatsComparison({ homeStats, awayStats }: TeamStatsComparisonProps)
 
 export function MatchDetail() {
   const { matchId } = useParams<{ matchId: string }>();
+  const [searchParams] = useSearchParams();
+  const leagueId = searchParams.get('league') ?? undefined;
   const navigate = useNavigate();
   const [match, setMatch] = useState<MatchDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -117,7 +119,7 @@ export function MatchDetail() {
     setError(null);
     
     try {
-      const details = await fetchMatchDetails(matchId);
+      const details = await fetchMatchDetails(matchId, leagueId);
       if (details) {
         setMatch(details);
         setLastUpdated(new Date());
@@ -129,7 +131,7 @@ export function MatchDetail() {
     } finally {
       setLoading(false);
     }
-  }, [matchId]);
+  }, [matchId, leagueId]);
 
   // Initial load
   useEffect(() => {
