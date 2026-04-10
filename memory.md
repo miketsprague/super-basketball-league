@@ -1,13 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-04-09T23:04:32Z
+2026-04-10T23:02:00Z
 
 ## Last Run Tasks
-- Task 2: Re-implemented EuroLeague season year fix branch `repo-assist/fix-issue-101-euroleague-season-year` (replace `CURRENT_SEASON_YEAR = '2025'` with `getCurrentSeasonYear()`; 81/81 tests pass) — `create_pull_request` still broken (44th consecutive failure)
-- Task 3: Added LeagueTable component tests on branch `repo-assist/improve-leaguetable-tests` (15 tests, 96/96 tests pass, lint clean) — PR creation still blocked
-- Task 4: Prepared deps update branch `repo-assist/deps-update-20260409` (indirect dep updates, 81/81 tests pass) — PR creation still blocked
-- Task 10: Implemented polling interval constant refactor on branch `repo-assist/improve-polling-interval-constant` (extracted `POLL_INTERVAL_MS` & `LIVE_POLL_INTERVAL_MS` to `src/constants.ts`; updated App.tsx, MatchDetail.tsx, TeamView.tsx; 81/81 tests pass, lint clean) — PR creation still blocked
+- Task 3: Added Fixtures component tests on branch `repo-assist/improve-fixtures-tests` (28 tests, 109/109 tests pass, lint clean) — `create_pull_request` still broken (45th consecutive failure)
+- Task 2: Re-implemented EuroLeague season year fix on branch `repo-assist/fix-issue-101-euroleague-season-year` (`getCurrentSeasonYear()` replaces hardcoded `'2025'`; 81/81 tests pass) — `create_pull_request` still broken (45th consecutive failure)
 - Task 11: Updated Monthly Activity 2026-04 issue (#94)
 
 ## Issue Backlog Cursor
@@ -24,45 +22,45 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - #99: "docs: investigate create_pull_request MCP tool error" (Copilot coding agent, DRAFT) — documents fix in KNOWN_ISSUES.md
 
 ## Open Repo Assist PRs
-(none — create_pull_request MCP tool broken for 44+ consecutive runs)
+(none — create_pull_request MCP tool broken for 45+ consecutive runs)
 
 ## Monthly Activity Summary
 - Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated this run
 
-## Recent Maintainer Activity (2026-04-09)
-- Issues #100-#107: Daily status reports (auto-generated)
+## Recent Maintainer Activity (2026-04-10)
+- Issue #108: Daily Status Report — 10 April 2026 (auto-generated, labels: report, daily-status, report daily-status)
 - No new maintainer comments or PRs since 2026-04-07
 
 ## Current Repo State
 - npm vulnerabilities: **0** (all fixed)
-- Tests: **81** passing on main; **96** passing with LeagueTable tests branch
-- Open issues: 11 (#107, #106, #105, #104, #103, #102, #101, #100, #98, #94, #7)
+- Tests: **81** passing on main; **109** passing with Fixtures tests branch
+- Open issues: 12 (#108, #107, #106, #105, #104, #103, #102, #101, #100, #98, #94, #7)
 - Open PRs: 1 (#99 docs for create_pull_request fix - DRAFT)
 
 ## Local Branches (need recreation each run — fresh runners don't persist)
+- Fixtures component tests: `repo-assist/improve-fixtures-tests`
+  - Created `src/components/__tests__/Fixtures.test.tsx` (28 tests)
+  - 109/109 tests pass (81 pre-existing + 28 new), lint clean
 - EuroLeague season year fix: `repo-assist/fix-issue-101-euroleague-season-year`
   - Replaced `CURRENT_SEASON_YEAR = '2025'` with `getCurrentSeasonYear()` (auto-derives: month>=10 ? year : year-1)
-  - 81/81 tests pass, lint clean, build clean
-  - Closes #101
-- LeagueTable component tests: `repo-assist/improve-leaguetable-tests`
-  - Created `src/components/__tests__/LeagueTable.test.tsx` (15 tests)
-  - 96/96 tests pass (81 pre-existing + 15 new), lint clean
-- Deps update: `repo-assist/deps-update-20260409`
-  - Only package-lock.json updated (indirect dep updates via npm update)
-  - 81/81 tests pass, lint clean, build clean
-- Polling interval constant: `repo-assist/improve-polling-interval-constant`
-  - Created `src/constants.ts` with `POLL_INTERVAL_MS = 5 * 60 * 1000` and `LIVE_POLL_INTERVAL_MS = 15_000`
-  - Updated App.tsx, MatchDetail.tsx (removed local `LIVE_POLL_INTERVAL` constant), TeamView.tsx
   - 81/81 tests pass, lint clean
+  - Closes #101
+
+## Pending Branches (need to be recreated + PR when tool fixed)
+- LeagueTable component tests: 15 tests, 96/96 pass (see previous runs for implementation)
+- Deps update: indirect dep updates only, 81/81 pass
+- Polling interval constant: `src/constants.ts` with `POLL_INTERVAL_MS = 5 * 60 * 1000` and `LIVE_POLL_INTERVAL_MS = 15_000`
+  - Updated App.tsx, MatchDetail.tsx (removed local `LIVE_POLL_INTERVAL` constant), TeamView.tsx
 
 ## Fix Attempts
 - 2026-03-03 to 2026-03-31: Security vulnerability fix — MERGED as PR #91 (maintainer did it)
 - 2026-03-09 to 2026-03-31: dataProvider.ts tests — MERGED as PR #92 (maintainer did it)
 - 2026-03-28 to 2026-04-02: Match detail perf fix — MERGED as PR #97 (Copilot coding agent did it) ✅
-- 2026-04-02 to 2026-04-09: Deps update — recreated each run, PR creation still broken
-- 2026-04-03 to 2026-04-09: EuroLeague season year fix — recreated each run, PR creation still broken (issue #101)
-- 2026-04-06 to 2026-04-09: LeagueTable component tests — recreated each run, PR creation still broken
-- 2026-04-07 to 2026-04-09: Polling interval constant — recreated each run, PR creation still broken
+- 2026-04-02 to 2026-04-10: Deps update — recreated each run, PR creation still broken
+- 2026-04-03 to 2026-04-10: EuroLeague season year fix — recreated each run, PR creation still broken (issue #101)
+- 2026-04-06 to 2026-04-10: LeagueTable component tests — recreated each run, PR creation still broken
+- 2026-04-07 to 2026-04-10: Polling interval constant — recreated each run, PR creation still broken
+- 2026-04-10: Fixtures component tests — created, PR creation still broken
 
 ## Improvement Ideas
 - dataProvider.ts tests — DONE: merged as PR #92
@@ -70,12 +68,13 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - Match detail perf fix — DONE: merged as PR #97
 - Deps update (minor/patch) — PENDING: branch ready, PR creation broken
 - EuroLeague season year hardcoding — PENDING: branch ready, PR creation broken (issue #101)
-- Component tests (Fixtures, MatchDetail, LeagueSelector) — PENDING
+- Component tests (MatchDetail, LeagueSelector) — PENDING
 - LeagueTable component tests — PENDING: branch ready (15 tests, 96/96 pass), PR creation blocked
+- Fixtures component tests — PENDING: branch ready (28 tests, 109/109 pass), PR creation blocked
 - Polling interval constant — PENDING: branch ready (src/constants.ts, POLL_INTERVAL_MS = 5 * 60 * 1000, LIVE_POLL_INTERVAL_MS = 15_000)
 
 ## Notes
-- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-04-09, 44+ runs)
+- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-04-10, 45+ runs)
 - Root cause: repo-assist.lock.yml pinned to gh-aw v0.50.6 (schema v1) — known bug, fix: `gh aw upgrade`
 - PR #99 documents this fix in KNOWN_ISSUES.md
 - `update_issue` max 1 per run — use `add_comment` for additional issue updates
@@ -83,13 +82,16 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - `create_issue` appears to work reliably
 - `add_labels` appears to work reliably
 - Issue #7 (iOS app request) is the only long-running user issue; no new human comments since last engagement (2026-03-04)
-- Tests: 81 passing on main; 96 passing on LeagueTable tests branch
+- Tests: 81 passing on main; 109 passing on Fixtures tests branch
 - NOTE: env var `VITE_USE_MOCK_FALLBACK` is evaluated at module load time in dataProvider.ts — vi.stubEnv won't work in tests for this flag
 - NOTE: Match.homeTeam and Match.awayTeam are Team objects (not strings): { id, name, shortName, logo? }
 - NOTE: StandingsEntry.team is a Team object; also has pointsFor, pointsAgainst, pointsDifference fields
 - NOTE: MatchDetails extends Match; has homeStats/awayStats/homePlayers/awayPlayers (not homeTeamStats/awayTeamStats); quarterScores is optional
 - NOTE: @testing-library/user-event is NOT installed; use fireEvent from @testing-library/react for click interactions
+- NOTE: Fixtures.tsx uses useNavigate + useSearchParams from react-router-dom; mock useNavigate, wrap in MemoryRouter for tests
+- NOTE: Fixtures tests use vi.setSystemTime(new Date('2026-04-10T12:00:00.000Z')) to fix "today" for stable date assertions
 - Daily status report issues are auto-closed by maintainer; labelled `report`, `daily-status`
+- Issue #108 has incorrect label 'report daily-status' (two labels merged); can't remove with safeoutputs (not in allowed list)
 - Branch `fix/show-all-fixtures` exists on origin (pushed Jan 18 2026, no PR, 1 commit by miketsprague); content already incorporated into main; stale branch
 - App.tsx uses `?league=` URL param for home page; Fixtures.tsx reads it via useSearchParams
 - Fixtures.tsx handleMatchClick already passes `?league=` param to match detail route (merged PR #97)
@@ -117,4 +119,5 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - 2026-04-07T23:05: Task 2/10 (re-implemented fix for #101), Task 10 (polling interval constant), Task 11
 - 2026-04-08T23:04: Task 4 (deps update 20260408), Task 2 (EuroLeague fix), Task 3 (LeagueTable tests 15 tests), Task 11
 - 2026-04-09T23:04: Task 2 (EuroLeague fix), Task 3 (LeagueTable tests), Task 4 (deps update 20260409), Task 10 (polling interval constant), Task 11
-- Next run should prioritise: Task 3 (Fixtures component tests), Task 1 (check daily status issues for labels), Task 9 (check new contributors)
+- 2026-04-10T22:59: Task 3 (Fixtures component tests, 28 tests), Task 2 (EuroLeague fix), Task 11
+- Next run should prioritise: Task 3 (MatchDetail or LeagueSelector component tests), Task 4 (deps update), Task 10 (new improvement idea)
