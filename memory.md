@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-04-12T23:00:00Z
+2026-04-14T23:07:00Z
 
 ## Last Run Tasks
-- Task 3: Added LeagueSelector component tests (17 tests) on branch `repo-assist/improve-leagueselector-tests` (98/98 tests pass) — `create_pull_request` still broken (47th consecutive failure)
-- Task 2: Re-implemented EuroLeague season year fix on branch `repo-assist/fix-issue-101-euroleague-season-year` (`getCurrentSeasonYear()` replaces hardcoded `'2025'`; 81/81 tests pass) — `create_pull_request` still broken
+- Task 2: Re-implemented EuroLeague season year fix on branch `repo-assist/fix-issue-101-euroleague-season-year` (`getCurrentSeasonYear()` replaces hardcoded `'2025'`; exported + 6 new tests; 87/87 tests pass, lint + build clean) — `create_pull_request` still broken (50th consecutive failure)
+- Task 3: Implemented polling interval constant refactor on branch `repo-assist/improve-polling-interval-constant` (`src/constants.ts` with `POLL_INTERVAL_MS` & `LIVE_POLL_INTERVAL_MS`; updated App.tsx, MatchDetail.tsx, TeamView.tsx; 81/81 tests pass, lint + build clean) — `create_pull_request` still broken
 - Task 11: Updated Monthly Activity 2026-04 issue (#94)
 
 ## Issue Backlog Cursor
@@ -22,65 +22,65 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - #99: "docs: investigate create_pull_request MCP tool error" (Copilot coding agent, DRAFT) — documents fix in KNOWN_ISSUES.md
 
 ## Open Repo Assist PRs
-(none — create_pull_request MCP tool broken for 47+ consecutive runs)
+(none — create_pull_request MCP tool broken for 50+ consecutive runs)
 
 ## Monthly Activity Summary
 - Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated this run
 
-## Recent Maintainer Activity (2026-04-12)
-- Issue #110: Daily Status Report — 12 April 2026 (auto-generated, labels: report, daily-status)
+## Recent Maintainer Activity (2026-04-14)
+- Issue #111: Daily Status Report — 13 April 2026 (auto-generated)
+- Issue #112: Daily Status Report — 14 April 2026 (auto-generated)
 - No new maintainer comments or PRs since 2026-04-07
 
 ## Current Repo State
 - npm vulnerabilities: **0** (all fixed)
-- Tests: **81** passing on main; **98** passing with LeagueSelector tests branch
-- Open issues: 14 (#110, #109, #108, #107, #106, #105, #104, #103, #102, #101, #100, #98, #94, #7)
+- Tests: **81** passing on main; **87** passing on EuroLeague season year fix branch
+- Open issues: 16 (#112, #111, #110, #109, #108, #107, #106, #105, #104, #103, #102, #101, #100, #98, #94, #7)
 - Open PRs: 1 (#99 docs for create_pull_request fix - DRAFT)
 
 ## Local Branches (need recreation each run — fresh runners don't persist)
-- LeagueSelector component tests: `repo-assist/improve-leagueselector-tests`
-  - Created `src/components/__tests__/LeagueSelector.test.tsx` (17 tests)
-  - 98/98 tests pass (81 pre-existing + 17 new), committed
 - EuroLeague season year fix: `repo-assist/fix-issue-101-euroleague-season-year`
-  - Replaced `CURRENT_SEASON_YEAR = '2025'` with `getCurrentSeasonYear()` (auto-derives: month>=10 ? year : year-1)
-  - 81/81 tests pass, committed
+  - Replaced `CURRENT_SEASON_YEAR = '2025'` with exported `getCurrentSeasonYear()` (auto-derives: month>=10 ? year : year-1)
+  - Added 6 tests covering season boundaries (87/87 pass), lint clean, build clean
+- Polling interval constant: `repo-assist/improve-polling-interval-constant`
+  - Created `src/constants.ts` with `POLL_INTERVAL_MS = 5 * 60 * 1000` and `LIVE_POLL_INTERVAL_MS = 15_000`
+  - Updated App.tsx, MatchDetail.tsx (removed local `LIVE_POLL_INTERVAL` constant), TeamView.tsx
+  - 81/81 tests pass, lint clean, build clean
 
 ## Pending Branches (need to be recreated + PR when tool fixed)
+- EuroLeague season year fix: 87 tests (81 pre-existing + 6 new), lint + build clean
+- Polling interval constant: 81/81 pass, lint + build clean
 - LeagueSelector component tests: 17 tests, 98/98 pass
 - MatchDetail component tests: 25 tests, 106/106 pass
 - Fixtures component tests: 28 tests, 109/109 pass
 - LeagueTable component tests: 15 tests, 96/96 pass
+- ErrorBoundary + TeamView component tests: 28 tests, 109/109 pass
 - Deps update: indirect dep updates only, 81/81 pass
-- Polling interval constant: `src/constants.ts` with `POLL_INTERVAL_MS = 5 * 60 * 1000` and `LIVE_POLL_INTERVAL_MS = 15_000`
-  - Updated App.tsx, MatchDetail.tsx (removed local `LIVE_POLL_INTERVAL` constant), TeamView.tsx
 
 ## Fix Attempts
 - 2026-03-03 to 2026-03-31: Security vulnerability fix — MERGED as PR #91 (maintainer did it)
 - 2026-03-09 to 2026-03-31: dataProvider.ts tests — MERGED as PR #92 (maintainer did it)
 - 2026-03-28 to 2026-04-02: Match detail perf fix — MERGED as PR #97 (Copilot coding agent did it) ✅
-- 2026-04-02 to 2026-04-12: Deps update — recreated each run, PR creation still broken
-- 2026-04-03 to 2026-04-12: EuroLeague season year fix — recreated each run, PR creation still broken (issue #101)
-- 2026-04-06 to 2026-04-12: LeagueTable component tests — recreated each run, PR creation still broken
-- 2026-04-07 to 2026-04-12: Polling interval constant — recreated each run, PR creation still broken
+- 2026-04-02 to 2026-04-14: Deps update — recreated each run, PR creation still broken
+- 2026-04-03 to 2026-04-14: EuroLeague season year fix — recreated each run, PR creation still broken (issue #101)
+- 2026-04-06 to 2026-04-14: LeagueTable component tests — recreated each run, PR creation still broken
+- 2026-04-07 to 2026-04-14: Polling interval constant — recreated each run, PR creation still broken
 - 2026-04-10: Fixtures component tests — created, PR creation still broken
 - 2026-04-11: MatchDetail component tests (25 tests) — created, PR creation still broken
 - 2026-04-12: LeagueSelector component tests (17 tests) — created, PR creation still broken
+- 2026-04-13: ErrorBoundary + TeamView component tests (28 tests) — created, PR creation still broken
 
 ## Improvement Ideas
 - dataProvider.ts tests — DONE: merged as PR #92
 - Security vulnerabilities — DONE: merged as PR #91
 - Match detail perf fix — DONE: merged as PR #97
 - Deps update (minor/patch) — PENDING: branch ready, PR creation broken
-- EuroLeague season year hardcoding — PENDING: branch ready, PR creation broken (issue #101)
-- Component tests (LeagueSelector) — DONE this run: 17 tests, branch ready, PR blocked
-- LeagueTable component tests — PENDING: branch ready (15 tests, 96/96 pass), PR creation blocked
-- Fixtures component tests — PENDING: branch ready (28 tests, 109/109 pass), PR creation blocked
-- MatchDetail component tests — PENDING: branch ready (25 tests, 106/106 pass), PR creation blocked
-- Polling interval constant — PENDING: branch ready (src/constants.ts, POLL_INTERVAL_MS = 5 * 60 * 1000, LIVE_POLL_INTERVAL_MS = 15_000)
-- Component tests (ErrorBoundary, TeamView) — TODO: next runs
+- EuroLeague season year hardcoding — PENDING: branch ready (87/87 pass), PR blocked (issue #101)
+- Polling interval constant — PENDING: branch ready (81/81 pass), PR creation blocked
+- All component tests (LeagueSelector, LeagueTable, Fixtures, MatchDetail, ErrorBoundary, TeamView) — PENDING: all branches ready, PR creation blocked
 
 ## Notes
-- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-04-12, 47+ runs)
+- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-04-14, 50+ runs)
 - Root cause: repo-assist.lock.yml pinned to gh-aw v0.50.6 (schema v1) — known bug, fix: `gh aw upgrade`
 - PR #99 documents this fix in KNOWN_ISSUES.md
 - `update_issue` max 1 per run — use `add_comment` for additional issue updates
@@ -88,7 +88,7 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - `create_issue` appears to work reliably
 - `add_labels` appears to work reliably
 - Issue #7 (iOS app request) is the only long-running user issue; no new human comments since last engagement (2026-03-04)
-- Tests: 81 passing on main; 98 passing on LeagueSelector tests branch
+- Tests: 81 passing on main; 87 passing on EuroLeague fix branch
 - NOTE: env var `VITE_USE_MOCK_FALLBACK` is evaluated at module load time in dataProvider.ts — vi.stubEnv won't work in tests for this flag
 - NOTE: Match.homeTeam and Match.awayTeam are Team objects (not strings): { id, name, shortName, logo? }
 - NOTE: StandingsEntry.team is a Team object; also has pointsFor, pointsAgainst, pointsDifference fields
@@ -99,6 +99,7 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - NOTE: MatchDetail.tsx uses useParams, useNavigate, useSearchParams — wrap in MemoryRouter with Routes for tests
 - NOTE: MatchDetail renders skeleton with animate-pulse class during loading
 - NOTE: LeagueSelector.tsx uses useNavigate — mock it; wrap in MemoryRouter for tests
+- NOTE: getCurrentSeasonYear() is exported from euroleagueApi.ts — test with vi.setSystemTime()
 - Daily status report issues are auto-closed by maintainer; labelled `report`, `daily-status`
 - Issue #108 has incorrect label 'report daily-status' (two labels merged); can't remove with safeoutputs (not in allowed list)
 - Branch `fix/show-all-fixtures` exists on origin (pushed Jan 18 2026, no PR, 1 commit by miketsprague); content already incorporated into main; stale branch
@@ -131,4 +132,6 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - 2026-04-10T22:59: Task 3 (Fixtures component tests, 28 tests), Task 2 (EuroLeague fix), Task 11
 - 2026-04-11T22:55: Task 2 (EuroLeague fix, 81/81 pass), Task 3 (MatchDetail component tests, 25 tests, 106/106 pass), Task 11
 - 2026-04-12T22:57: Task 3 (LeagueSelector component tests, 17 tests, 98/98 pass), Task 2 (EuroLeague fix), Task 11
-- Next run should prioritise: Task 3 (ErrorBoundary or TeamView component tests), Task 4 (investigate deps), Task 10 (new improvement)
+- 2026-04-13T23:09: Task 3 (ErrorBoundary + TeamView component tests, 28 tests, 109/109 pass), Task 2 (EuroLeague fix), Task 11
+- 2026-04-14T23:07: Task 2 (EuroLeague fix with 6 new tests, 87/87 pass), Task 3 (polling interval constant, 81/81 pass), Task 11
+- Next run should prioritise: Task 4 (deps update with current versions), Task 1/7 (check new issues, labeling), Task 10 (new improvement — e.g. investigate accessibility or SEO improvements)
