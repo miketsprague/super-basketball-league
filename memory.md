@@ -1,19 +1,20 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-04-14T23:07:00Z
+2026-04-15T23:09:00Z
 
 ## Last Run Tasks
-- Task 2: Re-implemented EuroLeague season year fix on branch `repo-assist/fix-issue-101-euroleague-season-year` (`getCurrentSeasonYear()` replaces hardcoded `'2025'`; exported + 6 new tests; 87/87 tests pass, lint + build clean) — `create_pull_request` still broken (50th consecutive failure)
-- Task 3: Implemented polling interval constant refactor on branch `repo-assist/improve-polling-interval-constant` (`src/constants.ts` with `POLL_INTERVAL_MS` & `LIVE_POLL_INTERVAL_MS`; updated App.tsx, MatchDetail.tsx, TeamView.tsx; 81/81 tests pass, lint + build clean) — `create_pull_request` still broken
+- Task 2: Re-implemented EuroLeague season year fix on branch `repo-assist/fix-issue-101-euroleague-season-year` (`getCurrentSeasonYear()` replaces hardcoded `'2025'`; exported + 6 new tests; 87/87 tests pass, lint + build clean) — `create_pull_request` still broken (51st consecutive failure)
+- Task 1: Commented on #101 with fix summary, test status, and branch name for maintainer review
 - Task 11: Updated Monthly Activity 2026-04 issue (#94)
 
 ## Issue Backlog Cursor
-Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
+Last processed: #113 (all non-automated open issues covered: #7, #98, #101)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview and suggested approach
 - #98 (2026-04-02): create_pull_request investigation — root cause (gh-aw v0.50.6 bug) and fix (gh aw upgrade)
+- #101 (2026-04-15): Fix summary, test status, branch name for maintainer review
 
 ## Issues Without Repo Assist Comments
 (none — all current non-automated issues either have comments or were filed by Repo Assist)
@@ -22,30 +23,25 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - #99: "docs: investigate create_pull_request MCP tool error" (Copilot coding agent, DRAFT) — documents fix in KNOWN_ISSUES.md
 
 ## Open Repo Assist PRs
-(none — create_pull_request MCP tool broken for 50+ consecutive runs)
+(none — create_pull_request MCP tool broken for 51+ consecutive runs)
 
 ## Monthly Activity Summary
 - Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated this run
 
-## Recent Maintainer Activity (2026-04-14)
-- Issue #111: Daily Status Report — 13 April 2026 (auto-generated)
-- Issue #112: Daily Status Report — 14 April 2026 (auto-generated)
+## Recent Maintainer Activity (2026-04-15)
+- Issue #113: Daily Status Report — 15 April 2026 (auto-generated)
 - No new maintainer comments or PRs since 2026-04-07
 
 ## Current Repo State
 - npm vulnerabilities: **0** (all fixed)
 - Tests: **81** passing on main; **87** passing on EuroLeague season year fix branch
-- Open issues: 16 (#112, #111, #110, #109, #108, #107, #106, #105, #104, #103, #102, #101, #100, #98, #94, #7)
+- Open issues: 17 (#113, #112, #111, #110, #109, #108, #107, #106, #105, #104, #103, #102, #101, #100, #98, #94, #7)
 - Open PRs: 1 (#99 docs for create_pull_request fix - DRAFT)
 
 ## Local Branches (need recreation each run — fresh runners don't persist)
 - EuroLeague season year fix: `repo-assist/fix-issue-101-euroleague-season-year`
   - Replaced `CURRENT_SEASON_YEAR = '2025'` with exported `getCurrentSeasonYear()` (auto-derives: month>=10 ? year : year-1)
   - Added 6 tests covering season boundaries (87/87 pass), lint clean, build clean
-- Polling interval constant: `repo-assist/improve-polling-interval-constant`
-  - Created `src/constants.ts` with `POLL_INTERVAL_MS = 5 * 60 * 1000` and `LIVE_POLL_INTERVAL_MS = 15_000`
-  - Updated App.tsx, MatchDetail.tsx (removed local `LIVE_POLL_INTERVAL` constant), TeamView.tsx
-  - 81/81 tests pass, lint clean, build clean
 
 ## Pending Branches (need to be recreated + PR when tool fixed)
 - EuroLeague season year fix: 87 tests (81 pre-existing + 6 new), lint + build clean
@@ -61,10 +57,10 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - 2026-03-03 to 2026-03-31: Security vulnerability fix — MERGED as PR #91 (maintainer did it)
 - 2026-03-09 to 2026-03-31: dataProvider.ts tests — MERGED as PR #92 (maintainer did it)
 - 2026-03-28 to 2026-04-02: Match detail perf fix — MERGED as PR #97 (Copilot coding agent did it) ✅
-- 2026-04-02 to 2026-04-14: Deps update — recreated each run, PR creation still broken
-- 2026-04-03 to 2026-04-14: EuroLeague season year fix — recreated each run, PR creation still broken (issue #101)
-- 2026-04-06 to 2026-04-14: LeagueTable component tests — recreated each run, PR creation still broken
-- 2026-04-07 to 2026-04-14: Polling interval constant — recreated each run, PR creation still broken
+- 2026-04-02 to 2026-04-15: Deps update — recreated each run, PR creation still broken
+- 2026-04-03 to 2026-04-15: EuroLeague season year fix — recreated each run, PR creation still broken (issue #101)
+- 2026-04-06 to 2026-04-15: LeagueTable component tests — recreated each run, PR creation still broken
+- 2026-04-07 to 2026-04-15: Polling interval constant — recreated each run, PR creation still broken
 - 2026-04-10: Fixtures component tests — created, PR creation still broken
 - 2026-04-11: MatchDetail component tests (25 tests) — created, PR creation still broken
 - 2026-04-12: LeagueSelector component tests (17 tests) — created, PR creation still broken
@@ -75,12 +71,13 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - Security vulnerabilities — DONE: merged as PR #91
 - Match detail perf fix — DONE: merged as PR #97
 - Deps update (minor/patch) — PENDING: branch ready, PR creation broken
-- EuroLeague season year hardcoding — PENDING: branch ready (87/87 pass), PR blocked (issue #101)
+- EuroLeague season year hardcoding — PENDING: branch ready (87/87 pass), PR blocked (issue #101), commented on issue
 - Polling interval constant — PENDING: branch ready (81/81 pass), PR creation blocked
 - All component tests (LeagueSelector, LeagueTable, Fixtures, MatchDetail, ErrorBoundary, TeamView) — PENDING: all branches ready, PR creation blocked
 
 ## Notes
-- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-04-14, 50+ runs)
+- `create_pull_request` MCP tool returns "context is not defined" consistently (runs: 2026-03-03 through 2026-04-15, 51+ runs)
+- `push_to_pull_request_branch` also returns "context is not defined" (confirmed 2026-04-15)
 - Root cause: repo-assist.lock.yml pinned to gh-aw v0.50.6 (schema v1) — known bug, fix: `gh aw upgrade`
 - PR #99 documents this fix in KNOWN_ISSUES.md
 - `update_issue` max 1 per run — use `add_comment` for additional issue updates
@@ -134,4 +131,5 @@ Last processed: #101 (all non-automated open issues covered: #7, #98, #101)
 - 2026-04-12T22:57: Task 3 (LeagueSelector component tests, 17 tests, 98/98 pass), Task 2 (EuroLeague fix), Task 11
 - 2026-04-13T23:09: Task 3 (ErrorBoundary + TeamView component tests, 28 tests, 109/109 pass), Task 2 (EuroLeague fix), Task 11
 - 2026-04-14T23:07: Task 2 (EuroLeague fix with 6 new tests, 87/87 pass), Task 3 (polling interval constant, 81/81 pass), Task 11
-- Next run should prioritise: Task 4 (deps update with current versions), Task 1/7 (check new issues, labeling), Task 10 (new improvement — e.g. investigate accessibility or SEO improvements)
+- 2026-04-15T23:09: Task 2 (EuroLeague fix, 87/87 pass), Task 1 (commented on #101), Task 11
+- Next run should prioritise: Task 3/10 (new improvement — accessibility, App.tsx tests, or API caching), Task 4 (deps update), Task 7 (labeling check)
