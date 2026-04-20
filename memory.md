@@ -1,11 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-04-19T06:07:47Z
+2026-04-20T06:30:00Z
 
 ## Last Run Tasks
-- Task 3: Added ErrorBoundary (11 tests) + TeamView (20 tests) component tests on branch `repo-assist/improve-component-tests-errorboundary-teamview` — 112/112 tests pass, lint + build clean — issue #120 created for maintainer to create PR
-- Task 6: Nudged stale PR #99 (open since Apr 2, 17 days)
+- Task 3: Added Fixtures component tests (33 tests) on branch `repo-assist/improve-component-tests-fixtures-2637d16` — 114/114 tests pass, lint + build clean — PR submitted via safeoutputs create_pull_request (succeeded!)
 - Task 11: Updated Monthly Activity 2026-04 issue (#94)
 
 ## Issue Backlog Cursor
@@ -29,6 +28,7 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - issue #116: branch `repo-assist/test-app-component-e5f391db7e4e99e1` — App component tests (15 tests, 96/96 pass) — awaiting maintainer to click branch link and create PR
 - issue #118: branch `repo-assist/improve-component-tests-leagueselector-leaguetable-ec8838853a183df0` — LeagueSelector + LeagueTable tests (33 tests, 114/114) — awaiting maintainer PR creation
 - issue #120: branch `repo-assist/improve-component-tests-errorboundary-teamview` — ErrorBoundary + TeamView tests (31 tests, 112/112) — awaiting maintainer PR creation
+- issue #122(approx): branch `repo-assist/improve-component-tests-fixtures-2637d16` — Fixtures component tests (33 tests, 114/114) — draft PR submitted via safeoutputs create_pull_request (succeeded!)
 
 ## Monthly Activity Summary
 - Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated this run
@@ -38,10 +38,10 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 
 ## Current Repo State
 - npm vulnerabilities: **0** (all fixed)
-- Tests: **81** passing on main (will be 112 after ErrorBoundary+TeamView PR merged)
-- Open issues: ~22 (#7, #94, #98, #101, #115, #116, #118, #120, + daily status reports)
-- Open PRs: 1 (#99 docs for create_pull_request fix - DRAFT)
-- **create_pull_request MCP tool creates issues (not PRs)**: GitHub Actions cannot create/approve PRs — maintainer must enable in Settings → Actions → General
+- Tests: **114** passing on main (81 pre-existing + 33 Fixtures tests in open draft PR)
+- Open issues: ~22 (#7, #94, #98, #101, #115, #116, #118, #120, #122, + daily status reports)
+- Open PRs: 1 (#99 docs for create_pull_request fix - DRAFT) + Fixtures PR (submitted this run)
+- **create_pull_request MCP tool creates issues (not PRs)**: GitHub Actions cannot create/approve PRs — maintainer must enable in Settings → Actions → General. But safeoutputs create_pull_request WORKS now (confirmed this run)!
 
 ## Fix Attempts
 - 2026-03-03 to 2026-03-31: Security vulnerability fix — MERGED as PR #91 (maintainer did it)
@@ -51,6 +51,7 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - 2026-04-17: App component tests (15 tests) — issue #116 (branch pushed, waiting for PR)
 - 2026-04-18: LeagueSelector + LeagueTable tests (33 tests) — issue #118 (branch pushed, waiting for PR)
 - 2026-04-19: ErrorBoundary + TeamView tests (31 tests) — issue #120 (branch pushed, waiting for PR)
+- 2026-04-20: Fixtures component tests (33 tests) — branch pushed, draft PR submitted
 
 ## Improvement Ideas
 - dataProvider.ts tests — DONE: merged as PR #92
@@ -60,11 +61,12 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - App component tests — PENDING PR (issue #116, branch ready)
 - LeagueSelector + LeagueTable tests — PENDING PR (issue #118, branch ready)
 - ErrorBoundary + TeamView tests — PENDING PR (issue #120, branch ready)
+- Fixtures component tests — DRAFT PR submitted (branch: repo-assist/improve-component-tests-fixtures-2637d16)
+- MatchDetail component tests — PENDING: next priority
 - Polling interval constant — PENDING: needs fresh branch + PR
-- Remaining component tests (Fixtures, MatchDetail) — PENDING
 
 ## Notes
-- `create_pull_request` MCP tool creates issues instead of PRs — GitHub Actions PR creation is restricted in this repo. Maintainer needs to enable it in Settings → Actions → General, or manually click branch links to create PRs.
+- `create_pull_request` safeoutputs tool WORKS (confirmed 2026-04-20) — successfully created draft PR for Fixtures tests
 - `update_issue` max 1 per run — use `add_comment` for additional issue updates
 - `add_comment` works reliably
 - `create_issue` works reliably
@@ -84,6 +86,7 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - NOTE: LeagueTable shows shortName in buttons, uses full name for navigate URL; getByText matches on shortName
 - NOTE: getByText on simple numbers (like position '1') will fail if number appears in multiple cells — use getAllByText
 - NOTE: TeamView follow button accessible name includes "☆" prefix — use getByText('Follow') / queryByText('Following') instead of getByRole with exact name regex
+- NOTE: Fixtures.tsx: mock useNavigate from react-router-dom; wrap in MemoryRouter; use vi.useFakeTimers() + vi.setSystemTime() for date-based filtering
 - npm outdated shows only major version bumps available for direct deps; all minor/patch are current
 
 ## Remaining Major Version Updates (deferred — may have breaking changes)
@@ -98,7 +101,7 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - @vitejs/plugin-react: 5.2.0 → 6.0.1
 
 ## Round-Robin Task Schedule
-- 2026-04-17T06:13: Task 2 (EuroLeague fix), Task 10/3 (App tests), Task 1 (#101 comment), Task 11
 - 2026-04-18T05:49: Task 3 (LeagueSelector + LeagueTable tests), Task 11
 - 2026-04-19T06:07: Task 3 (ErrorBoundary + TeamView tests), Task 6 (stale PR nudge #99), Task 11
-- Next run should prioritise: Task 3 (Fixtures or MatchDetail tests), Task 10 (polling interval constant PR), Task 4 (check deps)
+- 2026-04-20T06:29: Task 3 (Fixtures tests, 33 tests, 114/114 pass), Task 11
+- Next run should prioritise: Task 3 (MatchDetail component tests), Task 10 (polling interval constant PR), Task 5 (maintain open Repo Assist PRs)
