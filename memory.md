@@ -1,14 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-04-21T06:13:28Z
+2026-04-22T06:09:46Z
 
 ## Last Run Tasks
-- Task 3: Added MatchDetail component tests (38 tests) on branch `repo-assist/improve-component-tests-matchdetail` — 119/119 tests pass, lint + build clean — PR submitted via safeoutputs create_pull_request (creates issue fallback since GitHub Actions cannot create PRs)
+- Task 10: Polling interval constants refactor — created `src/constants.ts` with `POLL_INTERVAL_MS` (5 min) & `LIVE_POLL_INTERVAL_MS` (15s); updated App.tsx, TeamView.tsx, MatchDetail.tsx — 81/81 tests pass, lint + build clean — branch `repo-assist/improve-polling-constants-refactor`
 - Task 11: Updated Monthly Activity 2026-04 issue (#94)
 
 ## Issue Backlog Cursor
-Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
+Last processed: #127 (all non-automated open issues covered: #7, #98, #101)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview and suggested approach
@@ -29,7 +29,8 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - issue #118: branch `repo-assist/improve-component-tests-leagueselector-leaguetable-ec8838853a183df0` — LeagueSelector + LeagueTable tests (33 tests, 114/114) — awaiting maintainer PR creation
 - issue #121: branch `repo-assist/improve-component-tests-errorboundary-teamview` — ErrorBoundary + TeamView tests (31 tests, 112/112) — awaiting maintainer PR creation
 - issue #124: branch `repo-assist/improve-component-tests-fixtures-2637d16-09d3a24a34c80364` — Fixtures tests (33 tests, 114/114) — awaiting maintainer PR creation
-- (new this run): branch `repo-assist/improve-component-tests-matchdetail` — MatchDetail tests (38 tests, 119/119) — awaiting maintainer PR creation (issue may be created as #126)
+- issue #126: branch `repo-assist/improve-component-tests-matchdetail` — MatchDetail tests (38 tests, 119/119) — awaiting maintainer PR creation
+- (new this run): branch `repo-assist/improve-polling-constants-refactor` — polling interval constants refactor (81/81 tests) — awaiting maintainer PR creation
 
 ## Monthly Activity Summary
 - Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated this run
@@ -39,10 +40,10 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 
 ## Current Repo State
 - npm vulnerabilities: **0** (all fixed)
-- Tests: **119** passing on main (81 pre-existing + 38 MatchDetail tests in pending branch)
+- Tests: **81** passing on main (service tests only — component tests in pending branches)
 - Open issues: ~28 (including daily status reports and Repo Assist proposals)
 - Open PRs: 1 (#99 docs for create_pull_request fix - DRAFT)
-- **create_pull_request MCP tool creates issues (not PRs)**: GitHub Actions cannot create/approve PRs — maintainer must enable in Settings → Actions → General.
+- **create_pull_request MCP tool creates issues (fallback) when GitHub Actions cannot create PRs**: maintainer must enable in Settings → Actions → General.
 - **Duplicate issues**: #123 (dup of #124 Fixtures), #120 (dup of #121 ErrorBoundary+TeamView) — maintainer should close duplicates
 
 ## Fix Attempts
@@ -54,7 +55,8 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - 2026-04-18: LeagueSelector + LeagueTable tests (33 tests) — issue #118 (branch pushed, waiting for PR)
 - 2026-04-19: ErrorBoundary + TeamView tests (31 tests) — issue #121 (branch pushed, waiting for PR)
 - 2026-04-20: Fixtures component tests (33 tests) — issue #124 (branch pushed, waiting for PR)
-- 2026-04-21: MatchDetail component tests (38 tests) — branch pushed, issue pending
+- 2026-04-21: MatchDetail component tests (38 tests) — issue #126 (branch pushed, waiting for PR)
+- 2026-04-22: Polling interval constants refactor — branch `repo-assist/improve-polling-constants-refactor` (waiting for PR)
 
 ## Improvement Ideas
 - dataProvider.ts tests — DONE: merged as PR #92
@@ -65,8 +67,9 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - LeagueSelector + LeagueTable tests — PENDING PR (issue #118, branch ready)
 - ErrorBoundary + TeamView tests — PENDING PR (issue #121, branch ready)
 - Fixtures component tests — PENDING PR (issue #124, branch ready)
-- MatchDetail component tests — PENDING PR (branch `repo-assist/improve-component-tests-matchdetail`, this run)
-- Polling interval constant — PENDING: needs fresh branch + PR (next priority for Task 10)
+- MatchDetail component tests — PENDING PR (issue #126, branch ready)
+- Polling interval constants — PENDING PR (branch `repo-assist/improve-polling-constants-refactor`, this run)
+- Deps update (minor/patch) — next priority (all majors deferred)
 
 ## Notes
 - `create_pull_request` safeoutputs tool creates issues (fallback) when GitHub Actions cannot create PRs
@@ -91,6 +94,7 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - NOTE: TeamView follow button accessible name includes "☆" prefix — use getByText('Follow') / queryByText('Following') instead of getByRole with exact name regex
 - NOTE: Fixtures.tsx: mock useNavigate from react-router-dom; wrap in MemoryRouter; use vi.useFakeTimers() + vi.setSystemTime() for date-based filtering
 - NOTE: MatchDetail.tsx polling tests: use vi.useFakeTimers() BEFORE render, then use vi.runAllTimersAsync() + vi.advanceTimersByTimeAsync() inside act() — do NOT use waitFor with fake timers (causes timeout)
+- NOTE: POLL_INTERVAL_MS and LIVE_POLL_INTERVAL_MS are now exported from src/constants.ts (added 2026-04-22)
 - npm outdated shows only major version bumps available for direct deps; all minor/patch are current
 
 ## Remaining Major Version Updates (deferred — may have breaking changes)
@@ -105,8 +109,8 @@ Last processed: #119 (all non-automated open issues covered: #7, #98, #101)
 - @vitejs/plugin-react: 5.2.0 → 6.0.1
 
 ## Round-Robin Task Schedule
-- 2026-04-18T05:49: Task 3 (LeagueSelector + LeagueTable tests), Task 11
 - 2026-04-19T06:07: Task 3 (ErrorBoundary + TeamView tests), Task 6 (stale PR nudge #99), Task 11
 - 2026-04-20T06:29: Task 3 (Fixtures tests, 33 tests, 114/114 pass), Task 11
 - 2026-04-21T06:13: Task 3 (MatchDetail tests, 38 tests, 119/119 pass), Task 11
-- Next run should prioritise: Task 10 (polling interval constant refactor — create src/constants.ts with POLL_INTERVAL_MS & LIVE_POLL_INTERVAL_MS), Task 5 (maintain open Repo Assist PRs), Task 1 (scan issues for new activity)
+- 2026-04-22T06:09: Task 10 (polling interval constants refactor), Task 11
+- Next run should prioritise: Task 4 (deps update), Task 1 (scan for new issues/PRs), Task 9 (welcome new contributors check)
