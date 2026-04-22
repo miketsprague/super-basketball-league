@@ -9,6 +9,7 @@ import type { Match, StandingsEntry, League } from './types';
 import { fetchAllData, fetchLeagues, APIError } from './services/dataProvider';
 import { DEFAULT_LEAGUE, predefinedLeagues, getLeagueConfig } from './services/leagues';
 import { getFollowedTeam } from './services/teamStorage';
+import { POLL_INTERVAL_MS } from './constants';
 
 // Helper function to extract detailed error message
 function getErrorMessage(error: unknown): string {
@@ -108,7 +109,7 @@ function HomePage() {
     fetchData();
 
     // Optional: Auto-refresh every 5 minutes
-    const interval = setInterval(fetchData, 5 * 60 * 1000);
+    const interval = setInterval(fetchData, POLL_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [selectedLeague]);
 
