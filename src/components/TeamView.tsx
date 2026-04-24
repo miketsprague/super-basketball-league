@@ -4,6 +4,7 @@ import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
 import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
+import { POLL_INTERVAL_MS } from '../constants';
 
 export function TeamView() {
   const { teamName } = useParams<{ teamName: string }>();
@@ -41,7 +42,7 @@ export function TeamView() {
     loadTeamMatches();
 
     // Auto-refresh every 5 minutes
-    const interval = setInterval(loadTeamMatches, 5 * 60 * 1000);
+    const interval = setInterval(loadTeamMatches, POLL_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [loadTeamMatches]);
 

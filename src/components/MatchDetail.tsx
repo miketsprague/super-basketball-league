@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import type { MatchDetails, TeamStatistics } from '../types';
 import { fetchMatchDetails } from '../services/dataProvider';
-
-const LIVE_POLL_INTERVAL = 15000; // 15 seconds for live matches
+import { LIVE_POLL_INTERVAL_MS } from '../constants';
 
 function MatchDetailSkeleton() {
   return (
@@ -144,7 +143,7 @@ export function MatchDetail() {
     
     const interval = setInterval(() => {
       loadMatchDetails(false);
-    }, LIVE_POLL_INTERVAL);
+    }, LIVE_POLL_INTERVAL_MS);
     
     return () => clearInterval(interval);
   }, [match, loadMatchDetails]);
