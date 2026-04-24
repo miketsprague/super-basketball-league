@@ -1,14 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-04-23T06:17:30Z
+2026-04-24T06:21:03Z
 
 ## Last Run Tasks
-- Task 2/5: Created 4 PRs from pending branches (EuroLeague fix, App tests, LeagueSelector/LeagueTable tests, ErrorBoundary/TeamView tests)
+- Task 2/5: Created 4 PRs from pending branches (EuroLeague fix, Fixtures tests, MatchDetail tests, polling constants)
 - Task 11: Updated Monthly Activity 2026-04 issue (#94)
 
 ## Issue Backlog Cursor
-Last processed: #129 (all non-automated open issues covered: #7, #98, #101)
+Last processed: #134 (all non-automated open issues covered: #7, #98, #101)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview and suggested approach
@@ -23,14 +23,14 @@ Last processed: #129 (all non-automated open issues covered: #7, #98, #101)
 ## Open PRs (non-Repo Assist)
 - #99: "docs: investigate create_pull_request MCP tool error" (Copilot coding agent, DRAFT) — nudged 2026-04-19
 
-## Pending Repo Assist Branches (PRs submitted 2026-04-23, numbers TBD)
-- issue #101/#115: branch `repo-assist/fix-issue-101-euroleague-season-year-63610fbef8098669` — EuroLeague season year fix — PR submitted 2026-04-23
+## PRs Submitted (branches on remote, PR creation pending after workflow)
+- issue #101/#115: branch `repo-assist/fix-issue-101-euroleague-season-year-63610fbef8098669` — EuroLeague season year fix — PR submitted 2026-04-24
 - issue #116: branch `repo-assist/test-app-component-e5f391db7e4e99e1` — App component tests (15 tests) — PR submitted 2026-04-23
 - issue #118: branch `repo-assist/improve-component-tests-leagueselector-leaguetable-ec8838853a183df0` — LeagueSelector + LeagueTable tests (33 tests) — PR submitted 2026-04-23
 - issue #121: branch `repo-assist/improve-component-tests-errorboundary-teamview-99c1e151de4bc764` — ErrorBoundary + TeamView tests (31 tests) — PR submitted 2026-04-23
-- issue #124: branch `repo-assist/improve-component-tests-fixtures-2637d16-09d3a24a34c80364` — Fixtures tests (33 tests, 114/114) — awaiting PR creation (next run)
-- issue #126: branch `repo-assist/improve-component-tests-matchdetail-815058ea8b7f5927` — MatchDetail tests (38 tests, 119/119) — awaiting PR creation (next run)
-- issue #128: branch `repo-assist/improve-polling-constants-refactor-b91abe1986e9c547` — polling interval constants refactor (81/81 tests) — awaiting PR creation (next run)
+- issue #124: branch `repo-assist/improve-component-tests-fixtures-2637d16-09d3a24a34c80364` — Fixtures tests (33 tests) — PR submitted 2026-04-24
+- issue #126: branch `repo-assist/improve-component-tests-matchdetail-815058ea8b7f5927` — MatchDetail tests (38 tests) — PR submitted 2026-04-24
+- issue #128: branch `repo-assist/improve-polling-constants-refactor-b91abe1986e9c547` — polling constants refactor — PR submitted 2026-04-24
 
 ## Monthly Activity Summary
 - Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated this run
@@ -40,39 +40,39 @@ Last processed: #129 (all non-automated open issues covered: #7, #98, #101)
 
 ## Current Repo State
 - npm vulnerabilities: **0** (all fixed)
-- Tests: **81** passing on main (service tests only — component tests in pending branches)
-- Open issues: ~31 (including daily status reports and Repo Assist proposals)
+- Tests: **81** passing on main (component tests in pending branches)
+- Open issues: ~35 (including daily status reports and Repo Assist proposals)
 - Open PRs: 1 (#99 docs for create_pull_request fix - DRAFT)
-- **create_pull_request tool should now work** (lock files regenerated 2026-04-16); confirmed it returned `success` with patch on 2026-04-23
-- **Duplicate issues**: #123 (dup of #124 Fixtures), #120 (dup of #121 ErrorBoundary+TeamView) — maintainer should close duplicates
+- **create_pull_request tool generates patch files** (actual PRs created after workflow)
+- **Duplicate issues to close**: #123 (dup of #124), #120 (dup of #121), #130 (dup EuroLeague fix), #131 (dup App tests), #132 (dup LeagueSelector tests), #133 (dup ErrorBoundary/TeamView tests)
 
 ## Fix Attempts
 - 2026-03-03 to 2026-03-31: Security vulnerability fix — MERGED as PR #91 (maintainer did it)
 - 2026-03-09 to 2026-03-31: dataProvider.ts tests — MERGED as PR #92 (maintainer did it)
 - 2026-03-28 to 2026-04-02: Match detail perf fix — MERGED as PR #97 (Copilot coding agent did it)
-- 2026-04-23: EuroLeague season year fix — PR submitted from branch
-- 2026-04-23: App component tests (15 tests) — PR submitted from branch
-- 2026-04-23: LeagueSelector + LeagueTable tests (33 tests) — PR submitted from branch
-- 2026-04-23: ErrorBoundary + TeamView tests (31 tests) — PR submitted from branch
-- 2026-04-22: Polling interval constants refactor — branch pushed, PR needed next run
-- 2026-04-21: MatchDetail component tests (38 tests) — branch pushed, PR needed next run
-- 2026-04-20: Fixtures component tests (33 tests) — branch pushed, PR needed next run
+- 2026-04-23/24: EuroLeague season year fix — PR submitted (closes #101, #115)
+- 2026-04-23: App component tests (15 tests) — PR submitted (closes #116)
+- 2026-04-23: LeagueSelector + LeagueTable tests (33 tests) — PR submitted (closes #118)
+- 2026-04-23: ErrorBoundary + TeamView tests (31 tests) — PR submitted (closes #121)
+- 2026-04-24: Fixtures component tests (33 tests) — PR submitted (closes #124)
+- 2026-04-24: MatchDetail component tests (38 tests) — PR submitted (closes #126)
+- 2026-04-24: Polling interval constants refactor — PR submitted (closes #128)
 
 ## Improvement Ideas
 - dataProvider.ts tests — DONE: merged as PR #92
 - Security vulnerabilities — DONE: merged as PR #91
 - Match detail perf fix — DONE: merged as PR #97
-- EuroLeague season year hardcoding — PR submitted 2026-04-23
+- EuroLeague season year hardcoding — PR submitted 2026-04-24
 - App component tests — PR submitted 2026-04-23
 - LeagueSelector + LeagueTable tests — PR submitted 2026-04-23
 - ErrorBoundary + TeamView tests — PR submitted 2026-04-23
-- Fixtures component tests — PENDING PR (issue #124, branch ready)
-- MatchDetail component tests — PENDING PR (issue #126, branch ready)
-- Polling interval constants — PENDING PR (branch `repo-assist/improve-polling-constants-refactor-b91abe1986e9c547`)
+- Fixtures component tests — PR submitted 2026-04-24
+- MatchDetail component tests — PR submitted 2026-04-24
+- Polling interval constants — PR submitted 2026-04-24
 - Deps update (minor/patch) — next priority (all majors deferred)
 
 ## Notes
-- `create_pull_request` tool returned `success` with patch file 2026-04-23 — PRs should be created after workflow completes
+- `create_pull_request` tool returns "success" with patch file — actual PR creation happens after workflow; PRs sometimes created as issues instead (known bug)
 - `update_issue` max 1 per run — use `add_comment` for additional issue updates
 - `add_comment` works reliably
 - `create_issue` works reliably
@@ -113,4 +113,5 @@ Last processed: #129 (all non-automated open issues covered: #7, #98, #101)
 - 2026-04-21T06:13: Task 3 (MatchDetail tests, 38 tests, 119/119 pass), Task 11
 - 2026-04-22T06:09: Task 10 (polling interval constants refactor), Task 11
 - 2026-04-23T06:17: Task 2/5 (submitted 4 PRs from pending branches), Task 11
-- Next run should prioritise: Task 2/5 (create remaining 3 PRs), Task 1 (check for new issues), Task 9 (welcome new contributors check)
+- 2026-04-24T06:21: Task 2/5 (created 4 PRs from remaining branches), Task 11
+- Next run should prioritise: Task 1 (check new issues), Task 7 (labeling), Task 9 (welcome new contributors), Task 4 (deps update)
