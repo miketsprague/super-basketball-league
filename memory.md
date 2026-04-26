@@ -1,15 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-04-25T05:58:00Z
+2026-04-26T06:20:00Z
 
 ## Last Run Tasks
-- Task 2/5: Attempted PR creation for 4 branches (EuroLeague fix, polling constants, App tests, LeagueSelector/LeagueTable tests) — all created as issues due to permissions
-- Task 7: Labelled #135 (bug), #136 (refactor), #137 (enhancement), #138 (enhancement)
+- Task 7: Labelled #128 with `refactor`, #115 with `bug`
+- Task 10: Created docs issue for ARCHITECTURE.md inaccuracies (good first issue)
 - Task 11: Updated Monthly Activity 2026-04 issue (#94)
 
 ## Issue Backlog Cursor
-Last processed: #139 (all non-automated open issues covered: #7, #98, #101)
+Last processed: #144 (all non-automated open issues covered: #7, #98, #101, plus new docs issue)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview and suggested approach
@@ -29,7 +29,6 @@ Last processed: #139 (all non-automated open issues covered: #7, #98, #101)
 - This is because "Allow GitHub Actions to create and approve pull requests" is NOT enabled in repo settings
 - **DO NOT call create_pull_request again** until the maintainer enables this setting
 - Each call creates a new branch (with suffix) and a new issue — this creates noise
-- Issues #135–#138 (from 2026-04-24 run) + ~4 more (from 2026-04-25 run) are PR-proxy issues
 - Maintainer can click links in these issues to create PRs manually
 
 ## Branches Ready for PR (code complete, awaiting maintainer to create PR)
@@ -40,9 +39,10 @@ Last processed: #139 (all non-automated open issues covered: #7, #98, #101)
 - `repo-assist/improve-component-tests-fixtures-2637d16-09d3a24a34c80364` — Fixtures tests (33 tests) (closes #124) — 114/114 tests
 - `repo-assist/improve-component-tests-matchdetail-815058ea8b7f5927` — MatchDetail tests (38 tests) (closes #126) — 119/119 tests
 - `repo-assist/improve-polling-constants-refactor-b91abe1986e9c547` — polling constants refactor (closes #128, #136) — 81/81 tests
+- Plus newer branches from Apr 24-25 runs (same code, newer branch names with suffixes)
 
 ## Monthly Activity Summary
-- Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated 2026-04-25
+- Issue #94: [Repo Assist] Monthly Activity 2026-04 — open, updated 2026-04-26
 
 ## Recent Maintainer Activity
 - 2026-04-16: maintainer committed "fix: regenerate agentic workflow lock files" — gh-aw upgrade done
@@ -51,18 +51,12 @@ Last processed: #139 (all non-automated open issues covered: #7, #98, #101)
 ## Current Repo State
 - npm vulnerabilities: **0** (all fixed)
 - Tests: **81** passing on main (component tests in pending branches add up to ~152 more)
-- Open issues: ~35+ (including daily status reports and Repo Assist proposals/PR-proxy issues)
+- Open issues: ~36+ (including daily status reports and Repo Assist proposals/PR-proxy issues)
 - Open PRs: 1 (#99 docs for create_pull_request fix - DRAFT)
 - **create_pull_request tool creates issues (not PRs)** — GitHub Actions lacks permission to create PRs
 
 ## Duplicate issues to close (maintainer task)
-- #120 (dup of #121 — both ErrorBoundary/TeamView tests)
-- #123 (dup of #124 — both Fixtures tests)
-- #130 (dup of EuroLeague fix)
-- #131 (dup of App tests)
-- #132 (dup of LeagueSelector tests)
-- #133 (dup of ErrorBoundary/TeamView tests)
-- Plus ~4 more from 2026-04-25 run (unknown numbers)
+- #115, #116, #118, #120, #123, #124, #126, #128, #130, #131, #132, #133, #135, #136 — older versions superseded by #140–#143, #137, #138, #121
 
 ## Fix Attempts
 - 2026-03-03 to 2026-03-31: Security vulnerability fix — MERGED as PR #91 (maintainer did it)
@@ -76,14 +70,16 @@ Last processed: #139 (all non-automated open issues covered: #7, #98, #101)
 - dataProvider.ts tests — DONE: merged as PR #92
 - Security vulnerabilities — DONE: merged as PR #91
 - Match detail perf fix — DONE: merged as PR #97
-- EuroLeague season year hardcoding — branch ready, awaiting PR creation
-- App component tests — branch ready, awaiting PR creation
-- LeagueSelector + LeagueTable tests — branch ready, awaiting PR creation
-- ErrorBoundary + TeamView tests — branch ready, awaiting PR creation
-- Fixtures component tests — branch ready, awaiting PR creation
-- MatchDetail component tests — branch ready, awaiting PR creation
-- Polling interval constants — branch ready, awaiting PR creation
+- EuroLeague season year hardcoding — branch ready, awaiting PR creation (issue #140)
+- App component tests — branch ready, awaiting PR creation (issue #142)
+- LeagueSelector + LeagueTable tests — branch ready, awaiting PR creation (issue #143)
+- ErrorBoundary + TeamView tests — branch ready, awaiting PR creation (issue #121)
+- Fixtures component tests — branch ready, awaiting PR creation (issue #137)
+- MatchDetail component tests — branch ready, awaiting PR creation (issue #138)
+- Polling interval constants — branch ready, awaiting PR creation (issue #141)
+- ARCHITECTURE.md docs update — issue filed (good first issue), branch to be created when PR permission restored
 - Deps update (minor/patch) — next priority AFTER permission issue resolved
+- PWA manifest — possible future task
 
 ## Notes
 - `create_pull_request` tool creates issues NOT PRs — needs GitHub Actions PR creation permission
@@ -108,8 +104,9 @@ Last processed: #139 (all non-automated open issues covered: #7, #98, #101)
 - NOTE: TeamView follow button accessible name includes "☆" prefix — use getByText('Follow') / queryByText('Following') instead of getByRole with exact name regex
 - NOTE: Fixtures.tsx: mock useNavigate from react-router-dom; wrap in MemoryRouter; use vi.useFakeTimers() + vi.setSystemTime() for date-based filtering
 - NOTE: MatchDetail.tsx polling tests: use vi.useFakeTimers() BEFORE render, then use vi.runAllTimersAsync() + vi.advanceTimersByTimeAsync() inside act() — do NOT use waitFor with fake timers (causes timeout)
-- NOTE: POLL_INTERVAL_MS and LIVE_POLL_INTERVAL_MS are now exported from src/constants.ts (added 2026-04-22)
+- NOTE: POLL_INTERVAL_MS and LIVE_POLL_INTERVAL_MS are now exported from src/constants.ts (added 2026-04-22) — in pending branch only
 - npm outdated shows only major version bumps available for direct deps; all minor/patch are current
+- ARCHITECTURE.md has inaccurate component names (MatchCard, MatchList, StandingsTable, hooks/ dir don't exist) — docs issue filed
 
 ## Remaining Major Version Updates (deferred — may have breaking changes)
 - eslint: 9.39.4 → 10.2.0
@@ -129,4 +126,5 @@ Last processed: #139 (all non-automated open issues covered: #7, #98, #101)
 - 2026-04-23T06:17: Task 2/5 (submitted 4 PRs from pending branches), Task 11
 - 2026-04-24T06:21: Task 2/5 (created 4 PRs from remaining branches → created issues), Task 11
 - 2026-04-25T05:58: Task 2/5 (attempted 4 PRs → created issues), Task 7 (labeling), Task 11
-- Next run should prioritise: Task 1 (check new issues), Task 10 (find other improvements since PR creation is blocked), Task 11
+- 2026-04-26T06:20: Task 7 (labeling #128 refactor, #115 bug), Task 10 (docs issue), Task 11
+- Next run should prioritise: Task 1 (check new issues), Task 8 (release prep — no releases exist), Task 11
