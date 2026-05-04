@@ -156,9 +156,13 @@ function HomePage() {
       />
 
       {/* Tab Navigation */}
-      <nav className="bg-white shadow sticky top-0 z-10">
-        <div className="flex">
+      <nav className="bg-white shadow sticky top-0 z-10" aria-label="View">
+        <div className="flex" role="tablist">
           <button
+            role="tab"
+            id="fixtures-tab"
+            aria-selected={activeTab === 'fixtures'}
+            aria-controls="fixtures-panel"
             onClick={() => setActiveTab('fixtures')}
             className={`flex-1 py-3 text-sm font-medium transition-colors ${
               activeTab === 'fixtures'
@@ -170,6 +174,10 @@ function HomePage() {
           </button>
           {leagueHasStandings && (
             <button
+              role="tab"
+              id="table-tab"
+              aria-selected={activeTab === 'table'}
+              aria-controls="table-panel"
               onClick={() => setActiveTab('table')}
               className={`flex-1 py-3 text-sm font-medium transition-colors ${
                 activeTab === 'table'
@@ -205,9 +213,13 @@ function HomePage() {
             </button>
           </div>
         ) : activeTab === 'fixtures' ? (
-          <Fixtures matches={matches} loading={loading} />
+          <div role="tabpanel" id="fixtures-panel" aria-labelledby="fixtures-tab">
+            <Fixtures matches={matches} loading={loading} />
+          </div>
         ) : (
-          <LeagueTable standings={standings} loading={loading} />
+          <div role="tabpanel" id="table-panel" aria-labelledby="table-tab">
+            <LeagueTable standings={standings} loading={loading} />
+          </div>
         )}
       </main>
 
