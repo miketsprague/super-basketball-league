@@ -36,36 +36,53 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
             <th className="py-3 px-2 text-center w-8">P</th>
             <th className="py-3 px-2 text-center w-8">W</th>
             <th className="py-3 px-2 text-center w-8">L</th>
+            <th className="py-3 px-2 text-center w-12 hidden sm:table-cell">W%</th>
             <th className="py-3 px-2 text-center w-12 hidden sm:table-cell">+/-</th>
             <th className="py-3 px-2 text-center w-10 font-bold">Pts</th>
           </tr>
         </thead>
         <tbody>
-          {standings.map((entry, idx) => (
-            <tr
-              key={entry.team.id}
-              className={`border-b border-gray-100 ${
-                idx < 4 ? 'bg-green-50' : idx >= standings.length - 2 ? 'bg-red-50' : 'bg-white'
-              }`}
-            >
-              <td className="py-3 px-2 font-medium text-gray-600">{entry.position}</td>
-              <td className="py-3 px-2">
-                <button
-                  onClick={() => navigate(`/team/${encodeURIComponent(entry.team.name)}`)}
-                  className="font-medium text-gray-900 hover:text-orange-600 transition-colors text-left"
-                >
-                  {entry.team.shortName}
-                </button>
-              </td>
-              <td className="py-3 px-2 text-center text-gray-600">{entry.played}</td>
-              <td className="py-3 px-2 text-center text-gray-600">{entry.won}</td>
-              <td className="py-3 px-2 text-center text-gray-600">{entry.lost}</td>
-              <td className="py-3 px-2 text-center text-gray-600 hidden sm:table-cell">
-                {entry.pointsDifference > 0 ? '+' : ''}{entry.pointsDifference}
-              </td>
-              <td className="py-3 px-2 text-center font-bold text-orange-600">{entry.points}</td>
-            </tr>
-          ))}
+          {standings.map((entry, idx) => {
+            const winPct = entry.played > 0
+              ? Math.round((entry.won / entry.played) * 100)
+              : null;
+            return (
+              <tr
+                key={entry.team.id}
+                className={`border-b border-gray-100 ${
+                  idx < 4 ? 'bg-green-50' : idx >= standings.length - 2 ? 'bg-red-50' : 'bg-white'
+                }`}
+              >
+                <td className="py-3 px-2 font-medium text-gray-600">{entry.position}</td>
+                <td className="py-3 px-2">
+                  <button
+                    onClick={() => navigate(`/team/${encodeURIComponent(entry.team.name)}`)}
+                    className="flex items-center gap-2 font-medium text-gray-900 hover:text-orange-600 transition-colors text-left"
+                  >
+                    {entry.team.logo && (
+                      <img
+                        src={entry.team.logo}
+                        alt=""
+                        className="w-5 h-5 object-contain flex-shrink-0"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {entry.team.shortName}
+                  </button>
+                </td>
+                <td className="py-3 px-2 text-center text-gray-600">{entry.played}</td>
+                <td className="py-3 px-2 text-center text-gray-600">{entry.won}</td>
+                <td className="py-3 px-2 text-center text-gray-600">{entry.lost}</td>
+                <td className="py-3 px-2 text-center text-gray-600 hidden sm:table-cell">
+                  {winPct !== null ? `${winPct}%` : '—'}
+                </td>
+                <td className="py-3 px-2 text-center text-gray-600 hidden sm:table-cell">
+                  {entry.pointsDifference > 0 ? '+' : ''}{entry.pointsDifference}
+                </td>
+                <td className="py-3 px-2 text-center font-bold text-orange-600">{entry.points}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       <div className="mt-4 text-xs text-gray-500 px-2">
