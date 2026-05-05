@@ -1,11 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-04T06:54:00Z
+2026-05-05T06:28:00Z
 
 ## Last Run Tasks
-- Task 3: Submitted 2 more PRs (LeagueTable logos+W%, ARIA tab accessibility)
-- Task 6: Nudged PR #99 (stale since Apr 2, tooling now fixed)
+- Task 3: Submitted component tests PR (ErrorBoundary, LeagueSelector, LeagueTable — 104 tests, 23 new)
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
@@ -24,8 +23,9 @@ Last processed: #162 (all non-automated open issues covered)
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
 - #166: feat: PWA manifest and basketball icon — 81 tests ✅
-- (new): feat: team logos + W% in LeagueTable — 81 tests ✅ — branch improve-leaguetable-logos-winpct-2637d16-47155fe9e9b9d887-new
-- (new): feat: ARIA tab roles and panel ids — 81 tests ✅ — branch improve-aria-tab-accessibility-pr
+- #168: feat: team logos + W% in LeagueTable — 81 tests ✅
+- #169: feat: ARIA tab roles and panel ids — 81 tests ✅
+- (new): test: component tests ErrorBoundary/LeagueSelector/LeagueTable — 104 tests ✅ — branch repo-assist/improve-component-tests-2026-05-05
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice, Apr 19 + May 4)
@@ -33,25 +33,31 @@ Last processed: #162 (all non-automated open issues covered)
 ## PR Creation Status
 - PR creation IS WORKING
 - PRs from 2026-05-03: #163, #164, #165, #166
-- PRs from 2026-05-04: numbers TBD (submitted as improve-leaguetable... and improve-aria...)
+- PRs from 2026-05-04: #168, #169
+- PRs from 2026-05-05: component tests (# TBD)
 
 ## Proxy Issues to Close (when maintainer is ready)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130, #131, #132, #133, #135, #136, #137, #138, #140, #141, #142, #143, #147, #149, #151, #153, #155, #158, #159, #160, #161
 
 ## Branches Ready for PR (remaining)
-- repo-assist/improve-component-tests-errorboundary-teamview-99c1e151de4bc764 — ErrorBoundary/TeamView tests
-- repo-assist/improve-component-tests-fixtures-2637d16-09d3a24a34c80364 — Fixtures tests
-- repo-assist/improve-component-tests-leagueselector-leaguetable-ec8838853a183df0 — LeagueSelector/LeagueTable tests
-- repo-assist/improve-component-tests-matchdetail-815058ea8b7f5927 — MatchDetail tests
-- repo-assist/improve-polling-constants-refactor-b91abe1986e9c547 — polling constants refactor
-- repo-assist/test-app-component-e5f391db7e4e99e1 — App component tests
+- repo-assist/improve-component-tests-fixtures — Fixtures tests (complex: useNavigate + useSearchParams + MemoryRouter)
+- repo-assist/improve-component-tests-matchdetail — MatchDetail tests (complex: useParams + polling + timers)
+- repo-assist/test-app-component — App component tests (MemoryRouter + Routes)
 
 ## Monthly Activity Summary
 - Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN
 
 ## Current Repo State
 - npm vulnerabilities: 0
-- Tests: 81 passing on main (fix #163 branch adds 6 more euroleague tests = 87)
+- Tests: 81 passing on main; component tests branch has 104 (23 new)
+- Baseline main: 81 tests (5 test files, all service layer)
+- euroleague fix branch (#163): 87 tests
+
+## Component Tests Added (new in 2026-05-05 PR)
+- src/components/__tests__/ErrorBoundary.test.tsx — 6 tests
+- src/components/__tests__/LeagueSelector.test.tsx — 8 tests
+- src/components/__tests__/LeagueTable.test.tsx — 9 tests
+- Pattern: MemoryRouter wrapper, mock useNavigate, mock console.error for ErrorBoundary
 
 ## Round-Robin Task Schedule
 - 2026-04-29T06:37: Task 7 (labelled #147), Task 10 (LeagueTable logos + W%), Task 11
@@ -60,7 +66,8 @@ Last processed: #162 (all non-automated open issues covered)
 - 2026-05-02T06:30: Task 2/3/5 (prepared 4 PR branches), Task 11
 - 2026-05-03T06:38: Task 2/3 (submitted 4 real PRs), Task 11
 - 2026-05-04T06:54: Task 3 (2 more PRs), Task 6 (nudge #99), Task 11
-- Next: Task 3 (more PRs from remaining branches), Task 4 (deps check), Task 9 (welcome check)
+- 2026-05-05T06:28: Task 3 (component tests PR), Task 11
+- Next: Task 4 (deps check), Task 9 (welcome check), Task 3 (Fixtures/MatchDetail/App tests)
 
 ## Key Code Notes
 - VITE_USE_MOCK_FALLBACK evaluated at module load — vi.stubEnv needs vi.resetModules()
@@ -75,6 +82,7 @@ Last processed: #162 (all non-automated open issues covered)
 - getCurrentSeasonYear() from euroleagueApi.ts — test with vi.setSystemTime() (pending PR #163)
 - vitest: must import { describe, it, expect, vi } from 'vitest' explicitly
 - MatchDetail polling: vi.useFakeTimers() BEFORE render; vi.runAllTimersAsync() in act()
-- POLL_INTERVAL_MS and LIVE_POLL_INTERVAL_MS in src/constants.ts (pending branch)
-- LeagueTable (PR submitted): team logos 20x20px aria-hidden, W% column desktop-only
-- ARIA tab accessibility (PR submitted): App.tsx nav has tablist/tab/aria-selected/tabpanel/aria-labelledby
+- POLL_INTERVAL_MS and LIVE_POLL_INTERVAL_MS in src/constants.ts
+- LeagueTable (PR #168): team logos 20x20px aria-hidden, W% column desktop-only
+- ARIA tab accessibility (PR #169): App.tsx nav has tablist/tab/aria-selected/tabpanel/aria-labelledby
+- Component tests pattern: vi.mock useNavigate at module level, MemoryRouter wrapper, fireEvent for clicks
