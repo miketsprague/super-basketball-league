@@ -1,11 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-07T06:55:00Z
+2026-05-08T06:12:00Z
 
 ## Last Run Tasks
-- Task 3: MatchDetail component tests PR (29 tests, 110 total)
-- Task 1: Commented on #174 (package-lock.json protected-file failure explanation)
+- Task 3: App component tests PR (17 tests, 98 total)
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
@@ -30,6 +29,7 @@ Last processed: #175 (all non-automated open issues covered)
 - #171: test: component tests ErrorBoundary/LeagueSelector/LeagueTable — 104 tests ✅
 - #173: test: Fixtures component tests (25 tests, 106 total) ✅
 - #176: test: MatchDetail component tests (29 tests, 110 total) ✅
+- #178: test: App component tests (17 tests, 98 total) ✅
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice, Apr 19 + May 4)
@@ -45,8 +45,8 @@ Last processed: #175 (all non-automated open issues covered)
 - Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated this run)
 
 ## Current Repo State
-- npm vulnerabilities: 0
-- Tests: 81 passing on main; 110 with MatchDetail tests; 106 with Fixtures tests; 104 with ErrorBoundary/LeagueSelector/LeagueTable tests
+- npm vulnerabilities: 2 (1 moderate, 1 high) — can't fix without deps PR
+- Tests: 81 passing on main; 98 with App tests; 110 with MatchDetail tests; 106 with Fixtures tests; 104 with ErrorBoundary/LeagueSelector/LeagueTable tests
 - Baseline main: 81 tests (5 test files, all service layer)
 
 ## Component Tests Added (pending PRs)
@@ -55,6 +55,7 @@ Last processed: #175 (all non-automated open issues covered)
 - #171 PR: src/components/__tests__/LeagueTable.test.tsx — 9 tests
 - #173 PR: src/components/__tests__/Fixtures.test.tsx — 25 tests
 - #176 PR: src/components/__tests__/MatchDetail.test.tsx — 29 tests
+- #178 PR: src/components/__tests__/App.test.tsx — 17 tests
 
 ## Round-Robin Task Schedule
 - 2026-04-29T06:37: Task 7 (labelled #147), Task 10 (LeagueTable logos + W%), Task 11
@@ -66,7 +67,8 @@ Last processed: #175 (all non-automated open issues covered)
 - 2026-05-05T06:28: Task 3 (component tests PR #171), Task 11
 - 2026-05-06T06:44: Task 4 (deps update FAILED — protected files), Task 3 (Fixtures tests PR #173), Task 11
 - 2026-05-07T06:51: Task 3 (MatchDetail tests PR #176), Task 1 (#174 comment), Task 11
-- Next: Task 3 (App component tests), Task 6 (stale PR check), Task 8 (release check), Task 9 (welcome check)
+- 2026-05-08T06:08: Task 3 (App component tests PR #178), Task 11
+- Next: Task 6 (stale PR check), Task 7 (label issues), Task 8 (release check), Task 10 (keyboard nav or service worker)
 
 ## Key Code Notes
 - VITE_USE_MOCK_FALLBACK evaluated at module load — vi.stubEnv needs vi.resetModules()
@@ -77,7 +79,8 @@ Last processed: #175 (all non-automated open issues covered)
 - Fixtures.tsx: useNavigate + useSearchParams — mock useNavigate, wrap in MemoryRouter with initialEntries
 - MatchDetail.tsx: useParams, useNavigate, useSearchParams — MemoryRouter with Routes path="/match/:matchId"
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter; BrowserRouter in main.tsx
-- App.tsx (main): activeTab now in URL param ?tab=table (pending PR #165)
+- App.tsx: Fixtures renders shortName not name; future-dated scheduled matches for fixtures tab
+- Fixtures.tsx: default tab shows date >= today || status === 'live'; past completed → Results tab
 - getCurrentSeasonYear() from euroleagueApi.ts — test with vi.setSystemTime() (pending PR #163)
 - vitest: must import { describe, it, expect, vi } from 'vitest' explicitly
 - MatchDetail polling: vi.useFakeTimers() BEFORE render; vi.advanceTimersByTime(15001) works
