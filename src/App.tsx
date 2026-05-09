@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import { Fixtures } from './components/Fixtures';
 import { LeagueTable } from './components/LeagueTable';
@@ -112,6 +112,38 @@ function HomePage() {
     return () => clearInterval(interval);
   }, [selectedLeague]);
 
+  // Refs for keyboard focus management
+  const fixturesTabRef = useRef<HTMLButtonElement>(null);
+  const tableTabRef = useRef<HTMLButtonElement>(null);
+
+  const handleTabListKeyDown = useCallback((e: React.KeyboardEvent) => {
+    const tabs: Tab[] = leagueHasStandings ? ['fixtures', 'table'] : ['fixtures'];
+    const currentIndex = tabs.indexOf(activeTab);
+    const refs: Record<Tab, React.RefObject<HTMLButtonElement | null>> = {
+      fixtures: fixturesTabRef,
+      table: tableTabRef,
+    };
+
+    let nextIndex: number | null = null;
+    if (e.key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % tabs.length;
+    } else if (e.key === 'ArrowLeft') {
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    } else if (e.key === 'Home') {
+      nextIndex = 0;
+    } else if (e.key === 'End') {
+      nextIndex = tabs.length - 1;
+    }
+
+    if (nextIndex !== null) {
+      e.preventDefault();
+      const nextTab = tabs[nextIndex];
+      setActiveTab(nextTab);
+      refs[nextTab].current?.focus();
+    }
+  }, [activeTab, leagueHasStandings]);
+
+
   const handleLeagueChange = (league: League) => {
     // Update URL params to persist league selection
     setSearchParams(prev => {
@@ -156,9 +188,15 @@ function HomePage() {
       />
 
       {/* Tab Navigation */}
-      <nav className="bg-white shadow sticky top-0 z-10">
-        <div className="flex">
+      <nav className="bg-white shadow sticky top-0 z-10" aria-label="View">
+        <div className="flex" role="tablist" onKeyDown={handleTabListKeyDown}>
           <button
+            ref={fixturesTabRef}
+            role="tab"
+            id="fixtures-tab"
+            aria-selected={activeTab === 'fixtures'}
+            aria-controls="fixtures-panel"
+            tabIndex={activeTab === 'fixtures' ? 0 : -1}
             onClick={() => setActiveTab('fixtures')}
             className={`flex-1 py-3 text-sm font-medium transition-colors ${
               activeTab === 'fixtures'
@@ -170,6 +208,12 @@ function HomePage() {
           </button>
           {leagueHasStandings && (
             <button
+              ref={tableTabRef}
+              role="tab"
+              id="table-tab"
+              aria-selected={activeTab === 'table'}
+              aria-controls="table-panel"
+              tabIndex={activeTab === 'table' ? 0 : -1}
               onClick={() => setActiveTab('table')}
               className={`flex-1 py-3 text-sm font-medium transition-colors ${
                 activeTab === 'table'
@@ -205,9 +249,13 @@ function HomePage() {
             </button>
           </div>
         ) : activeTab === 'fixtures' ? (
-          <Fixtures matches={matches} loading={loading} />
+          <div role="tabpanel" id="fixtures-panel" aria-labelledby="fixtures-tab">
+            <Fixtures matches={matches} loading={loading} />
+          </div>
         ) : (
-          <LeagueTable standings={standings} loading={loading} />
+          <div role="tabpanel" id="table-panel" aria-labelledby="table-tab">
+            <LeagueTable standings={standings} loading={loading} />
+          </div>
         )}
       </main>
 
