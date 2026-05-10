@@ -1,14 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-09T06:27:00Z
+2026-05-10T06:43:00Z
 
 ## Last Run Tasks
-- Task 10: Keyboard navigation PR for tabs (91 tests ✅) — supersedes #169
+- Task 3/10: TeamView component tests (93 total ✅) — TBD PR number
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
-Last processed: #175 (all non-automated open issues covered)
+Last processed: #181 (all non-automated open issues covered)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -25,12 +25,13 @@ Last processed: #175 (all non-automated open issues covered)
 - #165: feat: persist active tab in URL — 81 tests ✅
 - #166: feat: PWA manifest and basketball icon — 81 tests ✅
 - #168: feat: team logos + W% in LeagueTable — 81 tests ✅
-- #169: feat: ARIA tab roles and panel ids — SUPERSEDED by keyboard nav PR below
+- #169: feat: ARIA tab roles and panel ids — SUPERSEDED by #180
 - #171: test: component tests ErrorBoundary/LeagueSelector/LeagueTable — 104 tests ✅
 - #173: test: Fixtures component tests (25 tests, 106 total) ✅
 - #176: test: MatchDetail component tests (29 tests, 110 total) ✅
 - #178: test: App component tests (17 tests, 98 total) ✅
-- TBD (submitted 2026-05-09): feat: keyboard navigation + ARIA roles for tabs — 91 tests ✅
+- #180: feat: keyboard navigation + ARIA roles for tabs — 91 tests ✅
+- TBD (submitted 2026-05-10): test: TeamView component tests (12 tests, 93 total) ✅
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice, Apr 19 + May 4)
@@ -47,17 +48,16 @@ Last processed: #175 (all non-automated open issues covered)
 
 ## Current Repo State
 - npm vulnerabilities: 2 (1 moderate, 1 high) — can't fix without deps PR
-- Tests: 81 passing on main; 91 with keyboard nav tests
+- Tests: 81 passing on main; 93 with TeamView tests (TBD PR)
 - Baseline main: 81 tests (5 test files, all service layer)
 
 ## Component Tests Added (pending PRs)
-- #171 PR: src/components/__tests__/ErrorBoundary.test.tsx — 6 tests
-- #171 PR: src/components/__tests__/LeagueSelector.test.tsx — 8 tests
-- #171 PR: src/components/__tests__/LeagueTable.test.tsx — 9 tests
-- #173 PR: src/components/__tests__/Fixtures.test.tsx — 25 tests
-- #176 PR: src/components/__tests__/MatchDetail.test.tsx — 29 tests
-- #178 PR: src/components/__tests__/App.test.tsx — 17 tests
-- TBD keyboard nav PR: src/components/__tests__/TabKeyboard.test.tsx — 10 tests
+- #171 PR: ErrorBoundary (6), LeagueSelector (8), LeagueTable (9)
+- #173 PR: Fixtures (25)
+- #176 PR: MatchDetail (29)
+- #178 PR: App (17)
+- #180 PR: TabKeyboard (10)
+- TBD PR: TeamView (12) — ALL components now covered
 
 ## Round-Robin Task Schedule
 - 2026-04-29T06:37: Task 7 (labelled #147), Task 10 (LeagueTable logos + W%), Task 11
@@ -70,8 +70,9 @@ Last processed: #175 (all non-automated open issues covered)
 - 2026-05-06T06:44: Task 4 (deps update FAILED — protected files), Task 3 (Fixtures tests PR #173), Task 11
 - 2026-05-07T06:51: Task 3 (MatchDetail tests PR #176), Task 1 (#174 comment), Task 11
 - 2026-05-08T06:08: Task 3 (App component tests PR #178), Task 11
-- 2026-05-09T06:27: Task 10 (keyboard nav + ARIA PR), Task 11
-- Next: Task 6 (stale PR check — but #99 already nudged twice), Task 7 (label issues), Task 8 (release check), Task 10 (service worker)
+- 2026-05-09T06:27: Task 10 (keyboard nav + ARIA PR #180), Task 11
+- 2026-05-10T06:43: Task 3/10 (TeamView tests — ALL components now covered), Task 11
+- Next: Task 1 (triage issues), Task 7 (label issues), Task 8 (release check), Task 5 (maintain PRs), Task 6 (stale PR check)
 
 ## Key Code Notes
 - VITE_USE_MOCK_FALLBACK evaluated at module load — vi.stubEnv needs vi.resetModules()
@@ -94,6 +95,10 @@ Last processed: #175 (all non-automated open issues covered)
 - App.tsx: LeagueSelector + Fixtures/LeagueTable — wrap in MemoryRouter for testing
 - App.tsx keyboard nav: handleTabListKeyDown on tablist div; ArrowLeft/Right/Home/End; tabIndex roving pattern
 - TabKeyboard.test.tsx: role='tablist' + onKeyDown; fireEvent.keyDown(tablist, { key: 'ArrowRight' })
+- TeamView.tsx: useParams (teamName), useNavigate, Link — wrap in MemoryRouter with Route path="/team/:teamName"
+- TeamView.tsx: auto-refresh every 5 min via setInterval; vi.useFakeTimers() ONLY in auto-refresh test (not beforeEach — breaks waitFor)
+- TeamView.tsx: mock Fixtures as stub to avoid dependency chain; mock dataProvider + teamStorage
+- TeamView.tsx: decodes URL-encoded teamName via decodeURIComponent
 
 ## Deps Update Notes (2026-05-06)
 - BLOCKED: package-lock.json is a protected file — deps PR cannot be created
