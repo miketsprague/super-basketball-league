@@ -4,9 +4,13 @@ import type { StandingsEntry } from '../types';
 interface LeagueTableProps {
   standings: StandingsEntry[];
   loading: boolean;
+  /** Number of top positions highlighted as playoff/promotion zone (default: 4). Set to 0 to disable. */
+  playoffPositions?: number;
+  /** Number of bottom positions highlighted as relegation zone (default: 2). Set to 0 to disable. */
+  relegationPositions?: number;
 }
 
-export function LeagueTable({ standings, loading }: LeagueTableProps) {
+export function LeagueTable({ standings, loading, playoffPositions = 4, relegationPositions = 2 }: LeagueTableProps) {
   const navigate = useNavigate();
 
   if (loading) {
@@ -45,7 +49,11 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
             <tr
               key={entry.team.id}
               className={`border-b border-gray-100 ${
-                idx < 4 ? 'bg-green-50' : idx >= standings.length - 2 ? 'bg-red-50' : 'bg-white'
+                playoffPositions > 0 && idx < playoffPositions
+                  ? 'bg-green-50'
+                  : relegationPositions > 0 && idx >= standings.length - relegationPositions
+                  ? 'bg-red-50'
+                  : 'bg-white'
               }`}
             >
               <td className="py-3 px-2 font-medium text-gray-600">{entry.position}</td>
@@ -68,9 +76,19 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
           ))}
         </tbody>
       </table>
-      <div className="mt-4 text-xs text-gray-500 px-2">
-        <span className="inline-block w-3 h-3 bg-green-50 border mr-1"></span> Playoff positions
-        <span className="inline-block w-3 h-3 bg-red-50 border ml-4 mr-1"></span> Relegation zone
+      <div className="mt-4 text-xs text-gray-500 px-2 flex flex-wrap gap-x-4 gap-y-1">
+        {playoffPositions > 0 && (
+          <span>
+            <span className="inline-block w-3 h-3 bg-green-50 border mr-1"></span>
+            Playoff positions (top {playoffPositions})
+          </span>
+        )}
+        {relegationPositions > 0 && (
+          <span>
+            <span className="inline-block w-3 h-3 bg-red-50 border mr-1"></span>
+            Relegation zone (bottom {relegationPositions})
+          </span>
+        )}
       </div>
     </div>
   );

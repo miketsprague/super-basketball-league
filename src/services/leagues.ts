@@ -17,6 +17,10 @@ export interface LeagueConfig extends League {
   geniusSportsCompetitionId?: string;
   /** Whether this competition has league table standings (default: true). False for knockout-only formats. */
   hasStandings?: boolean;
+  /** Number of top positions that qualify for playoffs/promotion (used to colour the standings table). */
+  playoffPositions?: number;
+  /** Number of bottom positions in the relegation zone (used to colour the standings table). */
+  relegationPositions?: number;
 }
 
 // League IDs for internal use
@@ -44,6 +48,8 @@ export const predefinedLeagues: LeagueConfig[] = [
     country: 'England',
     apiProvider: 'geniussports',
     geniusSportsCompetitionId: SLB_COMPETITION_IDS.CHAMPIONSHIP,
+    playoffPositions: 4,
+    relegationPositions: 2,
   },
   {
     id: LEAGUE_IDS.SLB_TROPHY,
@@ -52,6 +58,8 @@ export const predefinedLeagues: LeagueConfig[] = [
     country: 'England',
     apiProvider: 'geniussports',
     geniusSportsCompetitionId: SLB_COMPETITION_IDS.TROPHY,
+    playoffPositions: 4,
+    relegationPositions: 0,
   },
   {
     id: LEAGUE_IDS.SLB_CUP,
@@ -69,6 +77,8 @@ export const predefinedLeagues: LeagueConfig[] = [
     country: 'Europe',
     apiProvider: 'euroleague',
     competitionCode: 'E',
+    playoffPositions: 8,
+    relegationPositions: 0,
   },
   {
     id: LEAGUE_IDS.EUROCUP,
@@ -77,6 +87,8 @@ export const predefinedLeagues: LeagueConfig[] = [
     country: 'Europe',
     apiProvider: 'euroleague',
     competitionCode: 'U',
+    playoffPositions: 8,
+    relegationPositions: 0,
   },
 ];
 
