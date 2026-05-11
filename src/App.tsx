@@ -54,8 +54,11 @@ function HomePage() {
 
   const selectedLeague = getSelectedLeague();
 
+  // Get league-specific configuration
+  const leagueConfig = getLeagueConfig(selectedLeague.id);
+
   // Check if selected league supports standings
-  const leagueHasStandings = getLeagueConfig(selectedLeague.id)?.hasStandings !== false;
+  const leagueHasStandings = leagueConfig?.hasStandings !== false;
 
   // Auto-switch to fixtures tab when league doesn't support standings
   useEffect(() => {
@@ -207,7 +210,12 @@ function HomePage() {
         ) : activeTab === 'fixtures' ? (
           <Fixtures matches={matches} loading={loading} />
         ) : (
-          <LeagueTable standings={standings} loading={loading} />
+          <LeagueTable
+            standings={standings}
+            loading={loading}
+            playoffPositions={leagueConfig?.playoffPositions}
+            relegationPositions={leagueConfig?.relegationPositions}
+          />
         )}
       </main>
 
