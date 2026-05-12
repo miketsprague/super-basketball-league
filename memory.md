@@ -1,14 +1,16 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-11T07:53:55Z
+2026-05-12T06:57:00Z
 
 ## Last Run Tasks
-- Task 10: feat: configurable playoff/relegation zones per league (89 tests ✅) — PR TBD
+- Task 5: Verified all Repo Assist PRs clean (no merge conflicts)
+- Task 8: No releases exist — skipped release prep
+- Task 10: feat: highlight followed team's fixtures (PR TBD — new branch: repo-assist/improve-followed-team-fixtures-highlight)
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
-Last processed: #181 (all non-automated open issues covered)
+Last processed: #183 (all non-automated open issues covered; #183 is daily status report)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -32,7 +34,8 @@ Last processed: #181 (all non-automated open issues covered)
 - #178: test: App component tests (17 tests, 98 total) ✅
 - #180: feat: keyboard navigation + ARIA roles for tabs — 91 tests ✅
 - #182: test: TeamView component tests (12 tests, 93 total) ✅
-- TBD (submitted 2026-05-11): feat: configurable playoff/relegation zones per league — 89 tests ✅
+- #184: feat: configurable playoff/relegation zones per league — 89 tests ✅
+- TBD (submitted 2026-05-12): feat: highlight followed team fixtures — 81 tests ✅
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice, Apr 19 + May 4)
@@ -45,11 +48,11 @@ Last processed: #181 (all non-automated open issues covered)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130, #131, #132, #133, #135, #136, #137, #138, #140, #141, #142, #143, #147, #149, #151, #153, #155, #158, #159, #160, #161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated this run)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-12)
 
 ## Current Repo State
 - npm vulnerabilities: 2 (1 moderate, 1 high) — can't fix without deps PR
-- Tests: 81 passing on main; 89 with league zone config changes (TBD PR)
+- Tests: 81 passing on main; 89 with league zone config changes (PR #184)
 - Baseline main: 81 tests (5 test files, all service layer)
 
 ## Component Tests Added (pending PRs)
@@ -73,8 +76,9 @@ Last processed: #181 (all non-automated open issues covered)
 - 2026-05-08T06:08: Task 3 (App component tests PR #178), Task 11
 - 2026-05-09T06:27: Task 10 (keyboard nav + ARIA PR #180), Task 11
 - 2026-05-10T06:43: Task 3/10 (TeamView tests PR #182), Task 11
-- 2026-05-11T07:53: Task 10 (league zone config PR TBD), Task 11
-- Next: Task 1 (triage), Task 5 (maintain PRs), Task 6 (stale), Task 7 (labels), Task 8 (release check)
+- 2026-05-11T07:53: Task 10 (league zone config PR #184), Task 11
+- 2026-05-12T06:57: Task 5 (PR health check), Task 8 (no releases), Task 10 (followed team fixtures PR TBD), Task 11
+- Next: Task 1 (triage new issues), Task 6 (stale PRs/issues), Task 7 (labels), Task 9 (welcome new contributors)
 
 ## Key Code Notes
 - VITE_USE_MOCK_FALLBACK evaluated at module load — vi.stubEnv needs vi.resetModules()
@@ -101,11 +105,15 @@ Last processed: #181 (all non-automated open issues covered)
 - TeamView.tsx: auto-refresh every 5 min via setInterval; vi.useFakeTimers() ONLY in auto-refresh test (not beforeEach — breaks waitFor)
 - TeamView.tsx: mock Fixtures as stub to avoid dependency chain; mock dataProvider + teamStorage
 - TeamView.tsx: decodes URL-encoded teamName via decodeURIComponent
-- LeagueConfig: now has playoffPositions and relegationPositions fields (added 2026-05-11)
+- LeagueConfig: now has playoffPositions and relegationPositions fields (added PR #184)
 - LeagueTable: accepts playoffPositions and relegationPositions props (defaults: 4/2); legend is dynamic
 - EuroLeague: playoffPositions=8, relegationPositions=0 (not 4/2)
 - EuroCup: playoffPositions=8, relegationPositions=0 (not 4/2)
+- Fixtures.tsx: now accepts followedTeamName?: string prop (added 2026-05-12)
+- App.tsx: passes followedTeam?.name to Fixtures component (added 2026-05-12)
+- matchInvolvesTeam() imported in Fixtures.tsx from ../services/teamStorage (case-insensitive name match)
 
 ## Deps Update Notes (2026-05-06)
 - BLOCKED: package-lock.json is a protected file — deps PR cannot be created
 - Major version bumps NOT applied: @eslint/js 10.x, eslint 10.x, globals 17.x, jsdom 29.x, typescript 6.x, vite 8.x, @vitejs/plugin-react 6.x
+No memory files found
