@@ -1,6 +1,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMemo, useEffect, useCallback } from 'react';
 import type { Match } from '../types';
+import { matchInvolvesTeam } from '../services/teamStorage';
 
 type FilterTab = 'fixtures' | 'results' | 'all';
 
@@ -8,11 +9,12 @@ interface FixturesProps {
   matches: Match[];
   loading: boolean;
   showLeagueName?: boolean;
+  followedTeamName?: string;
 }
 
 const SCROLL_KEY = 'fixtures-scroll-position';
 
-export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
+export function Fixtures({ matches, loading, showLeagueName, followedTeamName }: FixturesProps) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   
@@ -238,7 +240,9 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
 
             {/* Matches for this date */}
             <div className="space-y-3 mt-2">
-              {group.matches.map((match) => (
+              {group.matches.map((match) => {
+                const isFollowedMatch = !!followedTeamName && matchInvolvesTeam(match, followedTeamName);
+                return (
                 <button
                   key={match.id}
                   onClick={() => handleMatchClick(match.id)}
@@ -248,11 +252,16 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                       : match.status === 'completed'
                       ? 'border-gray-400 hover:border-gray-500'
                       : 'border-orange-500 hover:border-orange-600'
-                  }`}
+                  }${isFollowedMatch ? ' ring-2 ring-orange-300 bg-orange-50/40' : ''}`}
                 >
                   <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
                     <span>{formatTime(match.time)}</span>
                     <div className="flex items-center gap-2">
+                      {isFollowedMatch && (
+                        <span className="px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-xs font-medium">
+                          ⭐ Your team
+                        </span>
+                      )}
                       {showLeagueName && match.leagueName && (
                         <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-medium">
                           {match.leagueName}
@@ -323,7 +332,8 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                     </div>
                   )}
                 </button>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}
