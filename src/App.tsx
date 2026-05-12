@@ -205,7 +205,7 @@ function HomePage() {
             </button>
           </div>
         ) : activeTab === 'fixtures' ? (
-          <Fixtures matches={matches} loading={loading} />
+          <Fixtures matches={matches} loading={loading} followedTeamName={followedTeam?.name} />
         ) : (
           <LeagueTable standings={standings} loading={loading} />
         )}
