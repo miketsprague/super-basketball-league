@@ -1,12 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-13T07:33:00Z
+2026-05-14T06:57:00Z
 
 ## Last Run Tasks
-- Task 7: Labelled PRs #176, #178, #180 with 'enhancement'
-- Task 9: No new human contributors (only github-actions bot in last 24h)
-- Task 10: feat: show last refreshed timestamp in fixtures view (PR TBD — new branch: repo-assist/improve-last-refreshed-timestamp)
+- Task 5: No CI failures or conflicts in open Repo Assist PRs (all clean)
+- Task 10: feat: add team search/filter to Fixtures view (PR TBD — new branch: repo-assist/improve-fixtures-team-search)
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
@@ -36,7 +35,8 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 - #182: test: TeamView component tests (12 tests, 93 total) ✅
 - #184: feat: configurable playoff/relegation zones per league — 89 tests ✅
 - #185: feat: highlight followed team fixtures — 81 tests ✅
-- TBD (submitted 2026-05-13): feat: show last refreshed timestamp in fixtures view — 85 tests ✅
+- #187: feat: show last refreshed timestamp in fixtures view — 85 tests ✅
+- TBD (submitted 2026-05-14): feat: add team search/filter to Fixtures view — 88 tests ✅ (7 new)
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice, Apr 19 + May 4)
@@ -49,11 +49,11 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130, #131, #132, #133, #135, #136, #137, #138, #140, #141, #142, #143, #147, #149, #151, #153, #155, #158, #159, #160, #161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-13)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-14)
 
 ## Current Repo State
 - npm vulnerabilities: 2 (1 moderate, 1 high) — can't fix without deps PR
-- Tests: 81 passing on main; 85 with last-refreshed-timestamp changes (PR TBD)
+- Tests: 81 passing on main; 88 with team-search changes (PR TBD)
 - Baseline main: 81 tests (5 test files, all service layer)
 
 ## Component Tests Added (pending PRs)
@@ -63,7 +63,8 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 - #178 PR: App (17)
 - #180 PR: TabKeyboard (10)
 - #182 PR: TeamView (12) — ALL components now covered
-- TBD PR: Fixtures.lastRefreshed (4)
+- #187 PR: Fixtures.lastRefreshed (4)
+- TBD PR: Fixtures.teamSearch (7)
 
 ## Round-Robin Task Schedule
 - 2026-04-29T06:37: Task 7 (labelled #147), Task 10 (LeagueTable logos + W%), Task 11
@@ -80,8 +81,9 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 - 2026-05-10T06:43: Task 3/10 (TeamView tests PR #182), Task 11
 - 2026-05-11T07:53: Task 10 (league zone config PR #184), Task 11
 - 2026-05-12T06:57: Task 5 (PR health check), Task 8 (no releases), Task 10 (followed team fixtures PR #185), Task 11
-- 2026-05-13T07:25: Task 7 (labels #176/#178/#180), Task 9 (no new contributors), Task 10 (last refreshed timestamp PR TBD), Task 11
-- Next: Task 1 (triage new issues), Task 2 (fix bugs), Task 5 (PR maintenance), Task 6 (stale PRs)
+- 2026-05-13T07:25: Task 7 (labels #176/#178/#180), Task 9 (no new contributors), Task 10 (last refreshed timestamp PR #187), Task 11
+- 2026-05-14T06:53: Task 5 (PR health — all clean), Task 10 (team search/filter PR TBD), Task 11
+- Next: Task 1 (triage), Task 2 (bug fix), Task 7 (labels), Task 9 (new contributors)
 
 ## Key Code Notes
 - VITE_USE_MOCK_FALLBACK evaluated at module load — vi.stubEnv needs vi.resetModules()
@@ -115,12 +117,14 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 - Fixtures.tsx: now accepts followedTeamName?: string prop (added PR #185, not on main yet)
 - App.tsx: passes followedTeam?.name to Fixtures component (added PR #185, not on main yet)
 - matchInvolvesTeam() imported in Fixtures.tsx from ../services/teamStorage (case-insensitive name match)
-- Fixtures.tsx: now accepts lastRefreshed?: Date | null prop (added PR TBD 2026-05-13)
+- Fixtures.tsx: now accepts lastRefreshed?: Date | null prop (added PR #187, not on main yet)
 - App.tsx: tracks lastRefreshed state, sets after successful fetchAllData and handleRetry
 - Fixtures.tsx: renders "Updated HH:MM" as aria-live=polite; shown even in empty-matches state
 - Fixtures.lastRefreshed.test.tsx: component tests for lastRefreshed prop (4 tests, requires MemoryRouter)
-- IMPORTANT: Fixtures.tsx early return for matches.length===0 must include lastRefreshed display (done in TBD PR)
-- Fixtures.tsx formatLastRefreshed must be defined BEFORE the loading/empty early returns
+- Fixtures.tsx: teamSearch state added (TBD PR, not on main yet); clears on tab change
+- Fixtures.teamSearch.test.tsx: 7 tests for team search; role='searchbox' for type=search inputs
+- Match type requires 'venue' field (can be 'TBC' string); always required in makeMatch helpers
+- Fixtures.tsx: tabFilteredMatches + filteredMatches pattern (two-stage filtering for team search)
 
 ## Deps Update Notes (2026-05-06)
 - BLOCKED: package-lock.json is a protected file — deps PR cannot be created
