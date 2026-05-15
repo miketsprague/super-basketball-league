@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import type { StandingsEntry } from '../types';
+import { normaliseTeamName } from '../services/teamStorage';
 
 interface LeagueTableProps {
   standings: StandingsEntry[];
   loading: boolean;
+  followedTeamName?: string;
 }
 
-export function LeagueTable({ standings, loading }: LeagueTableProps) {
+export function LeagueTable({ standings, loading, followedTeamName }: LeagueTableProps) {
   const navigate = useNavigate();
 
   if (loading) {
@@ -41,10 +43,16 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
           </tr>
         </thead>
         <tbody>
-          {standings.map((entry, idx) => (
+          {standings.map((entry, idx) => {
+            const isFollowed = followedTeamName
+              ? normaliseTeamName(entry.team.name) === normaliseTeamName(followedTeamName) ||
+                normaliseTeamName(entry.team.shortName) === normaliseTeamName(followedTeamName)
+              : false;
+            return (
             <tr
               key={entry.team.id}
               className={`border-b border-gray-100 ${
+                isFollowed ? 'bg-orange-50 ring-1 ring-inset ring-orange-300' :
                 idx < 4 ? 'bg-green-50' : idx >= standings.length - 2 ? 'bg-red-50' : 'bg-white'
               }`}
             >
@@ -55,6 +63,7 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
                   className="font-medium text-gray-900 hover:text-orange-600 transition-colors text-left"
                 >
                   {entry.team.shortName}
+                  {isFollowed && <span className="ml-1 text-orange-500" aria-label="followed team">⭐</span>}
                 </button>
               </td>
               <td className="py-3 px-2 text-center text-gray-600">{entry.played}</td>
@@ -65,7 +74,8 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
               </td>
               <td className="py-3 px-2 text-center font-bold text-orange-600">{entry.points}</td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
       <div className="mt-4 text-xs text-gray-500 px-2">
