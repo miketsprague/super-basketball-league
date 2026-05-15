@@ -1,15 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-14T06:57:00Z
+2026-05-15T07:39:00Z
 
 ## Last Run Tasks
-- Task 5: No CI failures or conflicts in open Repo Assist PRs (all clean)
-- Task 10: feat: add team search/filter to Fixtures view (PR TBD — new branch: repo-assist/improve-fixtures-team-search)
+- Task 7: Labelled PRs #187 and #189 with `enhancement`
+- Task 10: feat: highlight followed team's row in league table (PR TBD — new branch: repo-assist/improve-league-table-followed-team)
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
-Last processed: #183 (all non-automated open issues covered; #183 is daily status report)
+Last processed: #190 (all non-automated open issues covered; #190 is daily status report)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -36,7 +36,8 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 - #184: feat: configurable playoff/relegation zones per league — 89 tests ✅
 - #185: feat: highlight followed team fixtures — 81 tests ✅
 - #187: feat: show last refreshed timestamp in fixtures view — 85 tests ✅
-- TBD (submitted 2026-05-14): feat: add team search/filter to Fixtures view — 88 tests ✅ (7 new)
+- #189: feat: add team search/filter to Fixtures view — 88 tests ✅ (7 new)
+- TBD (submitted 2026-05-15): feat: highlight followed team's row in league table — 87 tests ✅ (6 new)
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice, Apr 19 + May 4)
@@ -49,11 +50,11 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130, #131, #132, #133, #135, #136, #137, #138, #140, #141, #142, #143, #147, #149, #151, #153, #155, #158, #159, #160, #161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-14)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-15)
 
 ## Current Repo State
 - npm vulnerabilities: 2 (1 moderate, 1 high) — can't fix without deps PR
-- Tests: 81 passing on main; 88 with team-search changes (PR TBD)
+- Tests: 81 passing on main; 87 with followed-team-league-table changes (PR TBD)
 - Baseline main: 81 tests (5 test files, all service layer)
 
 ## Component Tests Added (pending PRs)
@@ -64,7 +65,8 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 - #180 PR: TabKeyboard (10)
 - #182 PR: TeamView (12) — ALL components now covered
 - #187 PR: Fixtures.lastRefreshed (4)
-- TBD PR: Fixtures.teamSearch (7)
+- #189 PR: Fixtures.teamSearch (7)
+- TBD PR: LeagueTable.followedTeam (6)
 
 ## Round-Robin Task Schedule
 - 2026-04-29T06:37: Task 7 (labelled #147), Task 10 (LeagueTable logos + W%), Task 11
@@ -82,8 +84,9 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 - 2026-05-11T07:53: Task 10 (league zone config PR #184), Task 11
 - 2026-05-12T06:57: Task 5 (PR health check), Task 8 (no releases), Task 10 (followed team fixtures PR #185), Task 11
 - 2026-05-13T07:25: Task 7 (labels #176/#178/#180), Task 9 (no new contributors), Task 10 (last refreshed timestamp PR #187), Task 11
-- 2026-05-14T06:53: Task 5 (PR health — all clean), Task 10 (team search/filter PR TBD), Task 11
-- Next: Task 1 (triage), Task 2 (bug fix), Task 7 (labels), Task 9 (new contributors)
+- 2026-05-14T06:53: Task 5 (PR health — all clean), Task 10 (team search/filter PR #189), Task 11
+- 2026-05-15T07:33: Task 7 (labels #187/#189), Task 10 (followed team league table row PR TBD), Task 11
+- Next: Task 1 (triage), Task 5 (PR health check), Task 9 (new contributors), Task 10 (consider: service worker)
 
 ## Key Code Notes
 - VITE_USE_MOCK_FALLBACK evaluated at module load — vi.stubEnv needs vi.resetModules()
@@ -121,10 +124,15 @@ Last processed: #183 (all non-automated open issues covered; #183 is daily statu
 - App.tsx: tracks lastRefreshed state, sets after successful fetchAllData and handleRetry
 - Fixtures.tsx: renders "Updated HH:MM" as aria-live=polite; shown even in empty-matches state
 - Fixtures.lastRefreshed.test.tsx: component tests for lastRefreshed prop (4 tests, requires MemoryRouter)
-- Fixtures.tsx: teamSearch state added (TBD PR, not on main yet); clears on tab change
+- Fixtures.tsx: teamSearch state added (PR #189, not on main yet); clears on tab change
 - Fixtures.teamSearch.test.tsx: 7 tests for team search; role='searchbox' for type=search inputs
 - Match type requires 'venue' field (can be 'TBC' string); always required in makeMatch helpers
 - Fixtures.tsx: tabFilteredMatches + filteredMatches pattern (two-stage filtering for team search)
+- LeagueTable.tsx: now accepts followedTeamName?: string prop (added PR TBD, not on main yet)
+- LeagueTable: row highlight: bg-orange-50 ring-1 ring-inset ring-orange-300 when isFollowed
+- LeagueTable: ⭐ star badge with aria-label="followed team" next to team shortName
+- LeagueTable.followedTeam.test.tsx: 6 tests; uses aria-label="followed team" to detect star badge
+- LeagueTable tests: vi.mock react-router-dom with useNavigate: () => vi.fn() + vi.importActual
 
 ## Deps Update Notes (2026-05-06)
 - BLOCKED: package-lock.json is a protected file — deps PR cannot be created
