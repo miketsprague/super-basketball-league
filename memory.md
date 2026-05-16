@@ -1,15 +1,16 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-15T07:39:00Z
+2026-05-16T06:39:00Z
 
 ## Last Run Tasks
-- Task 7: Labelled PRs #187 and #189 with `enhancement`
-- Task 10: feat: highlight followed team's row in league table (PR TBD — new branch: repo-assist/improve-league-table-followed-team)
+- Task 5: PR health check — PR #191 mergeable_state: clean
+- Task 9: No new human contributors in last 24h
+- Task 10: Created service worker PR (TBD number) — feat: add service worker for offline/PWA support
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
-Last processed: #190 (all non-automated open issues covered; #190 is daily status report)
+Last processed: #192 (new daily status report, automated; #7 is only human non-automated open issue)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -37,7 +38,8 @@ Last processed: #190 (all non-automated open issues covered; #190 is daily statu
 - #185: feat: highlight followed team fixtures — 81 tests ✅
 - #187: feat: show last refreshed timestamp in fixtures view — 85 tests ✅
 - #189: feat: add team search/filter to Fixtures view — 88 tests ✅ (7 new)
-- TBD (submitted 2026-05-15): feat: highlight followed team's row in league table — 87 tests ✅ (6 new)
+- #191: feat: highlight followed team's row in league table — 87 tests ✅ (6 new)
+- TBD (submitted 2026-05-16): feat: add service worker for offline/PWA support — 87 tests ✅ (6 new)
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice, Apr 19 + May 4)
@@ -50,11 +52,11 @@ Last processed: #190 (all non-automated open issues covered; #190 is daily statu
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130, #131, #132, #133, #135, #136, #137, #138, #140, #141, #142, #143, #147, #149, #151, #153, #155, #158, #159, #160, #161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-15)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-16)
 
 ## Current Repo State
 - npm vulnerabilities: 2 (1 moderate, 1 high) — can't fix without deps PR
-- Tests: 81 passing on main; 87 with followed-team-league-table changes (PR TBD)
+- Tests: 81 passing on main; 87 with service worker changes (TBD PR)
 - Baseline main: 81 tests (5 test files, all service layer)
 
 ## Component Tests Added (pending PRs)
@@ -66,7 +68,8 @@ Last processed: #190 (all non-automated open issues covered; #190 is daily statu
 - #182 PR: TeamView (12) — ALL components now covered
 - #187 PR: Fixtures.lastRefreshed (4)
 - #189 PR: Fixtures.teamSearch (7)
-- TBD PR: LeagueTable.followedTeam (6)
+- #191 PR: LeagueTable.followedTeam (6)
+- TBD PR: serviceWorkerRegistration (6)
 
 ## Round-Robin Task Schedule
 - 2026-04-29T06:37: Task 7 (labelled #147), Task 10 (LeagueTable logos + W%), Task 11
@@ -85,8 +88,9 @@ Last processed: #190 (all non-automated open issues covered; #190 is daily statu
 - 2026-05-12T06:57: Task 5 (PR health check), Task 8 (no releases), Task 10 (followed team fixtures PR #185), Task 11
 - 2026-05-13T07:25: Task 7 (labels #176/#178/#180), Task 9 (no new contributors), Task 10 (last refreshed timestamp PR #187), Task 11
 - 2026-05-14T06:53: Task 5 (PR health — all clean), Task 10 (team search/filter PR #189), Task 11
-- 2026-05-15T07:33: Task 7 (labels #187/#189), Task 10 (followed team league table row PR TBD), Task 11
-- Next: Task 1 (triage), Task 5 (PR health check), Task 9 (new contributors), Task 10 (consider: service worker)
+- 2026-05-15T07:33: Task 7 (labels #187/#189), Task 10 (followed team league table row PR #191), Task 11
+- 2026-05-16T06:34: Task 5 (PR health — #191 clean), Task 9 (no new contributors), Task 10 (service worker PR TBD), Task 11
+- Next: Task 1 (triage), Task 7 (label new PRs), Task 8 (release prep check), Task 10 (consider: performance or accessibility audit)
 
 ## Key Code Notes
 - VITE_USE_MOCK_FALLBACK evaluated at module load — vi.stubEnv needs vi.resetModules()
@@ -128,11 +132,15 @@ Last processed: #190 (all non-automated open issues covered; #190 is daily statu
 - Fixtures.teamSearch.test.tsx: 7 tests for team search; role='searchbox' for type=search inputs
 - Match type requires 'venue' field (can be 'TBC' string); always required in makeMatch helpers
 - Fixtures.tsx: tabFilteredMatches + filteredMatches pattern (two-stage filtering for team search)
-- LeagueTable.tsx: now accepts followedTeamName?: string prop (added PR TBD, not on main yet)
+- LeagueTable.tsx: now accepts followedTeamName?: string prop (added PR #191, not on main yet)
 - LeagueTable: row highlight: bg-orange-50 ring-1 ring-inset ring-orange-300 when isFollowed
 - LeagueTable: ⭐ star badge with aria-label="followed team" next to team shortName
 - LeagueTable.followedTeam.test.tsx: 6 tests; uses aria-label="followed team" to detect star badge
 - LeagueTable tests: vi.mock react-router-dom with useNavigate: () => vi.fn() + vi.importActual
+- serviceWorkerRegistration.ts: production-only (import.meta.env.PROD check); uses BASE_URL for SW path
+- serviceWorkerRegistration.test.ts: vi.stubEnv('PROD', true/false) with booleans (not strings — PROD is boolean type)
+- vi.stubEnv for PROD: use boolean (true/false), not string ('true'/'false') — TypeScript will reject strings
+- Service worker (public/sw.js): cache-first for same-origin, network-first for external APIs
 
 ## Deps Update Notes (2026-05-06)
 - BLOCKED: package-lock.json is a protected file — deps PR cannot be created
