@@ -1,11 +1,12 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-17T06:56:00Z
+2026-05-18T08:16:00Z
 
 ## Last Run Tasks
-- Task 7: Labelled PR #193 with `enhancement`
-- Task 10: Created LIVE badge PR (feat: show LIVE badge on Fixtures tab when live matches are on) — TBD number
+- Task 5: PR health check — #195 mergeable_state: clean
+- Task 9: No new human contributors
+- Task 10: Created adaptive polling PR (TBD number — this run)
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
@@ -39,24 +40,25 @@ Last processed: #192 (new daily status report, automated; #7 is only human non-a
 - #189: feat: add team search/filter to Fixtures view — 88 tests ✅ (7 new)
 - #191: feat: highlight followed team's row in league table — 87 tests ✅ (6 new)
 - #193: feat: add service worker for offline/PWA support — 87 tests ✅ (6 new)
-- TBD (submitted 2026-05-17): feat: show LIVE badge on Fixtures tab when live matches are on — 86 tests ✅ (5 new)
+- #195: feat: show LIVE badge on Fixtures tab when live matches are on — 86 tests ✅ (5 new)
+- TBD (submitted 2026-05-18): feat: adaptive polling — refresh every 30 s when live matches are on — 86 tests ✅ (5 new)
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice, Apr 19 + May 4)
 
 ## PR Creation Status
 - PR creation IS WORKING
-- IMPORTANT: Deps update PRs are BLOCKED — package-lock.json is a protected file. Will always fail unless `allowed-files` is configured or `protected-files: fallback-to-issue` is set.
+- IMPORTANT: Deps update PRs are BLOCKED — package-lock.json is a protected file.
 
 ## Proxy Issues to Close (when maintainer is ready)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130, #131, #132, #133, #135, #136, #137, #138, #140, #141, #142, #143, #147, #149, #151, #153, #155, #158, #159, #160, #161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-17)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-18)
 
 ## Current Repo State
 - npm vulnerabilities: 2 (1 moderate, 1 high) — can't fix without deps PR
-- Tests: 81 passing on main; 86 with live indicator PR (TBD number)
+- Tests: 81 passing on main; 86 with adaptive polling PR (TBD)
 - Baseline main: 81 tests (5 test files, all service layer)
 
 ## Component Tests Added (pending PRs)
@@ -70,15 +72,16 @@ Last processed: #192 (new daily status report, automated; #7 is only human non-a
 - #189 PR: Fixtures.teamSearch (7)
 - #191 PR: LeagueTable.followedTeam (6)
 - #193 PR: serviceWorkerRegistration (6)
-- TBD PR: App.liveIndicator (5)
+- #195 PR: App.liveIndicator (5)
+- TBD PR: App.adaptivePolling (5)
 
 ## Round-Robin Task Schedule
-- 2026-05-13T07:25: Task 7 (labels #176/#178/#180), Task 9 (no new contributors), Task 10 (last refreshed timestamp PR #187), Task 11
-- 2026-05-14T06:53: Task 5 (PR health — all clean), Task 10 (team search/filter PR #189), Task 11
+- 2026-05-14T06:53: Task 5 (PR health), Task 10 (team search PR #189), Task 11
 - 2026-05-15T07:33: Task 7 (labels #187/#189), Task 10 (followed team league table row PR #191), Task 11
-- 2026-05-16T06:34: Task 5 (PR health — #191 clean), Task 9 (no new contributors), Task 10 (service worker PR #193), Task 11
-- 2026-05-17T06:51: Task 7 (label #193 with enhancement), Task 10 (LIVE badge PR — TBD), Task 11
-- Next: Task 1 (triage), Task 5 (PR health check), Task 8 (release prep check), Task 9 (new contributors)
+- 2026-05-16T06:34: Task 5 (PR health), Task 9 (no new contributors), Task 10 (service worker PR #193), Task 11
+- 2026-05-17T06:51: Task 7 (label #193), Task 10 (LIVE badge PR #195), Task 11
+- 2026-05-18T08:16: Task 5 (PR health — #195 clean), Task 9 (no new contributors), Task 10 (adaptive polling PR TBD), Task 11
+- Next: Task 1 (triage), Task 6 (stale PR nudges — #99 now very stale), Task 7 (label new PR), Task 8 (release prep check)
 
 ## Key Code Notes
 - VITE_USE_MOCK_FALLBACK evaluated at module load — vi.stubEnv needs vi.resetModules()
@@ -129,9 +132,14 @@ Last processed: #192 (new daily status report, automated; #7 is only human non-a
 - serviceWorkerRegistration.test.ts: vi.stubEnv('PROD', true/false) with booleans (not strings — PROD is boolean type)
 - vi.stubEnv for PROD: use boolean (true/false), not string ('true'/'false') — TypeScript will reject strings
 - Service worker (public/sw.js): cache-first for same-origin, network-first for external APIs
-- App.tsx: LIVE badge on "Fixtures & Results" tab when liveMatchCount > 0 (added TBD PR)
+- App.tsx: LIVE badge on "Fixtures & Results" tab when liveMatchCount > 0 (added PR #195)
 - App.liveIndicator.test.tsx: 5 tests; aria-label="N live match(es)" for badge; in src/components/__tests__/
 - LIVE badge test: use getByLabelText('1 live match') not getByText('LIVE') — LIVE appears in match cards too
+- App.tsx: POLL_INTERVAL_NORMAL=5min, POLL_INTERVAL_LIVE=30s (added TBD PR this run)
+- App.tsx: fetchData extracted as stable useCallback (TBD PR); hasLiveMatches via useMemo
+- App.adaptivePolling.test.tsx: 5 tests; vi.useFakeTimers() in beforeEach; act(async () => { await Promise.resolve(); }) for initial fetch; vi.advanceTimersByTime(INTERVAL+1000)
+- App adaptive polling: hasLiveMatches → POLL_INTERVAL_LIVE (30s), else POLL_INTERVAL_NORMAL (5min)
+- Live-refresh banner: role="status" aria-live="polite" shown when hasLiveMatches
 
 ## Deps Update Notes (2026-05-06)
 - BLOCKED: package-lock.json is a protected file — deps PR cannot be created
