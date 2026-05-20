@@ -1,15 +1,16 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-19T08:05:00Z
+2026-05-20T07:55:00Z
 
 ## Last Run Tasks
-- Task 7: Labelled PR #197 with `enhancement`
-- Task 10: Created share/copy-link button PR for MatchDetail (TBD — this run)
+- Task 5: PR #195 has `mergeable_state: clean`; no CI failures
+- Task 9: No new human contributors in last 24 hours
+- Task 10: Created PR (TBD number): feat: add team form guide to league table
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
-Last processed: #198 (only human open issue is #7 — already commented)
+Last processed: #200 (only human open issue is #7 — already commented)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -38,7 +39,8 @@ Last processed: #198 (only human open issue is #7 — already commented)
 - #193: feat: service worker for offline/PWA — 87 tests ✅
 - #195: feat: LIVE badge on Fixtures tab — 86 tests ✅
 - #197: feat: adaptive polling 30s when live — 86 tests ✅
-- TBD (2026-05-19): feat: share/copy-link button in MatchDetail — 86 tests ✅ (5 new)
+- #199: feat: share/copy-link button in MatchDetail — 86 tests ✅ (5 new)
+- TBD (2026-05-20): feat: team form guide in league table — 91 tests ✅ (10 new)
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -51,11 +53,11 @@ Last processed: #198 (only human open issue is #7 — already commented)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-19)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-20)
 
 ## Round-Robin Next
-- 2026-05-19T07:57: Task 7 (label #197), Task 10 (share button PR TBD), Task 11
-- Next: Task 1 (triage), Task 5 (PR health), Task 8 (release prep), Task 9 (new contributors)
+- 2026-05-20T07:55: Task 5, Task 9, Task 10 (form guide PR TBD), Task 11
+- Next: Task 1 (triage), Task 2 (bug fixes), Task 7 (labelling), Task 8 (release prep)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -66,7 +68,9 @@ Last processed: #198 (only human open issue is #7 — already commented)
 - Fake timers + async fetch: act(async () => { await Promise.resolve(); }) to flush useEffect
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - Fixtures.tsx: default tab shows date >= today || status === 'live'; results tab: past completed
-- src/components/__tests__/ dir exists (created 2026-05-19 for shareButton tests)
+- src/components/__tests__/ dir exists (first tests on main created 2026-05-20 for LeagueTable)
+- LeagueTable: now has optional matches prop and Form column (computeTeamForm + FormDots)
+- App.tsx: passes matches to LeagueTable (simple prop pass, no extra API calls)
 - MatchDetail share: shareStatus ('idle'|'copied'), handleShare useCallback; clipboard fallback 2s reset
 - App.tsx: POLL_INTERVAL_NORMAL=5min, POLL_INTERVAL_LIVE=30s (#197); hasLiveMatches via useMemo
 - App.tsx: LIVE badge aria-label="N live match(es)" on Fixtures tab (#195)
