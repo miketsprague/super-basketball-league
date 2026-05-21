@@ -1,6 +1,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMemo, useEffect, useCallback } from 'react';
 import type { Match } from '../types';
+import { SkeletonDateGroup } from './Skeleton';
 
 type FilterTab = 'fixtures' | 'results' | 'all';
 
@@ -112,8 +113,24 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+      <div className="space-y-4" aria-label="Loading fixtures" aria-busy="true">
+        {/* Skeleton filter tabs */}
+        <div className="flex gap-1 bg-gray-100 p-1 rounded-lg" aria-hidden="true">
+          <div className="flex-1 py-2 px-3 rounded-md bg-white shadow-sm animate-pulse">
+            <div className="h-4 bg-gray-200 rounded w-16 mx-auto" />
+          </div>
+          <div className="flex-1 py-2 px-3 rounded-md animate-pulse">
+            <div className="h-4 bg-gray-200 rounded w-16 mx-auto" />
+          </div>
+          <div className="flex-1 py-2 px-3 rounded-md animate-pulse">
+            <div className="h-4 bg-gray-200 rounded w-8 mx-auto" />
+          </div>
+        </div>
+        {/* Skeleton match groups */}
+        <div className="space-y-6">
+          <SkeletonDateGroup />
+          <SkeletonDateGroup />
+        </div>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import type { StandingsEntry } from '../types';
+import { SkeletonLeagueTableRow } from './Skeleton';
 
 interface LeagueTableProps {
   standings: StandingsEntry[];
@@ -11,8 +12,25 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+      <div className="overflow-x-auto" aria-label="Loading league table" aria-busy="true">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-gray-800 text-white text-xs">
+              <th className="py-3 px-2 text-left w-8">#</th>
+              <th className="py-3 px-2 text-left">Team</th>
+              <th className="py-3 px-2 text-center w-8">P</th>
+              <th className="py-3 px-2 text-center w-8">W</th>
+              <th className="py-3 px-2 text-center w-8">L</th>
+              <th className="py-3 px-2 text-center w-12 hidden sm:table-cell">+/-</th>
+              <th className="py-3 px-2 text-center w-10 font-bold">Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <SkeletonLeagueTableRow key={i} />
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   }
