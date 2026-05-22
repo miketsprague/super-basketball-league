@@ -120,7 +120,7 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
 
   if (matches.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
         No fixtures available
       </div>
     );
@@ -180,20 +180,20 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
   return (
     <div className="space-y-4">
       {/* Filter Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
               activeTab === tab.key
-                ? 'bg-white text-orange-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white dark:bg-gray-700 text-orange-600 dark:text-orange-400 shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
             }`}
           >
             {tab.label}
             <span className={`ml-1.5 text-xs ${
-              activeTab === tab.key ? 'text-orange-400' : 'text-gray-400'
+              activeTab === tab.key ? 'text-orange-400 dark:text-orange-500' : 'text-gray-400 dark:text-gray-500'
             }`}>
               {tab.count}
             </span>
@@ -203,7 +203,7 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
 
       {/* Empty state for filtered view */}
       {filteredMatches.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
           {activeTab === 'fixtures' && 'No upcoming fixtures'}
           {activeTab === 'results' && 'No results yet'}
           {activeTab === 'all' && 'No fixtures available'}
@@ -217,17 +217,17 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
             {/* Date Header */}
             <div className={`py-2 px-1 -mx-1 rounded ${
               isToday(group.date) 
-                ? 'bg-orange-50' 
+                ? 'bg-orange-50 dark:bg-orange-950' 
                 : isPast(group.date)
-                ? 'bg-gray-50'
-                : 'bg-green-50'
+                ? 'bg-gray-50 dark:bg-gray-800'
+                : 'bg-green-50 dark:bg-green-950'
             }`}>
               <h3 className={`text-sm font-semibold ${
                 isToday(group.date)
-                  ? 'text-orange-700'
+                  ? 'text-orange-700 dark:text-orange-400'
                   : isPast(group.date)
-                  ? 'text-gray-600'
-                  : 'text-green-700'
+                  ? 'text-gray-600 dark:text-gray-400'
+                  : 'text-green-700 dark:text-green-400'
               }`}>
                 {formatDateHeader(group.date)}
                 <span className="ml-2 text-xs font-normal opacity-75">
@@ -242,7 +242,7 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                 <button
                   key={match.id}
                   onClick={() => handleMatchClick(match.id)}
-                  className={`w-full text-left bg-white rounded-lg shadow p-4 border-l-4 hover:shadow-md transition-all cursor-pointer ${
+                  className={`w-full text-left bg-white dark:bg-gray-800 rounded-lg shadow p-4 border-l-4 hover:shadow-md transition-all cursor-pointer ${
                     match.status === 'live'
                       ? 'border-red-500 hover:border-red-600'
                       : match.status === 'completed'
@@ -250,20 +250,20 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                       : 'border-orange-500 hover:border-orange-600'
                   }`}
                 >
-                  <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
+                  <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mb-2">
                     <span>{formatTime(match.time)}</span>
                     <div className="flex items-center gap-2">
                       {showLeagueName && match.leagueName && (
-                        <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-medium">
+                        <span className="px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-xs font-medium">
                           {match.leagueName}
                         </span>
                       )}
                       <span className={`px-2 py-0.5 rounded text-xs font-medium ${
                         match.status === 'live' 
-                          ? 'bg-red-100 text-red-700 animate-pulse' 
+                          ? 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 animate-pulse' 
                           : match.status === 'completed'
-                          ? 'bg-gray-100 text-gray-600'
-                          : 'bg-green-100 text-green-700'
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                          : 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400'
                       }`}>
                         {match.status === 'live' ? 'LIVE' : match.status === 'completed' ? 'FT' : 'Upcoming'}
                       </span>
@@ -282,10 +282,10 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                               onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                           )}
-                          <span className="font-medium text-gray-900">{match.homeTeam.shortName}</span>
+                          <span className="font-medium text-gray-900 dark:text-gray-100">{match.homeTeam.shortName}</span>
                         </div>
                         <span className={`text-xl font-bold ${
-                          match.status === 'completed' ? 'text-gray-900' : 'text-gray-400'
+                          match.status === 'completed' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-600'
                         }`}>
                           {match.homeScore ?? '-'}
                         </span>
@@ -300,10 +300,10 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                               onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                           )}
-                          <span className="font-medium text-gray-900">{match.awayTeam.shortName}</span>
+                          <span className="font-medium text-gray-900 dark:text-gray-100">{match.awayTeam.shortName}</span>
                         </div>
                         <span className={`text-xl font-bold ${
-                          match.status === 'completed' ? 'text-gray-900' : 'text-gray-400'
+                          match.status === 'completed' ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-600'
                         }`}>
                           {match.awayScore ?? '-'}
                         </span>
@@ -312,14 +312,14 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                   </div>
                   
                   {match.venue && match.venue !== 'TBC' && (
-                    <div className="text-xs text-gray-400 mt-2 flex justify-between items-center">
+                    <div className="text-xs text-gray-400 dark:text-gray-500 mt-2 flex justify-between items-center">
                       <span className="truncate max-w-[70%]">{match.venue}</span>
-                      <span className="text-orange-500 flex-shrink-0">View details →</span>
+                      <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">View details →</span>
                     </div>
                   )}
                   {(!match.venue || match.venue === 'TBC') && (
-                    <div className="text-xs text-gray-400 mt-2 text-right">
-                      <span className="text-orange-500">View details →</span>
+                    <div className="text-xs text-gray-400 dark:text-gray-500 mt-2 text-right">
+                      <span className="text-orange-500 dark:text-orange-400">View details →</span>
                     </div>
                   )}
                 </button>
@@ -331,7 +331,7 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
 
       {/* Load more hint for 'all' tab */}
       {activeTab === 'all' && matches.length > 50 && (
-        <div className="text-center py-4 text-xs text-gray-400">
+        <div className="text-center py-4 text-xs text-gray-400 dark:text-gray-500">
           Showing all {matches.length} fixtures
         </div>
       )}

@@ -9,6 +9,7 @@ import type { Match, StandingsEntry, League } from './types';
 import { fetchAllData, fetchLeagues, APIError } from './services/dataProvider';
 import { DEFAULT_LEAGUE, predefinedLeagues, getLeagueConfig } from './services/leagues';
 import { getFollowedTeam } from './services/teamStorage';
+import { useDarkMode } from './hooks/useDarkMode';
 
 // Helper function to extract detailed error message
 function getErrorMessage(error: unknown): string {
@@ -27,6 +28,7 @@ type Tab = 'fixtures' | 'table';
 const LEAGUE_PARAM = 'league';
 
 function HomePage() {
+  const [isDark, toggleDark] = useDarkMode();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>('fixtures');
   const [matches, setMatches] = useState<Match[]>([]);
@@ -138,12 +140,22 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       {/* Header */}
       <header className="bg-gray-900 text-white py-4 px-4 shadow-lg">
-        <h1 className="text-xl font-bold text-center">
-          🏀 Basketball Leagues
-        </h1>
+        <div className="flex items-center justify-between">
+          <div className="w-8" />
+          <h1 className="text-xl font-bold text-center">
+            🏀 Basketball Leagues
+          </h1>
+          <button
+            onClick={toggleDark}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-700 transition-colors text-lg"
+          >
+            {isDark ? '☀️' : '🌙'}
+          </button>
+        </div>
       </header>
 
       {/* League Selector */}
@@ -156,14 +168,14 @@ function HomePage() {
       />
 
       {/* Tab Navigation */}
-      <nav className="bg-white shadow sticky top-0 z-10">
+      <nav className="bg-white dark:bg-gray-900 shadow sticky top-0 z-10">
         <div className="flex">
           <button
             onClick={() => setActiveTab('fixtures')}
             className={`flex-1 py-3 text-sm font-medium transition-colors ${
               activeTab === 'fixtures'
-                ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50 dark:bg-orange-950'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
             }`}
           >
             Fixtures & Results
@@ -173,8 +185,8 @@ function HomePage() {
               onClick={() => setActiveTab('table')}
               className={`flex-1 py-3 text-sm font-medium transition-colors ${
                 activeTab === 'table'
-                  ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50 dark:bg-orange-950'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
               }`}
             >
               League Table
@@ -185,7 +197,7 @@ function HomePage() {
 
       {/* Leagues error banner (non-blocking) */}
       {leaguesError && (
-        <div className="bg-yellow-50 border-b border-yellow-200 text-yellow-800 px-4 py-2 text-sm text-center">
+        <div className="bg-yellow-50 dark:bg-yellow-950 border-b border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 px-4 py-2 text-sm text-center">
           {leaguesError}
         </div>
       )}
@@ -193,7 +205,7 @@ function HomePage() {
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">
         {error ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded">
             <div className="flex items-center justify-between">
               <p>{error}</p>
             </div>
@@ -212,7 +224,7 @@ function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center text-xs text-gray-400 py-4">
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-600 py-4">
         Basketball Leagues © {new Date().getFullYear()}
       </footer>
     </div>

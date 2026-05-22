@@ -7,7 +7,7 @@ const LIVE_POLL_INTERVAL = 15000; // 15 seconds for live matches
 
 function MatchDetailSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-100 animate-pulse">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 animate-pulse">
       {/* Header Skeleton */}
       <div className="bg-gray-900 text-white py-4 px-4">
         <div className="h-6 bg-gray-700 rounded w-32 mb-2"></div>
@@ -15,30 +15,30 @@ function MatchDetailSkeleton() {
       </div>
       
       {/* Score Skeleton */}
-      <div className="bg-white p-6">
+      <div className="bg-white dark:bg-gray-800 p-6">
         <div className="flex justify-between items-center">
-          <div className="h-8 bg-gray-200 rounded w-24"></div>
-          <div className="h-12 bg-gray-200 rounded w-32"></div>
-          <div className="h-8 bg-gray-200 rounded w-24"></div>
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+          <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
         </div>
       </div>
       
       {/* Quarter Scores Skeleton */}
-      <div className="bg-white mt-2 p-4">
-        <div className="h-4 bg-gray-200 rounded w-32 mb-4"></div>
+      <div className="bg-white dark:bg-gray-800 mt-2 p-4">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-4"></div>
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-6 bg-gray-200 rounded"></div>
+            <div key={i} className="h-6 bg-gray-200 dark:bg-gray-700 rounded"></div>
           ))}
         </div>
       </div>
       
       {/* Stats Skeleton */}
-      <div className="bg-white mt-2 p-4">
-        <div className="h-4 bg-gray-200 rounded w-32 mb-4"></div>
+      <div className="bg-white dark:bg-gray-800 mt-2 p-4">
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-4"></div>
         <div className="space-y-3">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-8 bg-gray-200 rounded"></div>
+            <div key={i} className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
           ))}
         </div>
       </div>
@@ -63,17 +63,17 @@ function StatBar({ label, homeValue, awayValue, isPercentage = false }: StatBarP
   return (
     <div className="mb-3">
       <div className="flex justify-between text-sm mb-1">
-        <span className="font-medium">{displayHome}</span>
-        <span className="text-gray-500 text-xs">{label}</span>
-        <span className="font-medium">{displayAway}</span>
+        <span className="font-medium dark:text-gray-200">{displayHome}</span>
+        <span className="text-gray-500 dark:text-gray-400 text-xs">{label}</span>
+        <span className="font-medium dark:text-gray-200">{displayAway}</span>
       </div>
-      <div className="flex h-2 bg-gray-200 rounded overflow-hidden">
+      <div className="flex h-2 bg-gray-200 dark:bg-gray-700 rounded overflow-hidden">
         <div 
           className="bg-orange-500 transition-all duration-300" 
           style={{ width: `${homePercent}%` }}
         ></div>
         <div 
-          className="bg-gray-400 transition-all duration-300" 
+          className="bg-gray-400 dark:bg-gray-500 transition-all duration-300" 
           style={{ width: `${100 - homePercent}%` }}
         ></div>
       </div>
@@ -88,8 +88,8 @@ interface TeamStatsComparisonProps {
 
 function TeamStatsComparison({ homeStats, awayStats }: TeamStatsComparisonProps) {
   return (
-    <div className="bg-white rounded-lg shadow p-4 mt-4">
-      <h3 className="font-semibold text-gray-900 mb-4">Team Statistics</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mt-4">
+      <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Team Statistics</h3>
       <StatBar label="Field Goal %" homeValue={homeStats.fieldGoalPct} awayValue={awayStats.fieldGoalPct} isPercentage />
       <StatBar label="3-Point %" homeValue={homeStats.threePointPct} awayValue={awayStats.threePointPct} isPercentage />
       <StatBar label="Free Throw %" homeValue={homeStats.freeThrowPct} awayValue={awayStats.freeThrowPct} isPercentage />
@@ -164,14 +164,14 @@ export function MatchDetail() {
 
   if (error || !match) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
         <header className="bg-gray-900 text-white py-4 px-4">
           <button onClick={handleBack} className="flex items-center text-sm hover:text-orange-400">
             <span className="mr-2">←</span> Back to Fixtures
           </button>
         </header>
         <div className="max-w-lg mx-auto p-4">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded">
             <p>{error || 'Match not found'}</p>
             <button 
               onClick={handleRefresh}
@@ -218,7 +218,7 @@ export function MatchDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       {/* Sticky Header */}
       <header className="bg-gray-900 text-white py-3 px-4 sticky top-0 z-20">
         <div className="flex items-center justify-between">
@@ -244,7 +244,7 @@ export function MatchDetail() {
 
       <main className="max-w-lg mx-auto pb-8">
         {/* Match Info & Score */}
-        <div className="bg-white shadow">
+        <div className="bg-white dark:bg-gray-800 shadow">
           <div className="p-4 text-center">
             {/* Status Badge */}
             <div className="mb-3">
@@ -266,15 +266,15 @@ export function MatchDetail() {
                 )}
                 <button
                   onClick={() => navigate(`/team/${encodeURIComponent(match.homeTeam.name)}`)}
-                  className="font-bold text-lg text-gray-900 break-words hover:text-orange-600 transition-colors"
+                  className="font-bold text-lg text-gray-900 dark:text-gray-100 break-words hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                 >
                   {match.homeTeam.shortName}
                 </button>
-                <p className="text-xs text-gray-500 break-words">{match.homeTeam.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 break-words">{match.homeTeam.name}</p>
               </div>
               
               <div className="px-2 flex-shrink-0 min-w-[90px] text-center pt-3">
-                <div className="text-3xl font-bold text-gray-900 whitespace-nowrap">
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
                   {match.homeScore ?? '-'} - {match.awayScore ?? '-'}
                 </div>
               </div>
@@ -290,16 +290,16 @@ export function MatchDetail() {
                 )}
                 <button
                   onClick={() => navigate(`/team/${encodeURIComponent(match.awayTeam.name)}`)}
-                  className="font-bold text-lg text-gray-900 break-words hover:text-orange-600 transition-colors"
+                  className="font-bold text-lg text-gray-900 dark:text-gray-100 break-words hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                 >
                   {match.awayTeam.shortName}
                 </button>
-                <p className="text-xs text-gray-500 break-words">{match.awayTeam.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 break-words">{match.awayTeam.name}</p>
               </div>
             </div>
             
             {/* Date, Time, Venue */}
-            <div className="mt-4 text-sm text-gray-500 border-t pt-3">
+            <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 border-t dark:border-gray-700 pt-3">
               <p>{formatDate(match.date)} • {match.time}</p>
               <p className="text-xs mt-1">{match.venue}</p>
             </div>
@@ -308,12 +308,12 @@ export function MatchDetail() {
 
         {/* Quarter Scores */}
         {match.quarterScores && Object.keys(match.quarterScores).length > 0 && (match.status === 'completed' || match.status === 'live') && (
-          <div className="bg-white rounded-lg shadow p-4 mt-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Score by Quarter</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mt-4">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Score by Quarter</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-gray-500 text-xs border-b">
+                  <tr className="text-gray-500 dark:text-gray-400 text-xs border-b dark:border-gray-700">
                     <th className="py-2 text-left">Team</th>
                     <th className="py-2 text-center w-10">Q1</th>
                     <th className="py-2 text-center w-10">Q2</th>
@@ -324,23 +324,23 @@ export function MatchDetail() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b">
-                    <td className="py-2 font-medium">{match.homeTeam.shortName}</td>
-                    <td className="py-2 text-center">{match.quarterScores.q1?.home ?? '-'}</td>
-                    <td className="py-2 text-center">{match.quarterScores.q2?.home ?? '-'}</td>
-                    <td className="py-2 text-center">{match.quarterScores.q3?.home ?? '-'}</td>
-                    <td className="py-2 text-center">{match.quarterScores.q4?.home ?? '-'}</td>
-                    {match.quarterScores.ot && <td className="py-2 text-center">{match.quarterScores.ot.home}</td>}
-                    <td className="py-2 text-center font-bold text-orange-600">{match.homeScore ?? '-'}</td>
+                  <tr className="border-b dark:border-gray-700">
+                    <td className="py-2 font-medium dark:text-gray-200">{match.homeTeam.shortName}</td>
+                    <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.q1?.home ?? '-'}</td>
+                    <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.q2?.home ?? '-'}</td>
+                    <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.q3?.home ?? '-'}</td>
+                    <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.q4?.home ?? '-'}</td>
+                    {match.quarterScores.ot && <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.ot.home}</td>}
+                    <td className="py-2 text-center font-bold text-orange-600 dark:text-orange-400">{match.homeScore ?? '-'}</td>
                   </tr>
                   <tr>
-                    <td className="py-2 font-medium">{match.awayTeam.shortName}</td>
-                    <td className="py-2 text-center">{match.quarterScores.q1?.away ?? '-'}</td>
-                    <td className="py-2 text-center">{match.quarterScores.q2?.away ?? '-'}</td>
-                    <td className="py-2 text-center">{match.quarterScores.q3?.away ?? '-'}</td>
-                    <td className="py-2 text-center">{match.quarterScores.q4?.away ?? '-'}</td>
-                    {match.quarterScores.ot && <td className="py-2 text-center">{match.quarterScores.ot.away}</td>}
-                    <td className="py-2 text-center font-bold text-orange-600">{match.awayScore ?? '-'}</td>
+                    <td className="py-2 font-medium dark:text-gray-200">{match.awayTeam.shortName}</td>
+                    <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.q1?.away ?? '-'}</td>
+                    <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.q2?.away ?? '-'}</td>
+                    <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.q3?.away ?? '-'}</td>
+                    <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.q4?.away ?? '-'}</td>
+                    {match.quarterScores.ot && <td className="py-2 text-center dark:text-gray-300">{match.quarterScores.ot.away}</td>}
+                    <td className="py-2 text-center font-bold text-orange-600 dark:text-orange-400">{match.awayScore ?? '-'}</td>
                   </tr>
                 </tbody>
               </table>
@@ -352,14 +352,14 @@ export function MatchDetail() {
         {match.homeStats && match.awayStats ? (
           <TeamStatsComparison homeStats={match.homeStats} awayStats={match.awayStats} />
         ) : (match.status === 'scheduled') ? (
-          <div className="bg-white rounded-lg shadow p-4 mt-4">
-            <p className="text-gray-500 text-sm text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mt-4">
+            <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
               Statistics will be available once the match begins
             </p>
           </div>
         ) : (match.status === 'completed' || match.status === 'live') && (
-          <div className="bg-white rounded-lg shadow p-4 mt-4">
-            <p className="text-gray-500 text-sm text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mt-4">
+            <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
               Loading statistics...
             </p>
           </div>
@@ -367,16 +367,16 @@ export function MatchDetail() {
 
         {/* Player Statistics (Top Performers) */}
         {match.homePlayers && match.homePlayers.length > 0 && match.awayPlayers && match.awayPlayers.length > 0 && (
-          <div className="bg-white rounded-lg shadow p-4 mt-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Top Performers</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mt-4">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Top Performers</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-gray-500 mb-2 font-medium border-b pb-1">{match.homeTeam.shortName}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium border-b dark:border-gray-700 pb-1">{match.homeTeam.shortName}</p>
                 {match.homePlayers.slice(0, 3).map((player, index) => (
-                  <div key={player.id} className={`py-2 ${index < 2 ? 'border-b border-gray-100' : ''}`}>
-                    <p className="font-medium text-sm truncate">{player.name}</p>
-                    <div className="flex gap-2 text-xs text-gray-500 mt-0.5">
-                      <span className="font-semibold text-orange-600">{player.points} pts</span>
+                  <div key={player.id} className={`py-2 ${index < 2 ? 'border-b border-gray-100 dark:border-gray-700' : ''}`}>
+                    <p className="font-medium text-sm truncate dark:text-gray-200">{player.name}</p>
+                    <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      <span className="font-semibold text-orange-600 dark:text-orange-400">{player.points} pts</span>
                       <span>{player.rebounds} reb</span>
                       <span>{player.assists} ast</span>
                     </div>
@@ -384,12 +384,12 @@ export function MatchDetail() {
                 ))}
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-2 font-medium border-b pb-1">{match.awayTeam.shortName}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium border-b dark:border-gray-700 pb-1">{match.awayTeam.shortName}</p>
                 {match.awayPlayers.slice(0, 3).map((player, index) => (
-                  <div key={player.id} className={`py-2 ${index < 2 ? 'border-b border-gray-100' : ''}`}>
-                    <p className="font-medium text-sm truncate">{player.name}</p>
-                    <div className="flex gap-2 text-xs text-gray-500 mt-0.5">
-                      <span className="font-semibold text-orange-600">{player.points} pts</span>
+                  <div key={player.id} className={`py-2 ${index < 2 ? 'border-b border-gray-100 dark:border-gray-700' : ''}`}>
+                    <p className="font-medium text-sm truncate dark:text-gray-200">{player.name}</p>
+                    <div className="flex gap-2 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      <span className="font-semibold text-orange-600 dark:text-orange-400">{player.points} pts</span>
                       <span>{player.rebounds} reb</span>
                       <span>{player.assists} ast</span>
                     </div>

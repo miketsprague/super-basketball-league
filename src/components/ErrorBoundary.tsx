@@ -30,21 +30,21 @@ export class ErrorBoundary extends Component<Props, State> {
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-950 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-md w-full text-center">
             <div className="text-4xl mb-4">🏀</div>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Something went wrong
             </h1>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               We're sorry, but something unexpected happened. Please try refreshing the page.
             </p>
             {this.state.error && (
               <details className="text-left mb-4">
-                <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">
+                <summary className="text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-200">
                   Technical details
                 </summary>
-                <pre className="mt-2 p-2 bg-gray-100 rounded text-xs text-red-600 overflow-auto max-h-32">
+                <pre className="mt-2 p-2 bg-gray-100 dark:bg-gray-900 rounded text-xs text-red-600 dark:text-red-400 overflow-auto max-h-32">
                   {this.state.error.message}
                 </pre>
               </details>
