@@ -19,7 +19,7 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
 
   if (standings.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
         <p className="text-lg mb-2">No standings available</p>
         <p className="text-sm">This competition may have progressed beyond the group stage.</p>
       </div>
@@ -44,33 +44,33 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
           {standings.map((entry, idx) => (
             <tr
               key={entry.team.id}
-              className={`border-b border-gray-100 ${
-                idx < 4 ? 'bg-green-50' : idx >= standings.length - 2 ? 'bg-red-50' : 'bg-white'
+              className={`border-b border-gray-100 dark:border-gray-700 ${
+                idx < 4 ? 'bg-green-50 dark:bg-green-950' : idx >= standings.length - 2 ? 'bg-red-50 dark:bg-red-950' : 'bg-white dark:bg-gray-800'
               }`}
             >
-              <td className="py-3 px-2 font-medium text-gray-600">{entry.position}</td>
+              <td className="py-3 px-2 font-medium text-gray-600 dark:text-gray-400">{entry.position}</td>
               <td className="py-3 px-2">
                 <button
                   onClick={() => navigate(`/team/${encodeURIComponent(entry.team.name)}`)}
-                  className="font-medium text-gray-900 hover:text-orange-600 transition-colors text-left"
+                  className="font-medium text-gray-900 dark:text-gray-100 hover:text-orange-600 dark:hover:text-orange-400 transition-colors text-left"
                 >
                   {entry.team.shortName}
                 </button>
               </td>
-              <td className="py-3 px-2 text-center text-gray-600">{entry.played}</td>
-              <td className="py-3 px-2 text-center text-gray-600">{entry.won}</td>
-              <td className="py-3 px-2 text-center text-gray-600">{entry.lost}</td>
-              <td className="py-3 px-2 text-center text-gray-600 hidden sm:table-cell">
+              <td className="py-3 px-2 text-center text-gray-600 dark:text-gray-400">{entry.played}</td>
+              <td className="py-3 px-2 text-center text-gray-600 dark:text-gray-400">{entry.won}</td>
+              <td className="py-3 px-2 text-center text-gray-600 dark:text-gray-400">{entry.lost}</td>
+              <td className="py-3 px-2 text-center text-gray-600 dark:text-gray-400 hidden sm:table-cell">
                 {entry.pointsDifference > 0 ? '+' : ''}{entry.pointsDifference}
               </td>
-              <td className="py-3 px-2 text-center font-bold text-orange-600">{entry.points}</td>
+              <td className="py-3 px-2 text-center font-bold text-orange-600 dark:text-orange-400">{entry.points}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="mt-4 text-xs text-gray-500 px-2">
-        <span className="inline-block w-3 h-3 bg-green-50 border mr-1"></span> Playoff positions
-        <span className="inline-block w-3 h-3 bg-red-50 border ml-4 mr-1"></span> Relegation zone
+      <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 px-2">
+        <span className="inline-block w-3 h-3 bg-green-50 dark:bg-green-950 border dark:border-green-900 mr-1"></span> Playoff positions
+        <span className="inline-block w-3 h-3 bg-red-50 dark:bg-red-950 border dark:border-red-900 ml-4 mr-1"></span> Relegation zone
       </div>
     </div>
   );

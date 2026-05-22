@@ -61,21 +61,21 @@ export function TeamView() {
 
   if (!decodedTeamName) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
         <header className="bg-gray-900 text-white py-4 px-4">
           <Link to="/" className="flex items-center text-sm hover:text-orange-400">
             <span className="mr-2">←</span> Back to Fixtures
           </Link>
         </header>
         <div className="max-w-lg mx-auto p-4">
-          <p className="text-gray-500 text-center py-12">No team selected</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-12">No team selected</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       {/* Header */}
       <header className="bg-gray-900 text-white py-3 px-4 sticky top-0 z-20">
         <div className="flex items-center justify-between">
@@ -105,7 +105,7 @@ export function TeamView() {
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">
         {error ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded">
             <p>{error}</p>
             <button
               onClick={loadTeamMatches}
@@ -120,7 +120,7 @@ export function TeamView() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center text-xs text-gray-400 py-4">
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-600 py-4">
         Basketball Leagues © {new Date().getFullYear()}
       </footer>
     </div>
