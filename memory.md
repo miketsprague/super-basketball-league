@@ -1,10 +1,12 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-22T08:05:00Z
+2026-05-23T06:50:00Z
 
 ## Last Run Tasks
-- Task 10: Created PR (TBD number): feat: add dark mode toggle with localStorage persistence
+- Task 5: PR health check (no CI configured, no failures)
+- Task 9: No new human contributors
+- Task 10: Created PR (TBD number): feat: show season record stats banner in TeamView
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
@@ -39,7 +41,8 @@ Last processed: #200 (only human open issue is #7 — already commented)
 - #199: feat: share/copy-link button in MatchDetail — 86 tests ✅ (5 new)
 - #201: feat: team form guide in league table — 91 tests ✅ (10 new)
 - #203: feat: skeleton loading screens (LeagueTable + Fixtures) — 93 tests ✅ (12 new)
-- TBD (2026-05-22): feat: dark mode toggle — useDarkMode hook, @custom-variant dark, 91 tests ✅ (10 new)
+- #205: feat: dark mode toggle — useDarkMode hook, @custom-variant dark, 91 tests ✅ (10 new)
+- TBD (2026-05-23): feat: season record stats banner in TeamView — computeTeamRecord(), 91 tests ✅ (10 new)
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -52,11 +55,11 @@ Last processed: #200 (only human open issue is #7 — already commented)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-22)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-23)
 
 ## Round-Robin Next
-- 2026-05-22: Task 10 (dark mode PR TBD), Task 11
-- Next: Task 1 (triage), Task 2 (bug fixes), Task 7 (labelling), Task 5 (PR health), Task 9 (new contributors)
+- 2026-05-23: Task 5, Task 9, Task 10 (season record PR), Task 11
+- Next: Task 1 (triage), Task 2 (bug fixes), Task 7 (labelling), Task 3 (code improvements), Task 8 (release prep)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -84,3 +87,5 @@ Last processed: #200 (only human open issue is #7 — already commented)
 - LeagueTable uses named export: { LeagueTable } not default export
 - useDarkMode hook: src/hooks/useDarkMode.ts — reads localStorage 'basketball-dark-mode', OS pref fallback, adds/removes 'dark' class on html; Tailwind v4: @custom-variant dark in src/index.css
 - renderHook from @testing-library/react works for hook tests (see src/hooks/__tests__/useDarkMode.test.ts)
+- computeTeamRecord(matches, teamName): TeamRecord {played,won,lost,winPct,avgPointsFor,avgPointsAgainst} — in teamStorage.ts; uses matchInvolvesTeam + normaliseTeamName; only counts completed matches
+- TeamView: shows season record banner (W-L, win%, PPG for, PPG against) via useMemo when >=1 completed match
