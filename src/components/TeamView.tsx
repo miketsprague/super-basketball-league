@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
-import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import { getFollowedTeam, setFollowedTeam, clearFollowedTeam, computeTeamRecord } from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -55,6 +55,12 @@ export function TeamView() {
     }
   };
 
+  const record = useMemo(() => {
+    if (loading || matches.length === 0) return null;
+    const r = computeTeamRecord(matches, decodedTeamName);
+    return r.played > 0 ? r : null;
+  }, [matches, loading, decodedTeamName]);
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -101,6 +107,30 @@ export function TeamView() {
         <h1 className="text-lg font-bold">{decodedTeamName}</h1>
         <p className="text-xs text-gray-400 mt-1">All fixtures across all leagues</p>
       </div>
+
+      {/* Season Record */}
+      {record && (
+        <div className="bg-gray-700 text-white py-3 px-4">
+          <div className="flex justify-center gap-8 text-center">
+            <div>
+              <div className="text-xl font-bold text-orange-400">{record.won}–{record.lost}</div>
+              <div className="text-xs text-gray-400 mt-0.5">Record</div>
+            </div>
+            <div>
+              <div className="text-xl font-bold">{record.winPct}%</div>
+              <div className="text-xs text-gray-400 mt-0.5">Win Rate</div>
+            </div>
+            <div>
+              <div className="text-xl font-bold">{record.avgPointsFor}</div>
+              <div className="text-xs text-gray-400 mt-0.5">PPG For</div>
+            </div>
+            <div>
+              <div className="text-xl font-bold">{record.avgPointsAgainst}</div>
+              <div className="text-xs text-gray-400 mt-0.5">PPG Ag.</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">
