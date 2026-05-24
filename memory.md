@@ -1,12 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-23T06:50:00Z
+2026-05-24T07:30:00Z
 
 ## Last Run Tasks
-- Task 5: PR health check (no CI configured, no failures)
-- Task 9: No new human contributors
-- Task 10: Created PR (TBD number): feat: show season record stats banner in TeamView
+- Task 10: Created PR #209: feat: highlight winning team and show score margin in completed match cards
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
@@ -42,7 +40,8 @@ Last processed: #200 (only human open issue is #7 — already commented)
 - #201: feat: team form guide in league table — 91 tests ✅ (10 new)
 - #203: feat: skeleton loading screens (LeagueTable + Fixtures) — 93 tests ✅ (12 new)
 - #205: feat: dark mode toggle — useDarkMode hook, @custom-variant dark, 91 tests ✅ (10 new)
-- TBD (2026-05-23): feat: season record stats banner in TeamView — computeTeamRecord(), 91 tests ✅ (10 new)
+- #207: feat: season record stats banner in TeamView — computeTeamRecord(), 91 tests ✅ (10 new)
+- #209: feat: highlight winning team + score margin in match cards — getMatchWinner/getMatchMargin, 93 tests ✅ (12 new)
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -55,11 +54,11 @@ Last processed: #200 (only human open issue is #7 — already commented)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-23)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-24)
 
 ## Round-Robin Next
-- 2026-05-23: Task 5, Task 9, Task 10 (season record PR), Task 11
-- Next: Task 1 (triage), Task 2 (bug fixes), Task 7 (labelling), Task 3 (code improvements), Task 8 (release prep)
+- 2026-05-24: Task 10 (match winner display PR), Task 11
+- Next: Task 1 (triage), Task 2 (bug fixes), Task 7 (labelling), Task 3 (code improvements), Task 8 (release prep), Task 5 (PR health)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -71,6 +70,7 @@ Last processed: #200 (only human open issue is #7 — already commented)
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - Fixtures.tsx: default tab shows date >= today || status === 'live'; results tab: past completed
 - src/services/__tests__/ dir exists for service tests
+- src/components/__tests__/ dir now exists (created 2026-05-24) for component tests
 - LeagueTable: now has optional matches prop and Form column (computeTeamForm + FormDots)
 - App.tsx: passes matches to LeagueTable (simple prop pass, no extra API calls)
 - MatchDetail share: shareStatus ('idle'|'copied'), handleShare useCallback; clipboard fallback 2s reset
@@ -89,3 +89,5 @@ Last processed: #200 (only human open issue is #7 — already commented)
 - renderHook from @testing-library/react works for hook tests (see src/hooks/__tests__/useDarkMode.test.ts)
 - computeTeamRecord(matches, teamName): TeamRecord {played,won,lost,winPct,avgPointsFor,avgPointsAgainst} — in teamStorage.ts; uses matchInvolvesTeam + normaliseTeamName; only counts completed matches
 - TeamView: shows season record banner (W-L, win%, PPG for, PPG against) via useMemo when >=1 completed match
+- Fixtures.tsx: exports getMatchWinner(match) -> 'home'|'away'|'draw'|null and getMatchMargin(match) -> number|null (#209)
+- Completed match cards: winner bold with 'W' badge, loser dimmed; +N margin badge next to kick-off time
