@@ -2,6 +2,22 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMemo, useEffect, useCallback } from 'react';
 import type { Match } from '../types';
 
+export type MatchWinner = 'home' | 'away' | 'draw';
+
+export function getMatchWinner(match: Pick<Match, 'homeScore' | 'awayScore' | 'status'>): MatchWinner | null {
+  if (match.status !== 'completed') return null;
+  if (match.homeScore == null || match.awayScore == null) return null;
+  if (match.homeScore > match.awayScore) return 'home';
+  if (match.awayScore > match.homeScore) return 'away';
+  return 'draw';
+}
+
+export function getMatchMargin(match: Pick<Match, 'homeScore' | 'awayScore' | 'status'>): number | null {
+  if (match.status !== 'completed') return null;
+  if (match.homeScore == null || match.awayScore == null) return null;
+  return Math.abs(match.homeScore - match.awayScore);
+}
+
 type FilterTab = 'fixtures' | 'results' | 'all';
 
 interface FixturesProps {
@@ -238,7 +254,10 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
 
             {/* Matches for this date */}
             <div className="space-y-3 mt-2">
-              {group.matches.map((match) => (
+              {group.matches.map((match) => {
+                const winner = getMatchWinner(match);
+                const margin = getMatchMargin(match);
+                return (
                 <button
                   key={match.id}
                   onClick={() => handleMatchClick(match.id)}
@@ -251,7 +270,14 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                   }`}
                 >
                   <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
-                    <span>{formatTime(match.time)}</span>
+                    <div className="flex items-center gap-2">
+                      <span>{formatTime(match.time)}</span>
+                      {winner && margin != null && margin > 0 && (
+                        <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 text-xs font-medium">
+                          +{margin}
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-2">
                       {showLeagueName && match.leagueName && (
                         <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-medium">
@@ -282,10 +308,25 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                               onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                           )}
-                          <span className="font-medium text-gray-900">{match.homeTeam.shortName}</span>
+                          <span className={`font-medium ${
+                            winner === 'home'
+                              ? 'text-gray-900 font-bold'
+                              : winner === 'away'
+                              ? 'text-gray-400'
+                              : 'text-gray-900'
+                          }`}>
+                            {match.homeTeam.shortName}
+                            {winner === 'home' && <span className="ml-1 text-xs text-green-600">W</span>}
+                          </span>
                         </div>
                         <span className={`text-xl font-bold ${
-                          match.status === 'completed' ? 'text-gray-900' : 'text-gray-400'
+                          winner === 'home'
+                            ? 'text-gray-900'
+                            : winner === 'away'
+                            ? 'text-gray-400'
+                            : match.status === 'completed'
+                            ? 'text-gray-900'
+                            : 'text-gray-400'
                         }`}>
                           {match.homeScore ?? '-'}
                         </span>
@@ -300,10 +341,25 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                               onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                           )}
-                          <span className="font-medium text-gray-900">{match.awayTeam.shortName}</span>
+                          <span className={`font-medium ${
+                            winner === 'away'
+                              ? 'text-gray-900 font-bold'
+                              : winner === 'home'
+                              ? 'text-gray-400'
+                              : 'text-gray-900'
+                          }`}>
+                            {match.awayTeam.shortName}
+                            {winner === 'away' && <span className="ml-1 text-xs text-green-600">W</span>}
+                          </span>
                         </div>
                         <span className={`text-xl font-bold ${
-                          match.status === 'completed' ? 'text-gray-900' : 'text-gray-400'
+                          winner === 'away'
+                            ? 'text-gray-900'
+                            : winner === 'home'
+                            ? 'text-gray-400'
+                            : match.status === 'completed'
+                            ? 'text-gray-900'
+                            : 'text-gray-400'
                         }`}>
                           {match.awayScore ?? '-'}
                         </span>
@@ -323,7 +379,8 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
                     </div>
                   )}
                 </button>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}
