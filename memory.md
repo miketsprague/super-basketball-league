@@ -1,14 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-24T07:30:00Z
+2026-05-25T08:45:00Z
 
 ## Last Run Tasks
-- Task 10: Created PR #209: feat: highlight winning team and show score margin in completed match cards
+- Task 10: Created PR: feat: add sortable columns to league standings table (branch: repo-assist/improve-sortable-league-table)
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
-Last processed: #200 (only human open issue is #7 — already commented)
+Last processed: #210 (only human open issue is #7 — already commented)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -42,6 +42,7 @@ Last processed: #200 (only human open issue is #7 — already commented)
 - #205: feat: dark mode toggle — useDarkMode hook, @custom-variant dark, 91 tests ✅ (10 new)
 - #207: feat: season record stats banner in TeamView — computeTeamRecord(), 91 tests ✅ (10 new)
 - #209: feat: highlight winning team + score margin in match cards — getMatchWinner/getMatchMargin, 93 tests ✅ (12 new)
+- PR pending: feat: sortable columns in LeagueTable — click W/L/+/-/Pts/# headers; toggle asc/desc; aria-sort; 93 tests ✅ (12 new); branch: repo-assist/improve-sortable-league-table
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -54,10 +55,10 @@ Last processed: #200 (only human open issue is #7 — already commented)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-24)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-25)
 
 ## Round-Robin Next
-- 2026-05-24: Task 10 (match winner display PR), Task 11
+- 2026-05-25: Task 10 (sortable table PR), Task 11
 - Next: Task 1 (triage), Task 2 (bug fixes), Task 7 (labelling), Task 3 (code improvements), Task 8 (release prep), Task 5 (PR health)
 
 ## Key Code Notes
@@ -70,8 +71,10 @@ Last processed: #200 (only human open issue is #7 — already commented)
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - Fixtures.tsx: default tab shows date >= today || status === 'live'; results tab: past completed
 - src/services/__tests__/ dir exists for service tests
-- src/components/__tests__/ dir now exists (created 2026-05-24) for component tests
-- LeagueTable: now has optional matches prop and Form column (computeTeamForm + FormDots)
+- src/components/__tests__/ dir now exists for component tests
+- LeagueTable: SortColumn type, useState sort state, useMemo sortedStandings, SortIndicator component
+- LeagueTable: aria-sort on sort buttons; aria-label="Sort by W/L/Pts/+/-/position"
+- LeagueTable sort defaults: position/lost→asc on first click; won/pointsDifference/points→desc on first click
 - App.tsx: passes matches to LeagueTable (simple prop pass, no extra API calls)
 - MatchDetail share: shareStatus ('idle'|'copied'), handleShare useCallback; clipboard fallback 2s reset
 - App.tsx: POLL_INTERVAL_NORMAL=5min, POLL_INTERVAL_LIVE=30s (#197); hasLiveMatches via useMemo
@@ -91,3 +94,4 @@ Last processed: #200 (only human open issue is #7 — already commented)
 - TeamView: shows season record banner (W-L, win%, PPG for, PPG against) via useMemo when >=1 completed match
 - Fixtures.tsx: exports getMatchWinner(match) -> 'home'|'away'|'draw'|null and getMatchMargin(match) -> number|null (#209)
 - Completed match cards: winner bold with 'W' badge, loser dimmed; +N margin badge next to kick-off time
+- getTeamOrder() in LeagueTable tests: cast row to HTMLTableRowElement before accessing .cells
