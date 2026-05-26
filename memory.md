@@ -1,14 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-25T08:45:00Z
+2026-05-26T08:01:32Z
 
 ## Last Run Tasks
-- Task 10: Created PR: feat: add sortable columns to league standings table (branch: repo-assist/improve-sortable-league-table)
+- Task 2/10: Created PR: fix: preserve existing data when auto-refresh fails (branch: repo-assist/fix-auto-refresh-data-loss)
 - Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
-Last processed: #210 (only human open issue is #7 — already commented)
+Last processed: #212 (only human open issue is #7 — already commented; #174 already commented)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -42,7 +42,8 @@ Last processed: #210 (only human open issue is #7 — already commented)
 - #205: feat: dark mode toggle — useDarkMode hook, @custom-variant dark, 91 tests ✅ (10 new)
 - #207: feat: season record stats banner in TeamView — computeTeamRecord(), 91 tests ✅ (10 new)
 - #209: feat: highlight winning team + score margin in match cards — getMatchWinner/getMatchMargin, 93 tests ✅ (12 new)
-- PR pending: feat: sortable columns in LeagueTable — click W/L/+/-/Pts/# headers; toggle asc/desc; aria-sort; 93 tests ✅ (12 new); branch: repo-assist/improve-sortable-league-table
+- #211: feat: sortable columns in LeagueTable — click W/L/+/-/Pts/# headers; toggle asc/desc; aria-sort; 93 tests ✅ (12 new)
+- PR pending (branch: repo-assist/fix-auto-refresh-data-loss): fix: preserve existing data when auto-refresh fails — isInitialLoad flag; only initial load shows blocking error; background refresh keeps data; 86 tests ✅ (5 new in src/__tests__/App.test.tsx)
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -55,11 +56,11 @@ Last processed: #210 (only human open issue is #7 — already commented)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-25)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-26)
 
 ## Round-Robin Next
-- 2026-05-25: Task 10 (sortable table PR), Task 11
-- Next: Task 1 (triage), Task 2 (bug fixes), Task 7 (labelling), Task 3 (code improvements), Task 8 (release prep), Task 5 (PR health)
+- 2026-05-26: Task 2 (bug fix), Task 11
+- Next: Task 1 (triage), Task 7 (labelling), Task 3 (code improvements), Task 8 (release prep), Task 5 (PR health), Task 9 (welcome contributors)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -71,27 +72,24 @@ Last processed: #210 (only human open issue is #7 — already commented)
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - Fixtures.tsx: default tab shows date >= today || status === 'live'; results tab: past completed
 - src/services/__tests__/ dir exists for service tests
-- src/components/__tests__/ dir now exists for component tests
-- LeagueTable: SortColumn type, useState sort state, useMemo sortedStandings, SortIndicator component
-- LeagueTable: aria-sort on sort buttons; aria-label="Sort by W/L/Pts/+/-/position"
-- LeagueTable sort defaults: position/lost→asc on first click; won/pointsDifference/points→desc on first click
-- App.tsx: passes matches to LeagueTable (simple prop pass, no extra API calls)
-- MatchDetail share: shareStatus ('idle'|'copied'), handleShare useCallback; clipboard fallback 2s reset
+- src/__tests__/ dir now exists for App tests (src/__tests__/App.test.tsx — 5 tests for auto-refresh fix)
+- src/components/__tests__/ does NOT exist on main (component tests only in open PRs)
+- LeagueTable: SortColumn type, useState sort state, useMemo sortedStandings, SortIndicator component (in PR #211)
+- App.tsx: passes matches to LeagueTable (simple prop pass, no extra API calls) (in later PRs)
+- MatchDetail share: shareStatus ('idle'|'copied'), handleShare useCallback; clipboard fallback 2s reset (PR #199)
 - App.tsx: POLL_INTERVAL_NORMAL=5min, POLL_INTERVAL_LIVE=30s (#197); hasLiveMatches via useMemo
 - App.tsx: LIVE badge aria-label="N live match(es)" on Fixtures tab (#195)
 - vi.stubEnv for PROD: use boolean (true/false) not string
 - serviceWorkerRegistration.ts: production-only, uses BASE_URL for SW path
-- LeagueTable: playoffPositions/relegationPositions props (EuroLeague/Cup: 8/0; default: 4/2)
+- LeagueTable: playoffPositions/relegationPositions props (EuroLeague/Cup: 8/0; default: 4/2) (PR #184)
 - Fixtures.tsx: SCROLL_KEY='fixtures-scroll-position' (sessionStorage)
 - getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
-- Skeleton.tsx: Skeleton, SkeletonLeagueTableRow, SkeletonMatchCard, SkeletonDateGroup components
-- LeagueTable loading: skeleton table header + 8 SkeletonLeagueTableRow (aria-busy=true)
-- Fixtures loading: skeleton filter tabs + 2 SkeletonDateGroup (aria-busy=true)
+- Skeleton.tsx: Skeleton, SkeletonLeagueTableRow, SkeletonMatchCard, SkeletonDateGroup components (PR #203)
 - LeagueTable uses named export: { LeagueTable } not default export
-- useDarkMode hook: src/hooks/useDarkMode.ts — reads localStorage 'basketball-dark-mode', OS pref fallback, adds/removes 'dark' class on html; Tailwind v4: @custom-variant dark in src/index.css
-- renderHook from @testing-library/react works for hook tests (see src/hooks/__tests__/useDarkMode.test.ts)
-- computeTeamRecord(matches, teamName): TeamRecord {played,won,lost,winPct,avgPointsFor,avgPointsAgainst} — in teamStorage.ts; uses matchInvolvesTeam + normaliseTeamName; only counts completed matches
-- TeamView: shows season record banner (W-L, win%, PPG for, PPG against) via useMemo when >=1 completed match
-- Fixtures.tsx: exports getMatchWinner(match) -> 'home'|'away'|'draw'|null and getMatchMargin(match) -> number|null (#209)
-- Completed match cards: winner bold with 'W' badge, loser dimmed; +N margin badge next to kick-off time
-- getTeamOrder() in LeagueTable tests: cast row to HTMLTableRowElement before accessing .cells
+- useDarkMode hook: src/hooks/useDarkMode.ts — reads localStorage 'basketball-dark-mode', OS pref fallback (PR #205)
+- computeTeamRecord(matches, teamName): TeamRecord — in teamStorage.ts; only counts completed matches (PR #207)
+- Fixtures.tsx: exports getMatchWinner(match) and getMatchMargin(match) (PR #209)
+- App.tsx auto-refresh fix: isInitialLoad flag; background refresh errors are silent (not blocking); src/__tests__/App.test.tsx has regression tests
+- App test pattern: wrap in <MemoryRouter initialEntries={['/']}> <App /> </MemoryRouter>
+- Fake timers in App tests: vi.useFakeTimers() BEFORE render; waitFor doesn't work with fake timers (use act+Promise.resolve instead); separate describe blocks for real-timer tests vs fake-timer tests
+- Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
