@@ -1,15 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-27T08:12:35Z
+2026-05-28T08:12:42Z
 
 ## Last Run Tasks
-- Task 5: PR health check — no CI failures (no check runs configured)
-- Task 9: No new human contributors in last 24h
-- Task 11: Updated Monthly Activity Summary #156 (fixed PR #213 pending reference)
+- Task 10: Created AGENTS.md PR (docs: non-obvious patterns, testing conventions, API notes)
+- Task 11: Updated Monthly Activity Summary #156
 
 ## Issue Backlog Cursor
-Last processed: #214 (daily status reports; only human open issue is #7 — already commented; #174 already commented)
+Last processed: #214 (no new human issues since last run; only #7 and #101 remain as real issues — both already commented)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -45,6 +44,7 @@ Last processed: #214 (daily status reports; only human open issue is #7 — alre
 - #209: feat: highlight winning team + score margin in match cards — getMatchWinner/getMatchMargin, 93 tests ✅ (12 new)
 - #211: feat: sortable columns in LeagueTable — click W/L/+/-/Pts/# headers; toggle asc/desc; aria-sort; 93 tests ✅ (12 new)
 - #213: fix: preserve existing data when auto-refresh fails — isInitialLoad flag; only initial load shows blocking error; background refresh keeps data; 86 tests ✅ (5 new in src/__tests__/App.test.tsx)
+- TBD (2026-05-28): docs: add AGENTS.md — non-obvious patterns, testing conventions, API notes; 81 tests ✅ (docs only); branch: repo-assist/add-agents-md
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -57,11 +57,11 @@ Last processed: #214 (daily status reports; only human open issue is #7 — alre
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-27)
+- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-28)
 
 ## Round-Robin Next
-- 2026-05-27: Task 5 (PR health), Task 9 (welcome), Task 11
-- Next: Task 1 (triage), Task 7 (labelling), Task 3 (code improvements), Task 8 (release prep), Task 10 (repo forward)
+- 2026-05-28: Task 10 (AGENTS.md), Task 11 (monthly summary)
+- Next: Task 1 (triage), Task 5 (PR health), Task 7 (labelling), Task 9 (welcome), Task 3 (code improvements)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -94,3 +94,4 @@ Last processed: #214 (daily status reports; only human open issue is #7 — alre
 - App test pattern: wrap in <MemoryRouter initialEntries={['/']}> <App /> </MemoryRouter>
 - Fake timers in App tests: vi.useFakeTimers() BEFORE render; waitFor doesn't work with fake timers (use act+Promise.resolve instead); separate describe blocks for real-timer tests vs fake-timer tests
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
+- AGENTS.md now exists at repo root — captures conventions, testing patterns, API notes (added 2026-05-28)
