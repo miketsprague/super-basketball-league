@@ -1,15 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-01T09:00:00Z
+2026-06-01T09:15:00Z
 
 ## Last Run Tasks
-- Task 1: Commented on #218 (API health check failure — identified as transient)
-- Task 10: Created AGENTS.md PR (branch: repo-assist/add-agents-md-d9c625e; 81 tests ✅)
-- Task 11: Closed May 2026 issue #156; created June 2026 monthly activity issue (aw_jun2026)
+- Task 10: Created AGENTS.md PR (branch: repo-assist/add-agents-md; 81 tests ✅)
+- Task 11: Closed May 2026 issue #156; created June 2026 monthly activity issue
 
 ## Issue Backlog Cursor
-Last processed: #218 (new issues: #214-#218 reviewed; API health check #218 commented)
+Last processed: #218 (no new issues since last run)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -38,15 +37,15 @@ Last processed: #218 (new issues: #214-#218 reviewed; API health check #218 comm
 - #193: feat: service worker for offline/PWA — 87 tests ✅
 - #195: feat: LIVE badge on Fixtures tab — 86 tests ✅
 - #197: feat: adaptive polling 30s when live — 86 tests ✅
-- #199: feat: share/copy-link button in MatchDetail — 86 tests ✅ (5 new)
-- #201: feat: team form guide in league table — 91 tests ✅ (10 new)
-- #203: feat: skeleton loading screens (LeagueTable + Fixtures) — 93 tests ✅ (12 new)
-- #205: feat: dark mode toggle — useDarkMode hook, @custom-variant dark, 91 tests ✅ (10 new)
-- #207: feat: season record stats banner in TeamView — computeTeamRecord(), 91 tests ✅ (10 new)
-- #209: feat: highlight winning team + score margin in match cards — getMatchWinner/getMatchMargin, 93 tests ✅ (12 new)
-- #211: feat: sortable columns in LeagueTable — click W/L/+/-/Pts/# headers; toggle asc/desc; aria-sort; 93 tests ✅ (12 new)
-- #213: fix: preserve existing data when auto-refresh fails — isInitialLoad flag; only initial load shows blocking error; background refresh keeps data; 86 tests ✅ (5 new)
-- TBD (pending push): docs: add AGENTS.md — branch: repo-assist/add-agents-md-d9c625e; 81 tests ✅
+- #199: feat: share/copy-link button in MatchDetail — 86 tests ✅
+- #201: feat: team form guide in league table — 91 tests ✅
+- #203: feat: skeleton loading screens — 93 tests ✅
+- #205: feat: dark mode toggle — 91 tests ✅
+- #207: feat: season record stats banner in TeamView — 91 tests ✅
+- #209: feat: highlight winning team + score margin — 93 tests ✅
+- #211: feat: sortable columns in LeagueTable — 93 tests ✅
+- #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅
+- TBD (pending push 2026-06-01): docs: add AGENTS.md — branch: repo-assist/add-agents-md; 81 tests ✅
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -66,11 +65,11 @@ Last processed: #218 (new issues: #214-#218 reviewed; API health check #218 comm
 
 ## Monthly Activity Summary
 - Issue #156: CLOSED (May 2026)
-- June 2026 issue: CREATED this run (aw_jun2026 — find actual number on next run)
+- June 2026 issue: CREATED this run (find actual number from next run — search for "[Repo Assist] Monthly Activity 2026-06")
 
 ## Round-Robin Next
-- 2026-06-01: Task 1 (#218), Task 10 (AGENTS.md), Task 11 (monthly summary)
-- Next: Task 5 (PR health — rebase old PRs on d9c625e?), Task 7 (labelling), Task 9 (welcome), Task 8 (release prep)
+- 2026-06-01: Task 10 (AGENTS.md), Task 11 (monthly summary)
+- Next: Task 1 (issue triage), Task 5 (PR health), Task 7 (labelling), Task 9 (welcome), Task 8 (release prep)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
