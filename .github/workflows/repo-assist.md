@@ -43,10 +43,12 @@ safe-outputs:
     title-prefix: "[Repo Assist] "
     labels: [automation, repo-assist]
     max: 4
+    allowed-files: ["AGENTS.md"]
   push-to-pull-request-branch:
     target: "*"
     title-prefix: "[Repo Assist] "
     max: 4
+    allowed-files: ["AGENTS.md"]
   create-issue:
     title-prefix: "[Repo Assist] "
     labels: [automation, repo-assist]
