@@ -1,14 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-05-28T08:12:42Z
+2026-06-01T08:16:36Z
 
 ## Last Run Tasks
-- Task 10: Created AGENTS.md PR (docs: non-obvious patterns, testing conventions, API notes)
-- Task 11: Updated Monthly Activity Summary #156
+- Task 10: Created docs: add AGENTS.md PR (branch: repo-assist/add-agents-md; 81 tests ✅)
+- Task 11: Closed May monthly summary #156; created June 2026 monthly activity issue (new issue TBD #)
+- Task 5: Checked PR health — PR #217 merged May 30 (added full codebase via Copilot agent); all 28 Repo Assist PRs still open
 
 ## Issue Backlog Cursor
-Last processed: #214 (no new human issues since last run; only #7 and #101 remain as real issues — both already commented)
+Last processed: #213 (no new human issues since last run)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -43,8 +44,8 @@ Last processed: #214 (no new human issues since last run; only #7 and #101 remai
 - #207: feat: season record stats banner in TeamView — computeTeamRecord(), 91 tests ✅ (10 new)
 - #209: feat: highlight winning team + score margin in match cards — getMatchWinner/getMatchMargin, 93 tests ✅ (12 new)
 - #211: feat: sortable columns in LeagueTable — click W/L/+/-/Pts/# headers; toggle asc/desc; aria-sort; 93 tests ✅ (12 new)
-- #213: fix: preserve existing data when auto-refresh fails — isInitialLoad flag; only initial load shows blocking error; background refresh keeps data; 86 tests ✅ (5 new in src/__tests__/App.test.tsx)
-- TBD (2026-05-28): docs: add AGENTS.md — non-obvious patterns, testing conventions, API notes; 81 tests ✅ (docs only); branch: repo-assist/add-agents-md
+- #213: fix: preserve existing data when auto-refresh fails — isInitialLoad flag; only initial load shows blocking error; background refresh keeps data; 86 tests ✅ (5 new)
+- TBD (2026-06-01): docs: add AGENTS.md — testing conventions, API notes, coding patterns; 81 tests ✅ (docs only); branch: repo-assist/add-agents-md
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -52,16 +53,19 @@ Last processed: #214 (no new human issues since last run; only #7 and #101 remai
 ## PR Notes
 - Deps PRs BLOCKED: package-lock.json is a protected file
 - PR creation IS WORKING
+- All open RA PRs have base SHA 2637d16c (pre-PR#217 main); current main HEAD is af2c9fd
+- PR #217 merged May 30: added full codebase (Copilot agent); AGENTS.md NOT included in that PR
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #156: [Repo Assist] Monthly Activity 2026-05 — OPEN (updated 2026-05-28)
+- Issue #156: CLOSED (May 2026)
+- New June 2026 issue: CREATED this run (check GitHub for number)
 
 ## Round-Robin Next
-- 2026-05-28: Task 10 (AGENTS.md), Task 11 (monthly summary)
-- Next: Task 1 (triage), Task 5 (PR health), Task 7 (labelling), Task 9 (welcome), Task 3 (code improvements)
+- 2026-06-01: Task 10 (AGENTS.md), Task 11 (monthly summary), Task 5 (PR health check)
+- Next: Task 1 (triage), Task 7 (labelling), Task 9 (welcome), Task 3 (code improvements), Task 8 (release prep)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -94,4 +98,5 @@ Last processed: #214 (no new human issues since last run; only #7 and #101 remai
 - App test pattern: wrap in <MemoryRouter initialEntries={['/']}> <App /> </MemoryRouter>
 - Fake timers in App tests: vi.useFakeTimers() BEFORE render; waitFor doesn't work with fake timers (use act+Promise.resolve instead); separate describe blocks for real-timer tests vs fake-timer tests
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
-- AGENTS.md now exists at repo root — captures conventions, testing patterns, API notes (added 2026-05-28)
+- AGENTS.md added to repo root (PR TBD, 2026-06-01): captures conventions, testing patterns, API notes
+- localStorage mock: Node.js 25+ native stub shadows jsdom — always use explicit storageMock pattern (see teamStorage.test.ts)
