@@ -1,13 +1,63 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { StandingsEntry } from '../types';
+import type { StandingsEntry, Match } from '../types';
 
 interface LeagueTableProps {
   standings: StandingsEntry[];
   loading: boolean;
+  matches?: Match[];
 }
 
-export function LeagueTable({ standings, loading }: LeagueTableProps) {
+function computeTeamForm(matches: Match[], teamId: string): ('W' | 'L')[] {
+  const completed = matches
+    .filter(
+      m =>
+        m.status === 'completed' &&
+        (m.homeTeam.id === teamId || m.awayTeam.id === teamId) &&
+        m.homeScore !== undefined &&
+        m.awayScore !== undefined,
+    )
+    .sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
+
+  return completed.slice(0, 5).map(m => {
+    const isHome = m.homeTeam.id === teamId;
+    const teamScore = isHome ? m.homeScore! : m.awayScore!;
+    const oppScore = isHome ? m.awayScore! : m.homeScore!;
+    return teamScore > oppScore ? 'W' : 'L';
+  });
+}
+
+interface FormDotsProps {
+  form: ('W' | 'L')[];
+}
+
+function FormDots({ form }: FormDotsProps) {
+  if (form.length === 0) {
+    return <span className="text-gray-300 text-xs">—</span>;
+  }
+  return (
+    <div className="flex gap-0.5 justify-center" aria-label={`Form: ${form.join('')}`}>
+      {form.map((result, i) => (
+        <span
+          key={i}
+          className={`inline-block w-2.5 h-2.5 rounded-full ${result === 'W' ? 'bg-green-500' : 'bg-red-400'}`}
+          title={result === 'W' ? 'Win' : 'Loss'}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function LeagueTable({ standings, loading, matches = [] }: LeagueTableProps) {
   const navigate = useNavigate();
+
+  const formByTeam = useMemo(() => {
+    const map = new Map<string, ('W' | 'L')[]>();
+    for (const entry of standings) {
+      map.set(entry.team.id, computeTeamForm(matches, entry.team.id));
+    }
+    return map;
+  }, [standings, matches]);
 
   if (loading) {
     return (
@@ -38,6 +88,7 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
             <th className="py-3 px-2 text-center w-8">L</th>
             <th className="py-3 px-2 text-center w-12 hidden sm:table-cell">+/-</th>
             <th className="py-3 px-2 text-center w-10 font-bold">Pts</th>
+            <th className="py-3 px-2 text-center w-20" title="Last 5 matches (newest first)">Form</th>
           </tr>
         </thead>
         <tbody>
@@ -64,6 +115,9 @@ export function LeagueTable({ standings, loading }: LeagueTableProps) {
                 {entry.pointsDifference > 0 ? '+' : ''}{entry.pointsDifference}
               </td>
               <td className="py-3 px-2 text-center font-bold text-orange-600">{entry.points}</td>
+              <td className="py-3 px-2 text-center">
+                <FormDots form={formByTeam.get(entry.team.id) ?? []} />
+              </td>
             </tr>
           ))}
         </tbody>

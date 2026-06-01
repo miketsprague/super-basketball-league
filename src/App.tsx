@@ -207,7 +207,7 @@ function HomePage() {
         ) : activeTab === 'fixtures' ? (
           <Fixtures matches={matches} loading={loading} />
         ) : (
-          <LeagueTable standings={standings} loading={loading} />
+          <LeagueTable standings={standings} loading={loading} matches={matches} />
         )}
       </main>
 
