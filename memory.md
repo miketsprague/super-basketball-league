@@ -1,20 +1,21 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-01T08:36:00Z
+2026-06-01T09:00:00Z
 
 ## Last Run Tasks
-- Task 10/3: Created AGENTS.md (branch: repo-assist/add-agents-md; 81 tests ✅) — PR pending number
-- Task 11: Closed May 2026 monthly activity issue #156; created June 2026 issue (#aw_jun2026)
-- Task 5: Skipped this run (all PRs based on old base 2637d16c; new main is b7cc6fc after PR #219)
+- Task 1: Commented on #218 (API health check failure — identified as transient)
+- Task 10: Created AGENTS.md PR (branch: repo-assist/add-agents-md-d9c625e; 81 tests ✅)
+- Task 11: Closed May 2026 issue #156; created June 2026 monthly activity issue (aw_jun2026)
 
 ## Issue Backlog Cursor
-Last processed: #213 (no new human issues since last run)
+Last processed: #218 (new issues: #214-#218 reviewed; API health check #218 commented)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
 - #99 (2026-05-04): Second nudge — do not nudge again
 - #174 (2026-05-07): Explained package-lock.json protected-file failure
+- #218 (2026-06-01): API health check failure — identified as transient; second run passed
 
 ## Open Repo Assist PRs
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
@@ -45,7 +46,7 @@ Last processed: #213 (no new human issues since last run)
 - #209: feat: highlight winning team + score margin in match cards — getMatchWinner/getMatchMargin, 93 tests ✅ (12 new)
 - #211: feat: sortable columns in LeagueTable — click W/L/+/-/Pts/# headers; toggle asc/desc; aria-sort; 93 tests ✅ (12 new)
 - #213: fix: preserve existing data when auto-refresh fails — isInitialLoad flag; only initial load shows blocking error; background refresh keeps data; 86 tests ✅ (5 new)
-- TBD: docs: add AGENTS.md — testing conventions, API notes, coding patterns; 81 tests ✅ (docs only); branch: repo-assist/add-agents-md; PR pending
+- TBD (pending push): docs: add AGENTS.md — branch: repo-assist/add-agents-md-d9c625e; 81 tests ✅
 
 ## Open Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -53,21 +54,23 @@ Last processed: #213 (no new human issues since last run)
 ## PR Notes
 - Deps PRs BLOCKED: package-lock.json is a protected file
 - PR creation IS WORKING (confirmed with PR #213)
-- All open RA PRs (except AGENTS.md) have base SHA 2637d16c (pre-PR#217 main); current main HEAD is b7cc6fc (after PR #219)
+- All open RA PRs except AGENTS.md have base SHA 2637d16c (pre-PR#217 main)
+- Current main HEAD: d9c625e (PR #220 merged — updated repo-assist workflow allowed-files for AGENTS.md)
 - PR #217 merged May 30: added full codebase (Copilot agent)
 - PR #219 merged Jun 1: Allow Repo Assist to modify AGENTS.md (added to allowed-files)
-- AGENTS.md now in allowed-files — can modify/create via PR
+- PR #220 merged Jun 1: Allow Repo Assist to update AGENTS.md via protected-files.exclude
+- AGENTS.md is now in allowed-files — can modify/create via PR
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
 - Issue #156: CLOSED (May 2026)
-- June 2026 issue: CREATED this run (temp id: aw_jun2026)
+- June 2026 issue: CREATED this run (aw_jun2026 — find actual number on next run)
 
 ## Round-Robin Next
-- 2026-06-01: Task 10 (AGENTS.md), Task 11 (monthly summary)
-- Next: Task 1 (triage — cursor at #213), Task 7 (labelling), Task 9 (welcome), Task 5 (PR health check), Task 8 (release prep)
+- 2026-06-01: Task 1 (#218), Task 10 (AGENTS.md), Task 11 (monthly summary)
+- Next: Task 5 (PR health — rebase old PRs on d9c625e?), Task 7 (labelling), Task 9 (welcome), Task 8 (release prep)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -100,5 +103,7 @@ Last processed: #213 (no new human issues since last run)
 - App test pattern: wrap in <MemoryRouter initialEntries={['/']}> <App /> </MemoryRouter>
 - Fake timers in App tests: vi.useFakeTimers() BEFORE render; waitFor doesn't work with fake timers (use act+Promise.resolve instead); separate describe blocks for real-timer tests vs fake-timer tests
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
-- AGENTS.md added to repo root (PR pending, 2026-06-01): captures conventions, testing patterns, API notes
+- AGENTS.md added to repo root (PR pending 2026-06-01): captures conventions, testing patterns, API notes
 - localStorage mock: Node.js 25+ native stub shadows jsdom — always use explicit storageMock pattern (see teamStorage.test.ts)
+- Genius Sports API: User-Agent required (CloudFront blocks headless Chrome with 403)
+- API health check failures #218: was transient (run attempt 2 passed); watch for seasonal changes
