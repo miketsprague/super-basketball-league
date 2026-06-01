@@ -111,6 +111,7 @@ export function MatchDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
 
   const loadMatchDetails = useCallback(async (showLoading = true) => {
     if (!matchId) return;
@@ -152,6 +153,29 @@ export function MatchDetail() {
   const handleRefresh = () => {
     loadMatchDetails();
   };
+
+  const handleShare = useCallback(async () => {
+    const url = window.location.href;
+    const title = match
+      ? `${match.homeTeam.shortName} vs ${match.awayTeam.shortName}`
+      : 'Basketball match';
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+      } catch {
+        // User cancelled or share failed — ignore silently
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setShareStatus('copied');
+        setTimeout(() => setShareStatus('idle'), 2000);
+      } catch {
+        // Clipboard unavailable — ignore silently
+      }
+    }
+  }, [match]);
 
   const handleBack = () => {
     // Use browser history to preserve URL params (like league selection)
@@ -231,6 +255,14 @@ export function MatchDetail() {
                 Updated: {formatLastUpdated()}
               </span>
             )}
+            <button
+              onClick={handleShare}
+              className="text-sm px-2 py-1 rounded hover:bg-gray-800 transition-colors"
+              title={shareStatus === 'copied' ? 'Link copied!' : 'Share match'}
+              aria-label={shareStatus === 'copied' ? 'Link copied!' : 'Share match'}
+            >
+              {shareStatus === 'copied' ? '✓' : '⤴'}
+            </button>
             <button
               onClick={handleRefresh}
               className="text-sm px-2 py-1 rounded hover:bg-gray-800 transition-colors"
