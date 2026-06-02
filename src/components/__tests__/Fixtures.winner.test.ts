@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getMatchWinner, getMatchMargin } from '../Fixtures';
+import { getMatchWinner, getMatchMargin } from '../../utils/matchUtils';
 import type { Match } from '../../types';
 
 const baseMatch: Pick<Match, 'homeScore' | 'awayScore' | 'status'> = {
