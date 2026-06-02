@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-01T19:12:00Z
+2026-06-02T17:58:00Z
 
 ## Last Run Tasks
-- Task 5: Checked PR health — maintainer merged #199, #201, #209, #221 today
+- Task 3/10: Fixed ESLint errors — created PR: fix: move match utility functions to src/utils/matchUtils.ts
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -16,7 +16,7 @@ Last processed: #222 (no new human issues; only automation/report issues open)
 - #174 (2026-05-07): Explained package-lock.json protected-file failure
 - #218 (2026-06-01): API health check failure — identified as transient; second run passed
 
-## Open Repo Assist PRs (as of 2026-06-01 19:12)
+## Open Repo Assist PRs (as of 2026-06-02 17:58)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -42,11 +42,12 @@ Last processed: #222 (no new human issues; only automation/report issues open)
 - #207: feat: season record stats banner in TeamView — 91 tests ✅
 - #211: feat: sortable columns in LeagueTable — 93 tests ✅
 - #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅
+- (new): fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean
 
 ## Recently Merged PRs (2026-06-01)
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED
 - #201: feat: add team form guide to league table ✅ MERGED
-- #209: feat: highlight winning team and show score margin ✅ MERGED
+- #209: feat: highlight winning team and show score margin ✅ MERGED (introduced ESLint errors — fixed in new PR)
 - #221: docs: add AGENTS.md with project conventions ✅ MERGED
 
 ## Open Non-Repo-Assist PRs
@@ -55,7 +56,7 @@ Last processed: #222 (no new human issues; only automation/report issues open)
 ## PR Notes
 - Deps PRs BLOCKED: package-lock.json is a protected file
 - PR creation IS WORKING
-- All open RA PRs have base SHA 2637d16c (pre-PR#217 main)
+- ESLint errors from PR #209 fixed: getMatchWinner/getMatchMargin moved to src/utils/matchUtils.ts
 - Current main HEAD: 6e0299c (PR #199 merge — latest workspace)
 - AGENTS.md is in main (merged via PR #221)
 
@@ -66,8 +67,8 @@ Last processed: #222 (no new human issues; only automation/report issues open)
 - Issue #222: OPEN (June 2026) — updated this run
 
 ## Round-Robin Next
-- 2026-06-01 19:12: Task 5 (PR health), Task 11 (monthly summary)
-- Next: Task 1 (issue triage), Task 7 (labelling), Task 10 (feature work), Task 8 (release prep)
+- 2026-06-02 17:58: Task 3/10 (fix ESLint + feature work), Task 11 (monthly summary)
+- Next: Task 1 (issue triage), Task 7 (labelling), Task 8 (release prep)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -79,26 +80,14 @@ Last processed: #222 (no new human issues; only automation/report issues open)
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - Fixtures.tsx: default tab shows date >= today || status === 'live'; results tab: past completed
 - src/services/__tests__/ dir exists for service tests
-- src/__tests__/ dir now exists for App tests (src/__tests__/App.test.tsx — 5 tests for auto-refresh fix)
-- src/components/__tests__/ does NOT exist on main (component tests only in open PRs)
-- LeagueTable: SortColumn type, useState sort state, useMemo sortedStandings, SortIndicator component (in PR #211)
-- App.tsx: passes matches to LeagueTable (simple prop pass, no extra API calls) (in later PRs)
-- MatchDetail share: shareStatus ('idle'|'copied'), handleShare useCallback; clipboard fallback 2s reset (PR #199 — MERGED)
+- src/__tests__/ does NOT exist on main
+- src/components/__tests__/ has 3 test files: Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
+- getMatchWinner/getMatchMargin now in src/utils/matchUtils.ts (moved from Fixtures.tsx to fix ESLint)
+- LeagueTable: uses named export: { LeagueTable } not default export
 - App.tsx: POLL_INTERVAL_NORMAL=5min, POLL_INTERVAL_LIVE=30s (#197); hasLiveMatches via useMemo
-- App.tsx: LIVE badge aria-label="N live match(es)" on Fixtures tab (#195)
-- vi.stubEnv for PROD: use boolean (true/false) not string
-- serviceWorkerRegistration.ts: production-only, uses BASE_URL for SW path
-- LeagueTable: playoffPositions/relegationPositions props (EuroLeague/Cup: 8/0; default: 4/2) (PR #184)
-- Fixtures.tsx: SCROLL_KEY='fixtures-scroll-position' (sessionStorage)
-- getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
-- Skeleton.tsx: Skeleton, SkeletonLeagueTableRow, SkeletonMatchCard, SkeletonDateGroup components (PR #203)
-- LeagueTable uses named export: { LeagueTable } not default export
-- useDarkMode hook: src/hooks/useDarkMode.ts — reads localStorage 'basketball-dark-mode', OS pref fallback (PR #205)
-- computeTeamRecord(matches, teamName): TeamRecord — in teamStorage.ts; only counts completed matches (PR #207)
-- Fixtures.tsx: exports getMatchWinner(match) and getMatchMargin(match) (PR #209 — MERGED)
-- App.tsx auto-refresh fix: isInitialLoad flag; background refresh errors are silent; regression tests in src/__tests__/App.test.tsx
-- Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
-- AGENTS.md now in main (merged via PR #221)
 - localStorage mock: Node.js 25+ native stub shadows jsdom — always use explicit storageMock pattern
 - Genius Sports API: User-Agent required (CloudFront blocks headless Chrome with 403)
-- Team form guide in league table (PR #201 — MERGED)
+- vi.stubEnv for PROD: use boolean (true/false) not string
+- Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
+- getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
+- Main branch test count: 108 tests (8 test files)
