@@ -1,22 +1,24 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-02T17:58:00Z
+2026-06-03T18:17:00Z
 
 ## Last Run Tasks
-- Task 3/10: Fixed ESLint errors — created PR: fix: move match utility functions to src/utils/matchUtils.ts
+- Task 1: Commented on #216 (daily-repo-status auth failure)
+- Task 8: Created release PR repo-assist/release-v0.1.0 — CHANGELOG.md + version 0.1.0
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
-Last processed: #222 (no new human issues; only automation/report issues open)
+Last processed: #222 (checked latest open issues; #216 commented on)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
 - #99 (2026-05-04): Second nudge — do not nudge again
 - #174 (2026-05-07): Explained package-lock.json protected-file failure
 - #218 (2026-06-01): API health check failure — identified as transient; second run passed
+- #216 (2026-06-03): Daily-repo-status auth failure — explained transient issue, suggested fix
 
-## Open Repo Assist PRs (as of 2026-06-02 17:58)
+## Open Repo Assist PRs (as of 2026-06-03 18:17)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -42,12 +44,13 @@ Last processed: #222 (no new human issues; only automation/report issues open)
 - #207: feat: season record stats banner in TeamView — 91 tests ✅
 - #211: feat: sortable columns in LeagueTable — 93 tests ✅
 - #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅
-- (new): fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean
+- #225: fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean
+- (new): chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅ (2 pre-existing ESLint errors noted)
 
 ## Recently Merged PRs (2026-06-01)
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED
 - #201: feat: add team form guide to league table ✅ MERGED
-- #209: feat: highlight winning team and show score margin ✅ MERGED (introduced ESLint errors — fixed in new PR)
+- #209: feat: highlight winning team and show score margin ✅ MERGED
 - #221: docs: add AGENTS.md with project conventions ✅ MERGED
 
 ## Open Non-Repo-Assist PRs
@@ -56,19 +59,20 @@ Last processed: #222 (no new human issues; only automation/report issues open)
 ## PR Notes
 - Deps PRs BLOCKED: package-lock.json is a protected file
 - PR creation IS WORKING
-- ESLint errors from PR #209 fixed: getMatchWinner/getMatchMargin moved to src/utils/matchUtils.ts
+- ESLint errors from PR #209 fixed in PR #225 (not yet merged)
 - Current main HEAD: 6e0299c (PR #199 merge — latest workspace)
 - AGENTS.md is in main (merged via PR #221)
+- Release v0.1.0 PR created this run
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-03)
 
 ## Round-Robin Next
-- 2026-06-02 17:58: Task 3/10 (fix ESLint + feature work), Task 11 (monthly summary)
-- Next: Task 1 (issue triage), Task 7 (labelling), Task 8 (release prep)
+- 2026-06-03 18:17: Task 1 (#216 comment), Task 8 (release v0.1.0 PR), Task 11 (monthly summary)
+- Next: Task 2 (fix issues), Task 5 (maintain RA PRs), Task 9 (welcome new contributors)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
