@@ -1,15 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-03T18:17:00Z
+2026-06-04T16:34:54Z
 
 ## Last Run Tasks
-- Task 1: Commented on #216 (daily-repo-status auth failure)
-- Task 8: Created release PR repo-assist/release-v0.1.0 — CHANGELOG.md + version 0.1.0
+- Task 5: Checked CI on PRs #225, #226 — both passing, no fixes needed
+- Task 9: No new contributors (no new issues/PRs since last run)
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
-Last processed: #222 (checked latest open issues; #216 commented on)
+Last processed: #222 (no new issues since last run)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -18,7 +18,7 @@ Last processed: #222 (checked latest open issues; #216 commented on)
 - #218 (2026-06-01): API health check failure — identified as transient; second run passed
 - #216 (2026-06-03): Daily-repo-status auth failure — explained transient issue, suggested fix
 
-## Open Repo Assist PRs (as of 2026-06-03 18:17)
+## Open Repo Assist PRs (as of 2026-06-04 16:34)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -45,7 +45,7 @@ Last processed: #222 (checked latest open issues; #216 commented on)
 - #211: feat: sortable columns in LeagueTable — 93 tests ✅
 - #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅
 - #225: fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean
-- (new): chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅ (2 pre-existing ESLint errors noted)
+- #226: chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅ (2 pre-existing ESLint errors noted)
 
 ## Recently Merged PRs (2026-06-01)
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED
@@ -62,17 +62,17 @@ Last processed: #222 (checked latest open issues; #216 commented on)
 - ESLint errors from PR #209 fixed in PR #225 (not yet merged)
 - Current main HEAD: 6e0299c (PR #199 merge — latest workspace)
 - AGENTS.md is in main (merged via PR #221)
-- Release v0.1.0 PR created this run
+- Release v0.1.0 PR is #226
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-03)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-04)
 
 ## Round-Robin Next
-- 2026-06-03 18:17: Task 1 (#216 comment), Task 8 (release v0.1.0 PR), Task 11 (monthly summary)
-- Next: Task 2 (fix issues), Task 5 (maintain RA PRs), Task 9 (welcome new contributors)
+- 2026-06-04 16:34: Task 5 (CI check), Task 9 (new contributors), Task 11 (monthly summary)
+- Next: Task 1 (triage issues), Task 3 (codebase improvements), Task 7 (manage labels)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -86,7 +86,7 @@ Last processed: #222 (checked latest open issues; #216 commented on)
 - src/services/__tests__/ dir exists for service tests
 - src/__tests__/ does NOT exist on main
 - src/components/__tests__/ has 3 test files: Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
-- getMatchWinner/getMatchMargin now in src/utils/matchUtils.ts (moved from Fixtures.tsx to fix ESLint)
+- getMatchWinner/getMatchMargin now in src/utils/matchUtils.ts (moved from Fixtures.tsx to fix ESLint) — in PR #225
 - LeagueTable: uses named export: { LeagueTable } not default export
 - App.tsx: POLL_INTERVAL_NORMAL=5min, POLL_INTERVAL_LIVE=30s (#197); hasLiveMatches via useMemo
 - localStorage mock: Node.js 25+ native stub shadows jsdom — always use explicit storageMock pattern
