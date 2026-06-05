@@ -177,6 +177,85 @@ export async function fetchMatchDetails(matchId: string, leagueId?: string): Pro
   return null;
 }
 
+export interface H2HRecord {
+  /** Wins for the team named `team1Name` (the "home" team of the current match). */
+  team1Wins: number;
+  /** Wins for the team named `team2Name` (the "away" team of the current match). */
+  team2Wins: number;
+  draws: number;
+  total: number;
+  /** Previous meetings, most recent first (up to 5). */
+  recentMatches: Match[];
+}
+
+/**
+ * Compute head-to-head record between two teams from a list of matches.
+ * Uses case-insensitive name matching (both full name and short name).
+ */
+export function computeH2HRecord(
+  matches: Match[],
+  team1Name: string,
+  team2Name: string,
+  excludeMatchId?: string,
+): H2HRecord {
+  const norm = (s: string) => s.trim().toLowerCase();
+  const t1 = norm(team1Name);
+  const t2 = norm(team2Name);
+
+  const involvesT1 = (m: Match) =>
+    norm(m.homeTeam.name) === t1 ||
+    norm(m.homeTeam.shortName ?? m.homeTeam.name) === t1 ||
+    norm(m.awayTeam.name) === t1 ||
+    norm(m.awayTeam.shortName ?? m.awayTeam.name) === t1;
+
+  const involvesT2 = (m: Match) =>
+    norm(m.homeTeam.name) === t2 ||
+    norm(m.homeTeam.shortName ?? m.homeTeam.name) === t2 ||
+    norm(m.awayTeam.name) === t2 ||
+    norm(m.awayTeam.shortName ?? m.awayTeam.name) === t2;
+
+  const h2hMatches = matches.filter(
+    (m) =>
+      m.status === 'completed' &&
+      m.id !== excludeMatchId &&
+      involvesT1(m) &&
+      involvesT2(m),
+  );
+
+  const sorted = [...h2hMatches].sort((a, b) => {
+    const aMs = new Date(`${a.date}T12:00:00`).getTime();
+    const bMs = new Date(`${b.date}T12:00:00`).getTime();
+    return bMs - aMs;
+  });
+
+  let team1Wins = 0;
+  let team2Wins = 0;
+  let draws = 0;
+
+  for (const m of sorted) {
+    if (m.homeScore == null || m.awayScore == null) continue;
+
+    const homeIsT1 =
+      norm(m.homeTeam.name) === t1 ||
+      norm(m.homeTeam.shortName ?? m.homeTeam.name) === t1;
+
+    const t1Score = homeIsT1 ? m.homeScore : m.awayScore;
+    const t2Score = homeIsT1 ? m.awayScore : m.homeScore;
+
+    if (t1Score > t2Score) team1Wins++;
+    else if (t2Score > t1Score) team2Wins++;
+    else draws++;
+  }
+
+  return {
+    team1Wins,
+    team2Wins,
+    draws,
+    total: sorted.length,
+    recentMatches: sorted.slice(0, 5),
+  };
+}
+
 /**
  * Fetch matches from all leagues and filter by team name.
  * Each match is annotated with leagueId and leagueName.

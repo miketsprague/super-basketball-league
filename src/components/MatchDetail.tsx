@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import type { MatchDetails, TeamStatistics } from '../types';
-import { fetchMatchDetails } from '../services/dataProvider';
+import { fetchMatchDetails, fetchMatches, computeH2HRecord, type H2HRecord } from '../services/dataProvider';
 
 const LIVE_POLL_INTERVAL = 15000; // 15 seconds for live matches
 
@@ -112,6 +112,7 @@ export function MatchDetail() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
+  const [h2hRecord, setH2HRecord] = useState<H2HRecord | null>(null);
 
   const loadMatchDetails = useCallback(async (showLoading = true) => {
     if (!matchId) return;
@@ -133,6 +134,27 @@ export function MatchDetail() {
       setLoading(false);
     }
   }, [matchId, leagueId]);
+
+  // Fetch H2H record once match details are loaded
+  useEffect(() => {
+    if (!match || !leagueId) return;
+
+    fetchMatches(leagueId)
+      .then((allMatches) => {
+        const record = computeH2HRecord(
+          allMatches,
+          match.homeTeam.name,
+          match.awayTeam.name,
+          match.id,
+        );
+        if (record.total > 0) {
+          setH2HRecord(record);
+        }
+      })
+      .catch(() => {
+        // H2H data is optional — ignore errors
+      });
+  }, [match, leagueId]);
 
   // Initial load
   useEffect(() => {
@@ -428,6 +450,42 @@ export function MatchDetail() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Head-to-Head */}
+        {h2hRecord && (
+          <div className="bg-white rounded-lg shadow p-4 mt-4">
+            <h3 className="font-semibold text-gray-900 mb-3">Head-to-Head This Season</h3>
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-center flex-1">
+                <p className="text-sm text-gray-500 mb-1">{match.homeTeam.shortName}</p>
+                <p className="text-3xl font-bold text-orange-600">{h2hRecord.team1Wins}</p>
+                <p className="text-xs text-gray-400">wins</p>
+              </div>
+              {h2hRecord.draws > 0 && (
+                <div className="text-center px-2">
+                  <p className="text-sm text-gray-500 mb-1">Draws</p>
+                  <p className="text-2xl font-bold text-gray-500">{h2hRecord.draws}</p>
+                </div>
+              )}
+              <div className="text-center flex-1">
+                <p className="text-sm text-gray-500 mb-1">{match.awayTeam.shortName}</p>
+                <p className="text-3xl font-bold text-orange-600">{h2hRecord.team2Wins}</p>
+                <p className="text-xs text-gray-400">wins</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {h2hRecord.recentMatches.map((m) => (
+                <div key={m.id} className="flex items-center justify-between text-sm border-t pt-2">
+                  <span className="text-gray-600 w-1/3 truncate">{m.homeTeam.shortName}</span>
+                  <span className="font-semibold tabular-nums">
+                    {m.homeScore} – {m.awayScore}
+                  </span>
+                  <span className="text-gray-600 w-1/3 text-right truncate">{m.awayTeam.shortName}</span>
+                </div>
+              ))}
             </div>
           </div>
         )}
