@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-04T16:34:54Z
+2026-06-05T16:26:00Z
 
 ## Last Run Tasks
-- Task 5: Checked CI on PRs #225, #226 — both passing, no fixes needed
-- Task 9: No new contributors (no new issues/PRs since last run)
+- Task 1: Commented on #145 (linked to PR #164 — first comment on that issue)
+- Task 10: Created new PR: feat: add head-to-head season record section to MatchDetail (119 tests ✅, branch: repo-assist/improve-h2h-stats-matchdetail)
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -14,11 +14,13 @@ Last processed: #222 (no new issues since last run)
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
 - #99 (2026-05-04): Second nudge — do not nudge again
+- #101 (2026-04-17): Two comments: fix implemented, PR ready (note: PR #163 is the current live PR)
+- #145 (2026-06-05): Linked to PR #164 for ARCHITECTURE.md fix
 - #174 (2026-05-07): Explained package-lock.json protected-file failure
-- #218 (2026-06-01): API health check failure — identified as transient; second run passed
 - #216 (2026-06-03): Daily-repo-status auth failure — explained transient issue, suggested fix
+- #218 (2026-06-01): API health check failure — identified as transient; second run passed
 
-## Open Repo Assist PRs (as of 2026-06-04 16:34)
+## Open Repo Assist PRs (as of 2026-06-05 16:26)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -45,7 +47,8 @@ Last processed: #222 (no new issues since last run)
 - #211: feat: sortable columns in LeagueTable — 93 tests ✅
 - #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅
 - #225: fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean
-- #226: chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅ (2 pre-existing ESLint errors noted)
+- #226: chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅
+- NEW (TBD#): feat: add head-to-head season record section to MatchDetail — 119 tests ✅ — branch: repo-assist/improve-h2h-stats-matchdetail (PR# unknown, update next run)
 
 ## Recently Merged PRs (2026-06-01)
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED
@@ -60,7 +63,7 @@ Last processed: #222 (no new issues since last run)
 - Deps PRs BLOCKED: package-lock.json is a protected file
 - PR creation IS WORKING
 - ESLint errors from PR #209 fixed in PR #225 (not yet merged)
-- Current main HEAD: 6e0299c (PR #199 merge — latest workspace)
+- Current main HEAD: 6e0299c (PR #199 merge)
 - AGENTS.md is in main (merged via PR #221)
 - Release v0.1.0 PR is #226
 
@@ -68,11 +71,11 @@ Last processed: #222 (no new issues since last run)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-04)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-05)
 
 ## Round-Robin Next
-- 2026-06-04 16:34: Task 5 (CI check), Task 9 (new contributors), Task 11 (monthly summary)
-- Next: Task 1 (triage issues), Task 3 (codebase improvements), Task 7 (manage labels)
+- 2026-06-05 16:26: Task 1 (comment #145), Task 10 (H2H feature PR), Task 11 (monthly summary)
+- Next: Task 2 (fix issues via PR — check if any more fixable bugs), Task 5 (CI check on PRs), Task 7 (labels), Task 9 (new contributors)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -86,7 +89,9 @@ Last processed: #222 (no new issues since last run)
 - src/services/__tests__/ dir exists for service tests
 - src/__tests__/ does NOT exist on main
 - src/components/__tests__/ has 3 test files: Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
-- getMatchWinner/getMatchMargin now in src/utils/matchUtils.ts (moved from Fixtures.tsx to fix ESLint) — in PR #225
+- getMatchWinner/getMatchMargin in Fixtures.tsx (2 ESLint errors — moved to utils in PR #225)
+- computeH2HRecord + H2HRecord exported from dataProvider.ts (added this run, 119 tests)
+- NEW: src/services/__tests__/dataProvider.h2h.test.ts (11 tests, covers H2H computation)
 - LeagueTable: uses named export: { LeagueTable } not default export
 - App.tsx: POLL_INTERVAL_NORMAL=5min, POLL_INTERVAL_LIVE=30s (#197); hasLiveMatches via useMemo
 - localStorage mock: Node.js 25+ native stub shadows jsdom — always use explicit storageMock pattern
@@ -94,4 +99,5 @@ Last processed: #222 (no new issues since last run)
 - vi.stubEnv for PROD: use boolean (true/false) not string
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
 - getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
-- Main branch test count: 108 tests (8 test files)
+- Main branch test count: 119 tests (9 test files) [was 108 before H2H PR]
+- Main branch ESLint: 2 errors in Fixtures.tsx (pre-existing, fixed by PR #225)
