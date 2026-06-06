@@ -1,15 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-05T16:26:00Z
+2026-06-06T15:12:00Z
 
 ## Last Run Tasks
-- Task 1: Commented on #145 (linked to PR #164 — first comment on that issue)
-- Task 10: Created new PR: feat: add head-to-head season record section to MatchDetail (119 tests ✅, branch: repo-assist/improve-h2h-stats-matchdetail)
+- Task 5: CI verified: PRs #225, #226, #227 all passing ✅
+- Task 10: Created Fixtures component tests PR (26 tests, 134 total) — branch: repo-assist/improve-venue-in-fixtures (PR# TBD next run)
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
-Last processed: #222 (no new issues since last run)
+Last processed: #222 (no new non-status issues since last run)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -20,15 +20,15 @@ Last processed: #222 (no new issues since last run)
 - #216 (2026-06-03): Daily-repo-status auth failure — explained transient issue, suggested fix
 - #218 (2026-06-01): API health check failure — identified as transient; second run passed
 
-## Open Repo Assist PRs (as of 2026-06-05 16:26)
+## Open Repo Assist PRs (as of 2026-06-06 15:12)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
 - #166: feat: PWA manifest and basketball icon — 81 tests ✅
 - #168: feat: team logos + W% in LeagueTable — 81 tests ✅
 - #169: feat: ARIA tab roles — SUPERSEDED by #180
-- #171: test: ErrorBoundary/LeagueSelector/LeagueTable — 104 tests ✅
-- #173: test: Fixtures (25 tests) — 106 total ✅
+- #171: test: ErrorBoundary/LeagueSelector/LeagueTable — 104 tests ✅ (may conflict with main's LeagueTable.test.tsx)
+- #173: test: Fixtures (25 tests) — may be superseded by new Fixtures tests PR (branch: repo-assist/improve-venue-in-fixtures)
 - #176: test: MatchDetail (29 tests) — 110 total ✅
 - #178: test: App (17 tests) — 98 total ✅
 - #180: feat: keyboard nav + ARIA roles for tabs — 91 tests ✅
@@ -48,7 +48,8 @@ Last processed: #222 (no new issues since last run)
 - #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅
 - #225: fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean
 - #226: chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅
-- NEW (TBD#): feat: add head-to-head season record section to MatchDetail — 119 tests ✅ — branch: repo-assist/improve-h2h-stats-matchdetail (PR# unknown, update next run)
+- #227: feat: add head-to-head season record section to MatchDetail — 119 tests ✅
+- NEW (TBD#): test: add Fixtures component tests (26 tests) — 134 tests ✅ — branch: repo-assist/improve-venue-in-fixtures (PR# unknown, update next run)
 
 ## Recently Merged PRs (2026-06-01)
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED
@@ -66,16 +67,18 @@ Last processed: #222 (no new issues since last run)
 - Current main HEAD: 6e0299c (PR #199 merge)
 - AGENTS.md is in main (merged via PR #221)
 - Release v0.1.0 PR is #226
+- PR #171 likely conflicts with main (main already has LeagueTable.test.tsx with 10 tests; PR #171's has 9)
+- PR #173 likely superseded by new Fixtures tests PR (branch: repo-assist/improve-venue-in-fixtures)
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-05)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-06)
 
 ## Round-Robin Next
-- 2026-06-05 16:26: Task 1 (comment #145), Task 10 (H2H feature PR), Task 11 (monthly summary)
-- Next: Task 2 (fix issues via PR — check if any more fixable bugs), Task 5 (CI check on PRs), Task 7 (labels), Task 9 (new contributors)
+- 2026-06-06 15:12: Task 5 (CI check), Task 10 (Fixtures tests PR), Task 11 (monthly summary)
+- Next: Task 1 (triage issues), Task 2 (fix issues), Task 7 (labels), Task 9 (new contributors)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -86,18 +89,19 @@ Last processed: #222 (no new issues since last run)
 - Fake timers + async fetch: act(async () => { await Promise.resolve(); }) to flush useEffect
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - Fixtures.tsx: default tab shows date >= today || status === 'live'; results tab: past completed
+- Fixtures.tsx: now shows venue below teams (when not 'TBC'), "View details →" text on every card
 - src/services/__tests__/ dir exists for service tests
 - src/__tests__/ does NOT exist on main
-- src/components/__tests__/ has 3 test files: Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
+- src/components/__tests__/ has 4 test files now: Fixtures.test.tsx (NEW), Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
 - getMatchWinner/getMatchMargin in Fixtures.tsx (2 ESLint errors — moved to utils in PR #225)
-- computeH2HRecord + H2HRecord exported from dataProvider.ts (added this run, 119 tests)
-- NEW: src/services/__tests__/dataProvider.h2h.test.ts (11 tests, covers H2H computation)
+- computeH2HRecord + H2HRecord exported from dataProvider.ts (added in PR #227, not yet merged)
 - LeagueTable: uses named export: { LeagueTable } not default export
-- App.tsx: POLL_INTERVAL_NORMAL=5min, POLL_INTERVAL_LIVE=30s (#197); hasLiveMatches via useMemo
+- App.tsx: POLL_INTERVAL hardcoded at 5min on main (PR #197 adds adaptive polling, not merged)
 - localStorage mock: Node.js 25+ native stub shadows jsdom — always use explicit storageMock pattern
 - Genius Sports API: User-Agent required (CloudFront blocks headless Chrome with 403)
 - vi.stubEnv for PROD: use boolean (true/false) not string
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
 - getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
-- Main branch test count: 119 tests (9 test files) [was 108 before H2H PR]
+- Main branch test count: 134 tests (9 test files) [after new Fixtures tests PR is merged]
+- Current main test count: 108 tests (8 test files) [before new PR merge]
 - Main branch ESLint: 2 errors in Fixtures.tsx (pre-existing, fixed by PR #225)
