@@ -28,8 +28,11 @@ jobs:
             "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/standings")
 
           echo "HTTP status: $HTTP_CODE"
+          echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::error::Standings endpoint returned HTTP $HTTP_CODE"
+            echo "failure_reason=HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
+            echo "response_preview=$(head -c 300 "$BODY_FILE" | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -37,6 +40,8 @@ jobs:
           if ! jq empty "$BODY_FILE" 2>/dev/null; then
             echo "::error::Standings response is not valid JSON"
             echo "Response preview: $(head -c 200 "$BODY_FILE")"
+            echo "failure_reason=response not valid JSON" >> "$GITHUB_OUTPUT"
+            echo "response_preview=$(head -c 300 "$BODY_FILE" | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -44,16 +49,19 @@ jobs:
           HTML_CONTENT=$(jq -r '.html // empty' "$BODY_FILE")
           if [ -z "$HTML_CONTENT" ]; then
             echo "::error::Standings response missing 'html' field"
+            echo "failure_reason=response missing html field" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
           # Check for critical CSS selectors in standings HTML
           if ! echo "$HTML_CONTENT" | grep -q "STANDINGS_played"; then
             echo "::error::Standings HTML missing .STANDINGS_played selector"
+            echo "failure_reason=HTML missing .STANDINGS_played selector" >> "$GITHUB_OUTPUT"
             exit 1
           fi
           if ! echo "$HTML_CONTENT" | grep -q "team-name-full"; then
             echo "::error::Standings HTML missing .team-name-full selector"
+            echo "failure_reason=HTML missing .team-name-full selector" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -72,8 +80,11 @@ jobs:
             "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/schedule?roundNumber=-1")
 
           echo "HTTP status: $HTTP_CODE"
+          echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::error::Schedule endpoint returned HTTP $HTTP_CODE"
+            echo "failure_reason=HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
+            echo "response_preview=$(head -c 300 "$BODY_FILE" | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -81,6 +92,8 @@ jobs:
           if ! jq empty "$BODY_FILE" 2>/dev/null; then
             echo "::error::Schedule response is not valid JSON"
             echo "Response preview: $(head -c 200 "$BODY_FILE")"
+            echo "failure_reason=response not valid JSON" >> "$GITHUB_OUTPUT"
+            echo "response_preview=$(head -c 300 "$BODY_FILE" | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -88,16 +101,19 @@ jobs:
           HTML_CONTENT=$(jq -r '.html // empty' "$BODY_FILE")
           if [ -z "$HTML_CONTENT" ]; then
             echo "::error::Schedule response missing 'html' field"
+            echo "failure_reason=response missing html field" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
           # Check for critical CSS selectors in schedule HTML
           if ! printf '%s' "$HTML_CONTENT" | grep -q "match-wrap"; then
             echo "::error::Schedule HTML missing .match-wrap selector"
+            echo "failure_reason=HTML missing .match-wrap selector" >> "$GITHUB_OUTPUT"
             exit 1
           fi
           if ! printf '%s' "$HTML_CONTENT" | grep -q 'extfix_'; then
             echo "::error::Schedule HTML missing #extfix_ ID patterns"
+            echo "failure_reason=HTML missing extfix_ ID patterns" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -105,6 +121,7 @@ jobs:
           MATCH_ID=$(printf '%s' "$HTML_CONTENT" | python3 -c "import re, sys; html = sys.stdin.read(); matches = re.findall(r'class\\s*=\\s*\"([^\"]*\\bmatch-wrap\\b[^\"]*)\"[^>]*id\\s*=\\s*\"extfix_(\\d+)\"', html); preferred = next((match_id for classes, match_id in matches if 'STATUS_COMPLETE' in classes or 'STATUS_LIVE' in classes), ''); fallback = matches[0][1] if matches else ''; print(preferred or fallback, end='')")
           if [ -z "$MATCH_ID" ]; then
             echo "::error::Could not extract a sample match ID from schedule HTML"
+            echo "failure_reason=could not extract sample match ID" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -133,8 +150,10 @@ jobs:
             "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/41897/match/${MATCH_ID}/boxscore")
 
           echo "HTTP status: $HTTP_CODE"
+          echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::error::Boxscore endpoint returned HTTP $HTTP_CODE"
+            echo "failure_reason=HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -142,6 +161,7 @@ jobs:
           if ! jq empty "$BODY_FILE" 2>/dev/null; then
             echo "::error::Boxscore response is not valid JSON"
             echo "Response preview: $(head -c 200 "$BODY_FILE")"
+            echo "failure_reason=response not valid JSON" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -149,6 +169,7 @@ jobs:
           HTML_CONTENT=$(jq -r '.html // empty' "$BODY_FILE")
           if [ -z "$HTML_CONTENT" ]; then
             echo "::error::Boxscore response missing 'html' field"
+            echo "failure_reason=response missing html field" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -167,8 +188,10 @@ jobs:
             "https://api-live.euroleague.net/v1/results?seasoncode=E2025")
 
           echo "HTTP status: $HTTP_CODE"
+          echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::error::EuroLeague V1 results endpoint returned HTTP $HTTP_CODE"
+            echo "failure_reason=HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -192,8 +215,10 @@ jobs:
             "https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/E2025/games?pageSize=100")
 
           echo "HTTP status: $HTTP_CODE"
+          echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::error::EuroLeague V2 games endpoint returned HTTP $HTTP_CODE"
+            echo "failure_reason=HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -201,6 +226,7 @@ jobs:
           if ! jq empty "$BODY_FILE" 2>/dev/null; then
             echo "::error::EuroLeague V2 response is not valid JSON"
             echo "Response preview: $(head -c 200 "$BODY_FILE")"
+            echo "failure_reason=response not valid JSON" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -208,6 +234,7 @@ jobs:
           DATA_CHECK=$(jq -r '.data // empty' "$BODY_FILE")
           if [ -z "$DATA_CHECK" ]; then
             echo "::error::EuroLeague V2 response missing 'data' field"
+            echo "failure_reason=response missing data field" >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -226,19 +253,38 @@ jobs:
             const failures = [];
 
             if ('${{ steps.genius_standings.outcome }}' === 'failure') {
-              failures.push('- ❌ Genius Sports `/standings` endpoint');
+              const detail = '${{ steps.genius_standings.outputs.failure_reason }}';
+              const preview = '${{ steps.genius_standings.outputs.response_preview }}';
+              let msg = `- ❌ Genius Sports \`/standings\` endpoint`;
+              if (detail) msg += ` — ${detail}`;
+              if (preview) msg += `\n  > Response preview: \`${preview.substring(0, 200)}\``;
+              failures.push(msg);
             }
             if ('${{ steps.genius_schedule.outcome }}' === 'failure') {
-              failures.push('- ❌ Genius Sports `/schedule?roundNumber=-1` endpoint');
+              const detail = '${{ steps.genius_schedule.outputs.failure_reason }}';
+              const preview = '${{ steps.genius_schedule.outputs.response_preview }}';
+              let msg = `- ❌ Genius Sports \`/schedule?roundNumber=-1\` endpoint`;
+              if (detail) msg += ` — ${detail}`;
+              if (preview) msg += `\n  > Response preview: \`${preview.substring(0, 200)}\``;
+              failures.push(msg);
             }
             if ('${{ steps.genius_boxscore.outcome }}' === 'failure') {
-              failures.push('- ❌ Genius Sports `/match/{id}/boxscore` endpoint');
+              const detail = '${{ steps.genius_boxscore.outputs.failure_reason }}';
+              let msg = `- ❌ Genius Sports \`/match/{id}/boxscore\` endpoint`;
+              if (detail) msg += ` — ${detail}`;
+              failures.push(msg);
             }
             if ('${{ steps.euroleague_v1.outcome }}' === 'failure') {
-              failures.push('- ❌ EuroLeague V1 API (XML) `/results` endpoint');
+              const detail = '${{ steps.euroleague_v1.outputs.failure_reason }}';
+              let msg = `- ❌ EuroLeague V1 API (XML) \`/results\` endpoint`;
+              if (detail) msg += ` — ${detail}`;
+              failures.push(msg);
             }
             if ('${{ steps.euroleague_v2.outcome }}' === 'failure') {
-              failures.push('- ❌ EuroLeague V2 API (JSON) `/games` endpoint');
+              const detail = '${{ steps.euroleague_v2.outputs.failure_reason }}';
+              let msg = `- ❌ EuroLeague V2 API (JSON) \`/games\` endpoint`;
+              if (detail) msg += ` — ${detail}`;
+              failures.push(msg);
             }
 
             const body = `## 🚨 API Health Check Failed
