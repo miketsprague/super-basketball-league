@@ -1,15 +1,16 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-07T15:25:00Z
+2026-06-08T16:58:00Z
 
 ## Last Run Tasks
-- Task 5: CI verified PR #228 passing ✅
-- Task 10: Created MatchDetail pre-match team form guide PR — branch: repo-assist/improve-matchdetail-form-guide (PR# TBD next run)
+- Task 1: Commented on #230 (API health check failure — identified as transient)
+- Task 7: Labelled #230 with `needs investigation`
+- Task 10: Created PR #231 — ci: add failure diagnostics to API health check issue reports
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
-Last processed: #222 (no new non-status issues since last run)
+Last processed: #230 (new today — API health check failure, commented and labelled)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -19,8 +20,9 @@ Last processed: #222 (no new non-status issues since last run)
 - #174 (2026-05-07): Explained package-lock.json protected-file failure
 - #216 (2026-06-03): Daily-repo-status auth failure — explained transient issue, suggested fix
 - #218 (2026-06-01): API health check failure — identified as transient; second run passed
+- #230 (2026-06-08): API health check failure — identified as likely transient (same pattern as Jun 1); PR #231 created for better diagnostics
 
-## Open Repo Assist PRs (as of 2026-06-07 15:25)
+## Open Repo Assist PRs (as of 2026-06-08 16:58)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -50,7 +52,8 @@ Last processed: #222 (no new non-status issues since last run)
 - #226: chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅
 - #227: feat: add head-to-head season record section to MatchDetail — 119 tests ✅
 - #228: test: add Fixtures component tests (26 tests) — CI passing ✅
-- NEW (TBD#): feat: pre-match team form guide in MatchDetail — 117 tests ✅ — branch: repo-assist/improve-matchdetail-form-guide
+- #229: feat: pre-match team form guide in MatchDetail — 117 tests ✅
+- #231: ci: add failure diagnostics to API health check issue reports — workflow only, no tests needed
 
 ## Recently Merged PRs (2026-06-01)
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED
@@ -71,17 +74,26 @@ Last processed: #222 (no new non-status issues since last run)
 - PR #171 likely conflicts with main (main already has LeagueTable.test.tsx with 10 tests; PR #171's has 9)
 - PR #173 superseded by #228 (new Fixtures tests PR)
 - PR #169 superseded by #180 (keyboard nav + ARIA)
-- computeTeamForm(matches, teamId) now exported from teamStorage.ts (added this run)
+- computeTeamForm(matches, teamId, maxResults?) now exported from teamStorage.ts (added in PR #229)
+- FormResult = 'W' | 'L' exported from teamStorage.ts
+- computeH2HRecord + H2HRecord exported from dataProvider.ts (added in PR #227, not yet merged)
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-07)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-08)
+
+## API Health Check Pattern
+- Genius Sports /standings failures: intermittent — run #89 (Jun 1), run #96 (Jun 8)
+- All other endpoints passed both times — suggests transient rather than structural
+- Pattern: 1 failure in ~7 runs, other 6 pass
+- PR #231 adds diagnostic info (failure reason + response preview) to future failure issues
+- Next monitoring: if /standings fails again consistently in June, check for season-end page structure change
 
 ## Round-Robin Next
-- 2026-06-07 15:25: Task 5 (CI check #228), Task 10 (MatchDetail form guide PR), Task 11 (monthly summary)
-- Next: Task 1 (triage issues), Task 2 (fix issues), Task 7 (labels), Task 9 (new contributors)
+- 2026-06-08 16:58: Task 1 (#230), Task 7 (#230 label), Task 10 (health check PR #231), Task 11 (monthly summary)
+- Next: Task 2 (fix issues), Task 3 (codebase improvements), Task 4 (deps), Task 5 (CI checks on open PRs), Task 9 (new contributors)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -97,8 +109,8 @@ Last processed: #222 (no new non-status issues since last run)
 - src/__tests__/ does NOT exist on main
 - src/components/__tests__/ has 4 test files: Fixtures.test.tsx (PR #228), Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
 - getMatchWinner/getMatchMargin in Fixtures.tsx (2 ESLint errors — moved to utils in PR #225)
-- computeH2HRecord + H2HRecord exported from dataProvider.ts (added in PR #227, not yet merged)
-- computeTeamForm(matches, teamId, maxResults?) exported from teamStorage.ts (added this run)
+- computeH2HRecord + H2HRecord exported from dataProvider.ts (PR #227, not yet merged)
+- computeTeamForm(matches, teamId, maxResults?) exported from teamStorage.ts (PR #229)
 - FormResult = 'W' | 'L' exported from teamStorage.ts
 - LeagueTable: uses named export: { LeagueTable } not default export
 - App.tsx: POLL_INTERVAL hardcoded at 5min on main (PR #197 adds adaptive polling, not merged)
@@ -108,5 +120,3 @@ Last processed: #222 (no new non-status issues since last run)
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
 - getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
 - Main branch test count: 108 tests (8 test files)
-- After form guide PR: 117 tests (8 test files)
-- Main branch ESLint: 2 errors in Fixtures.tsx (pre-existing, fixed by PR #225)
