@@ -287,27 +287,57 @@ jobs:
               failures.push(msg);
             }
 
-            const body = `## 🚨 API Health Check Failed
+            const timestamp = new Date().toISOString();
+            const failureList = failures.join('\n');
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
 
-            The daily API health check detected failures at ${new Date().toISOString()}:
-
-            ${failures.join('\n')}
-
-            ### What to check
-            - Is the API temporarily down? Try again in a few minutes.
-            - Has the API response structure changed? Check HTML selectors and field names.
-            - Has the domain or endpoint URL changed?
-
-            ### Workflow run
-            ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
-            `.replace(/^            /gm, '');
-
-            await github.rest.issues.create({
+            // Search for an existing open health check issue to avoid creating duplicates.
+            // When failures are recurring (e.g., during off-season), we comment on the
+            // existing issue rather than filing a new one each day.
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `🚨 API Health Check Failed - ${new Date().toISOString().split('T')[0]}`,
-              body,
-              labels: ['api-monitoring'],
+              labels: 'api-monitoring',
+              state: 'open',
+              per_page: 10,
             });
 
-            core.setFailed('One or more API health checks failed. Issue created.');
+            const openHealthCheckIssue = existingIssues.find(issue =>
+              issue.title.startsWith('🚨 API Health Check Failed')
+            );
+
+            if (openHealthCheckIssue) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: openHealthCheckIssue.number,
+                body: `### 🔁 Recurring failure at ${timestamp}\n\n${failureList}\n\n**Workflow run:** ${runUrl}`,
+              });
+              console.log(`Added comment to existing issue #${openHealthCheckIssue.number} — no new issue created`);
+            } else {
+              const body = [
+                `## 🚨 API Health Check Failed`,
+                ``,
+                `The daily API health check detected failures at ${timestamp}:`,
+                ``,
+                failureList,
+                ``,
+                `### What to check`,
+                `- Is the API temporarily down? Try again in a few minutes.`,
+                `- Has the API response structure changed? Check HTML selectors and field names.`,
+                `- Has the domain or endpoint URL changed?`,
+                ``,
+                `### Workflow run`,
+                runUrl,
+              ].join('\n');
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 API Health Check Failed - ${timestamp.split('T')[0]}`,
+                body,
+                labels: ['api-monitoring'],
+              });
+            }
+
+            core.setFailed('One or more API health checks failed. See issue for details.');
