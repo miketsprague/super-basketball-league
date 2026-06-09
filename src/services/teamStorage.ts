@@ -1,3 +1,5 @@
+import type { Match } from '../types';
+
 const FOLLOWED_TEAM_KEY = 'basketball-followed-team';
 
 export interface FollowedTeam {
@@ -65,4 +67,34 @@ export function matchInvolvesTeam(
     normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised ||
     normaliseTeamName(match.awayTeam.shortName ?? match.awayTeam.name) === normalised
   );
+}
+
+export type FormResult = 'W' | 'L';
+
+/**
+ * Compute a team's recent form from a list of matches.
+ * Returns results ordered most-recent first (up to maxResults completed matches).
+ * Basketball has no draws, so results are always 'W' or 'L'.
+ */
+export function computeTeamForm(
+  matches: Match[],
+  teamId: string,
+  maxResults = 5,
+): FormResult[] {
+  const completed = matches
+    .filter(
+      m =>
+        m.status === 'completed' &&
+        (m.homeTeam.id === teamId || m.awayTeam.id === teamId) &&
+        m.homeScore !== undefined &&
+        m.awayScore !== undefined,
+    )
+    .sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
+
+  return completed.slice(0, maxResults).map(m => {
+    const isHome = m.homeTeam.id === teamId;
+    const teamScore = isHome ? m.homeScore! : m.awayScore!;
+    const oppScore = isHome ? m.awayScore! : m.homeScore!;
+    return teamScore > oppScore ? 'W' : 'L';
+  });
 }

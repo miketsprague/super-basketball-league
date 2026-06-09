@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import type { MatchDetails, TeamStatistics } from '../types';
-import { fetchMatchDetails } from '../services/dataProvider';
+import type { Match, MatchDetails, TeamStatistics } from '../types';
+import { fetchMatchDetails, fetchMatches } from '../services/dataProvider';
+import { computeTeamForm, type FormResult } from '../services/teamStorage';
 
 const LIVE_POLL_INTERVAL = 15000; // 15 seconds for live matches
 
@@ -102,6 +103,72 @@ function TeamStatsComparison({ homeStats, awayStats }: TeamStatsComparisonProps)
   );
 }
 
+interface FormBadgeProps {
+  result: FormResult;
+}
+
+function FormBadge({ result }: FormBadgeProps) {
+  return (
+    <span
+      className={`inline-flex items-center justify-center w-6 h-6 rounded text-xs font-bold text-white ${
+        result === 'W' ? 'bg-green-500' : 'bg-red-400'
+      }`}
+      title={result === 'W' ? 'Win' : 'Loss'}
+      aria-label={result === 'W' ? 'Win' : 'Loss'}
+    >
+      {result}
+    </span>
+  );
+}
+
+interface PreMatchFormGuideProps {
+  homeForm: FormResult[];
+  awayForm: FormResult[];
+  homeShortName: string;
+  awayShortName: string;
+}
+
+function PreMatchFormGuide({ homeForm, awayForm, homeShortName, awayShortName }: PreMatchFormGuideProps) {
+  if (homeForm.length === 0 && awayForm.length === 0) return null;
+
+  const renderForm = (form: FormResult[]) => {
+    if (form.length === 0) {
+      return <span className="text-gray-400 text-xs">No recent data</span>;
+    }
+    // Display oldest → most recent (left to right)
+    return (
+      <div className="flex gap-1">
+        {[...form].reverse().map((result, i) => (
+          <FormBadge key={i} result={result} />
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow p-4 mt-4">
+      <h3 className="font-semibold text-gray-900 mb-4 text-sm">Recent Form</h3>
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex-1">
+          <p className="text-xs text-gray-500 mb-2 font-medium">{homeShortName}</p>
+          {renderForm(homeForm)}
+        </div>
+        <div className="flex-1 text-right">
+          <p className="text-xs text-gray-500 mb-2 font-medium">{awayShortName}</p>
+          <div className="flex gap-1 justify-end">
+            {awayForm.length === 0
+              ? <span className="text-gray-400 text-xs">No recent data</span>
+              : [...awayForm].reverse().map((result, i) => (
+                  <FormBadge key={i} result={result} />
+                ))}
+          </div>
+        </div>
+      </div>
+      <p className="text-xs text-gray-400 mt-3 text-center">Last 5 matches · oldest → most recent</p>
+    </div>
+  );
+}
+
 export function MatchDetail() {
   const { matchId } = useParams<{ matchId: string }>();
   const [searchParams] = useSearchParams();
@@ -112,6 +179,7 @@ export function MatchDetail() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
+  const [leagueMatches, setLeagueMatches] = useState<Match[]>([]);
 
   const loadMatchDetails = useCallback(async (showLoading = true) => {
     if (!matchId) return;
@@ -149,6 +217,19 @@ export function MatchDetail() {
     
     return () => clearInterval(interval);
   }, [match, loadMatchDetails]);
+
+  // Fetch all league matches to compute pre-match form guide (scheduled games only)
+  const matchStatus = match?.status;
+  useEffect(() => {
+    if (!leagueId || matchStatus !== 'scheduled') return;
+    let cancelled = false;
+    fetchMatches(leagueId).then(matches => {
+      if (!cancelled) setLeagueMatches(matches);
+    }).catch(() => {
+      // Non-critical: form guide is best-effort; silently ignore failures
+    });
+    return () => { cancelled = true; };
+  }, [leagueId, matchStatus]);
 
   const handleRefresh = () => {
     loadMatchDetails();
@@ -395,6 +476,16 @@ export function MatchDetail() {
               Loading statistics...
             </p>
           </div>
+        )}
+
+        {/* Pre-Match Form Guide — shown for scheduled matches when league data is available */}
+        {match.status === 'scheduled' && leagueMatches.length > 0 && (
+          <PreMatchFormGuide
+            homeForm={computeTeamForm(leagueMatches, match.homeTeam.id)}
+            awayForm={computeTeamForm(leagueMatches, match.awayTeam.id)}
+            homeShortName={match.homeTeam.shortName}
+            awayShortName={match.awayTeam.shortName}
+          />
         )}
 
         {/* Player Statistics (Top Performers) */}
