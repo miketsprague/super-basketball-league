@@ -1,16 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-09T16:30:00Z
+2026-06-10T16:49:00Z
 
 ## Last Run Tasks
-- Task 1: Commented on #232 (both Genius Sports endpoints failing — likely season-end)
-- Task 7: Labelled #232 with `needs investigation`
-- Task 10: Created PR #233 — ci: deduplicate health check failure issues
+- Task 5/10: Created PR #234 — ci: make API health check season-aware for Genius Sports
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
-Last processed: #232 (new today — both Genius Sports endpoints failing, commented and labelled)
+Last processed: #232 (commented 2026-06-09)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -23,7 +21,7 @@ Last processed: #232 (new today — both Genius Sports endpoints failing, commen
 - #230 (2026-06-08): API health check failure — identified as likely transient (same pattern as Jun 1); PR #231 created for better diagnostics
 - #232 (2026-06-09): API health check failure — BOTH Genius Sports endpoints failing, likely season-end escalation; PR #233 created for deduplication
 
-## Open Repo Assist PRs (as of 2026-06-09 16:30)
+## Open Repo Assist PRs (as of 2026-06-10 16:49)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -49,12 +47,13 @@ Last processed: #232 (new today — both Genius Sports endpoints failing, commen
 - #207: feat: season record stats banner in TeamView — 91 tests ✅
 - #211: feat: sortable columns in LeagueTable — 93 tests ✅
 - #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅
-- #225: fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean
+- #225: fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean — mergeable_state: clean
 - #226: chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅
 - #227: feat: add head-to-head season record section to MatchDetail — 119 tests ✅
 - #228: test: add Fixtures component tests (26 tests) — CI passing ✅
 - #229: feat: pre-match team form guide in MatchDetail — 117 tests ✅
-- #233: ci: deduplicate health check failure issues — workflow only, no tests needed
+- #233: ci: deduplicate health check failure issues — workflow only, no tests — mergeable_state: clean
+- #234: ci: make API health check season-aware for Genius Sports — workflow only, no tests
 
 ## Recently Merged PRs
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED (2026-06-01)
@@ -69,7 +68,7 @@ Last processed: #232 (new today — both Genius Sports endpoints failing, commen
 ## PR Notes
 - Deps PRs BLOCKED: package-lock.json is a protected file
 - PR creation IS WORKING
-- ESLint errors from PR #209 fixed in PR #225 (not yet merged)
+- ESLint errors from PR #209 fixed in PR #225 (not yet merged) — mergeable_state: clean
 - Current main HEAD: 5a1a8ec (PR #231 merged 2026-06-09)
 - AGENTS.md is in main (merged via PR #221)
 - Release v0.1.0 PR is #226
@@ -79,24 +78,26 @@ Last processed: #232 (new today — both Genius Sports endpoints failing, commen
 - computeTeamForm(matches, teamId, maxResults?) now exported from teamStorage.ts (added in PR #229)
 - FormResult = 'W' | 'L' exported from teamStorage.ts
 - computeH2HRecord + H2HRecord exported from dataProvider.ts (added in PR #227, not yet merged)
+- PR #233: deduplication (comment on existing issue), clean against main — protected file
+- PR #234: season-aware health check, clean against main — protected file; non-conflicting with #233
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-09)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-10)
 
 ## API Health Check Pattern
 - Genius Sports failures: Jun 1 (/standings), Jun 8 (/standings), Jun 9 (/standings AND /schedule)
 - EuroLeague endpoints: passed all runs
-- Escalating pattern suggests SEASON-END structural change, not transient
+- Season-end confirmed: SLB season typically ends April/May; off-season HTML lacks CSS selectors
 - PR #231 (MERGED 2026-06-09): adds diagnostic info to failure issues
-- PR #233 (new 2026-06-09): prevents duplicate issues on recurring failures
-- Next monitoring: if both Genius Sports endpoints continue failing, confirm season-end and consider pausing content-level health checks until September
+- PR #233 (open): prevents duplicate issues on recurring failures
+- PR #234 (new 2026-06-10): makes health check season-aware; skips CSS selector checks Jun-Sep
 
 ## Round-Robin Next
-- 2026-06-09 16:28: Task 1 (#232 comment), Task 7 (#232 label), Task 10 (PR #233 health check dedup), Task 11 (monthly summary)
-- Next: Task 2 (fix issues), Task 3 (codebase improvements), Task 4 (deps), Task 5 (CI checks on open PRs), Task 9 (new contributors)
+- 2026-06-10 16:49: Task 10 (PR #234 health check season-aware), Task 11 (monthly summary)
+- Next: Task 1 (triage issues), Task 2 (fix issues), Task 9 (new contributors)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -122,4 +123,4 @@ Last processed: #232 (new today — both Genius Sports endpoints failing, commen
 - vi.stubEnv for PROD: use boolean (true/false) not string
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
 - getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
-- Main branch test count: 108 tests (8 test files) — verified 2026-06-09
+- Main branch test count: 108 tests (8 test files) — verified 2026-06-10
