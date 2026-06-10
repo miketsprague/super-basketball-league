@@ -15,6 +15,22 @@ jobs:
       # Real browser User-Agent required - CloudFront blocks headless Chrome with 403
       USER_AGENT: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
     steps:
+      - name: Determine season status
+        id: season
+        run: |
+          # SLB season runs October–May; off-season is June–September.
+          # During off-season the Genius Sports widget returns different HTML that
+          # lacks the in-season CSS selectors — so we skip content checks and only
+          # verify HTTP reachability and JSON structure.
+          MONTH=$(date +%-m)
+          if [ "$MONTH" -ge 10 ] || [ "$MONTH" -le 5 ]; then
+            echo "in_season=true" >> "$GITHUB_OUTPUT"
+            echo "Season status: IN-SEASON (month $MONTH) — full content checks enabled"
+          else
+            echo "in_season=false" >> "$GITHUB_OUTPUT"
+            echo "Season status: OFF-SEASON (month $MONTH) — CSS content checks skipped for Genius Sports"
+          fi
+
       - name: Check Genius Sports - Standings
         id: genius_standings
         continue-on-error: true
@@ -53,16 +69,22 @@ jobs:
             exit 1
           fi
 
-          # Check for critical CSS selectors in standings HTML
-          if ! echo "$HTML_CONTENT" | grep -q "STANDINGS_played"; then
-            echo "::error::Standings HTML missing .STANDINGS_played selector"
-            echo "failure_reason=HTML missing .STANDINGS_played selector" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
-          if ! echo "$HTML_CONTENT" | grep -q "team-name-full"; then
-            echo "::error::Standings HTML missing .team-name-full selector"
-            echo "failure_reason=HTML missing .team-name-full selector" >> "$GITHUB_OUTPUT"
-            exit 1
+          # Check for critical CSS selectors in standings HTML — in-season only.
+          # During off-season (June–September) the widget returns different markup
+          # that lacks these selectors; skip to avoid false-positive failures.
+          if [ "${{ steps.season.outputs.in_season }}" = "true" ]; then
+            if ! echo "$HTML_CONTENT" | grep -q "STANDINGS_played"; then
+              echo "::error::Standings HTML missing .STANDINGS_played selector"
+              echo "failure_reason=HTML missing .STANDINGS_played selector" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+            if ! echo "$HTML_CONTENT" | grep -q "team-name-full"; then
+              echo "::error::Standings HTML missing .team-name-full selector"
+              echo "failure_reason=HTML missing .team-name-full selector" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+          else
+            echo "ℹ️ Off-season: skipping CSS selector checks for standings"
           fi
 
           echo "✅ Genius Sports Standings endpoint healthy"
@@ -105,28 +127,34 @@ jobs:
             exit 1
           fi
 
-          # Check for critical CSS selectors in schedule HTML
-          if ! printf '%s' "$HTML_CONTENT" | grep -q "match-wrap"; then
-            echo "::error::Schedule HTML missing .match-wrap selector"
-            echo "failure_reason=HTML missing .match-wrap selector" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
-          if ! printf '%s' "$HTML_CONTENT" | grep -q 'extfix_'; then
-            echo "::error::Schedule HTML missing #extfix_ ID patterns"
-            echo "failure_reason=HTML missing extfix_ ID patterns" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
+          # Check for critical CSS selectors and extract a match ID — in-season only.
+          # During off-season (June–September) the schedule widget lacks match-wrap
+          # elements; skip content checks to avoid false-positive failures.
+          if [ "${{ steps.season.outputs.in_season }}" = "true" ]; then
+            if ! printf '%s' "$HTML_CONTENT" | grep -q "match-wrap"; then
+              echo "::error::Schedule HTML missing .match-wrap selector"
+              echo "failure_reason=HTML missing .match-wrap selector" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+            if ! printf '%s' "$HTML_CONTENT" | grep -q 'extfix_'; then
+              echo "::error::Schedule HTML missing #extfix_ ID patterns"
+              echo "failure_reason=HTML missing extfix_ ID patterns" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
 
-          # Extract a completed/live match for the boxscore check when possible
-          MATCH_ID=$(printf '%s' "$HTML_CONTENT" | python3 -c "import re, sys; html = sys.stdin.read(); matches = re.findall(r'class\\s*=\\s*\"([^\"]*\\bmatch-wrap\\b[^\"]*)\"[^>]*id\\s*=\\s*\"extfix_(\\d+)\"', html); preferred = next((match_id for classes, match_id in matches if 'STATUS_COMPLETE' in classes or 'STATUS_LIVE' in classes), ''); fallback = matches[0][1] if matches else ''; print(preferred or fallback, end='')")
-          if [ -z "$MATCH_ID" ]; then
-            echo "::error::Could not extract a sample match ID from schedule HTML"
-            echo "failure_reason=could not extract sample match ID" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
+            # Extract a completed/live match for the boxscore check when possible
+            MATCH_ID=$(printf '%s' "$HTML_CONTENT" | python3 -c "import re, sys; html = sys.stdin.read(); matches = re.findall(r'class\\s*=\\s*\"([^\"]*\\bmatch-wrap\\b[^\"]*)\"[^>]*id\\s*=\\s*\"extfix_(\\d+)\"', html); preferred = next((match_id for classes, match_id in matches if 'STATUS_COMPLETE' in classes or 'STATUS_LIVE' in classes), ''); fallback = matches[0][1] if matches else ''; print(preferred or fallback, end='')")
+            if [ -z "$MATCH_ID" ]; then
+              echo "::error::Could not extract a sample match ID from schedule HTML"
+              echo "failure_reason=could not extract sample match ID" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
 
-          echo "Selected sample match ID: $MATCH_ID"
-          echo "sample_match_id=$MATCH_ID" >> "$GITHUB_OUTPUT"
+            echo "Selected sample match ID: $MATCH_ID"
+            echo "sample_match_id=$MATCH_ID" >> "$GITHUB_OUTPUT"
+          else
+            echo "ℹ️ Off-season: skipping CSS selector checks and match ID extraction for schedule"
+          fi
 
           echo "✅ Genius Sports Schedule endpoint healthy"
 
