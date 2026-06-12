@@ -1,14 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-10T16:49:00Z
+2026-06-12T16:34:55Z
 
 ## Last Run Tasks
-- Task 5/10: Created PR #234 — ci: make API health check season-aware for Genius Sports
+- Task 1 (triage): Commented on #236 (API health check - recurring off-season pattern, linked to #233/#234); commented on #235 (Repo Assist failure - infrastructure auth issue)
+- Task 10 (forward progress): Created PR #237 — test: add ErrorBoundary and LeagueSelector component tests (14 tests, closes #171) — 122 tests ✅
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
-Last processed: #232 (commented 2026-06-09)
+Last processed: #236 (commented 2026-06-12)
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -20,15 +21,17 @@ Last processed: #232 (commented 2026-06-09)
 - #218 (2026-06-01): API health check failure — identified as transient; second run passed
 - #230 (2026-06-08): API health check failure — identified as likely transient (same pattern as Jun 1); PR #231 created for better diagnostics
 - #232 (2026-06-09): API health check failure — BOTH Genius Sports endpoints failing, likely season-end escalation; PR #233 created for deduplication
+- #235 (2026-06-12): Repo Assist workflow failure (authentication expired mid-run) — infrastructure issue, no code fix needed
+- #236 (2026-06-12): API health check failure — recurring off-season pattern; linked to fix PRs #233 and #234
 
-## Open Repo Assist PRs (as of 2026-06-10 16:49)
+## Open Repo Assist PRs (as of 2026-06-12 16:34)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — 87 tests ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
 - #166: feat: PWA manifest and basketball icon — 81 tests ✅
 - #168: feat: team logos + W% in LeagueTable — 81 tests ✅
 - #169: feat: ARIA tab roles — SUPERSEDED by #180
-- #171: test: ErrorBoundary/LeagueSelector/LeagueTable — 104 tests ✅ (may conflict with main's LeagueTable.test.tsx)
+- #171: test: ErrorBoundary/LeagueSelector/LeagueTable — SUPERSEDED by #237 (conflicted with main)
 - #173: test: Fixtures (25 tests) — SUPERSEDED by #228
 - #176: test: MatchDetail (29 tests) — 110 total ✅
 - #178: test: App (17 tests) — 98 total ✅
@@ -54,6 +57,7 @@ Last processed: #232 (commented 2026-06-09)
 - #229: feat: pre-match team form guide in MatchDetail — 117 tests ✅
 - #233: ci: deduplicate health check failure issues — workflow only, no tests — mergeable_state: clean
 - #234: ci: make API health check season-aware for Genius Sports — workflow only, no tests
+- #237: test: add ErrorBoundary and LeagueSelector component tests (14 tests) — closes #171 — 122 tests ✅
 
 ## Recently Merged PRs
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED (2026-06-01)
@@ -72,7 +76,7 @@ Last processed: #232 (commented 2026-06-09)
 - Current main HEAD: 5a1a8ec (PR #231 merged 2026-06-09)
 - AGENTS.md is in main (merged via PR #221)
 - Release v0.1.0 PR is #226
-- PR #171 likely conflicts with main (main already has LeagueTable.test.tsx with 10 tests; PR #171's has 9)
+- PR #171 superseded by #237 (new PR with just ErrorBoundary + LeagueSelector tests, no conflict)
 - PR #173 superseded by #228 (new Fixtures tests PR)
 - PR #169 superseded by #180 (keyboard nav + ARIA)
 - computeTeamForm(matches, teamId, maxResults?) now exported from teamStorage.ts (added in PR #229)
@@ -80,24 +84,25 @@ Last processed: #232 (commented 2026-06-09)
 - computeH2HRecord + H2HRecord exported from dataProvider.ts (added in PR #227, not yet merged)
 - PR #233: deduplication (comment on existing issue), clean against main — protected file
 - PR #234: season-aware health check, clean against main — protected file; non-conflicting with #233
+- Main branch test count: 122 tests (10 test files) — verified 2026-06-12 after creating #237
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-10)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-12)
 
 ## API Health Check Pattern
-- Genius Sports failures: Jun 1 (/standings), Jun 8 (/standings), Jun 9 (/standings AND /schedule)
+- Genius Sports failures: Jun 1 (/standings), Jun 8 (/standings), Jun 9 (/standings AND /schedule), Jun 12 (/standings HTTP 500)
 - EuroLeague endpoints: passed all runs
 - Season-end confirmed: SLB season typically ends April/May; off-season HTML lacks CSS selectors
 - PR #231 (MERGED 2026-06-09): adds diagnostic info to failure issues
 - PR #233 (open): prevents duplicate issues on recurring failures
-- PR #234 (new 2026-06-10): makes health check season-aware; skips CSS selector checks Jun-Sep
+- PR #234 (open): makes health check season-aware; skips CSS selector checks Jun-Sep
 
 ## Round-Robin Next
-- 2026-06-10 16:49: Task 10 (PR #234 health check season-aware), Task 11 (monthly summary)
-- Next: Task 1 (triage issues), Task 2 (fix issues), Task 9 (new contributors)
+- 2026-06-12 16:34: Task 1 (triage #235, #236), Task 10 (PR #237 test files), Task 11 (monthly summary)
+- Next: Task 2 (fix issues), Task 7 (labeling), Task 9 (new contributors), Task 5 (maintain PRs)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -111,7 +116,7 @@ Last processed: #232 (commented 2026-06-09)
 - Fixtures.tsx: now shows venue below teams (when not 'TBC'), "View details →" text on every card
 - src/services/__tests__/ dir exists for service tests
 - src/__tests__/ does NOT exist on main
-- src/components/__tests__/ has 4 test files: Fixtures.test.tsx (PR #228), Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
+- src/components/__tests__/ has 5 test files on main (after PR #237 merges): Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx + ErrorBoundary.test.tsx + LeagueSelector.test.tsx (last 2 in PR #237)
 - getMatchWinner/getMatchMargin in Fixtures.tsx (2 ESLint errors — moved to utils in PR #225)
 - computeH2HRecord + H2HRecord exported from dataProvider.ts (PR #227, not yet merged)
 - computeTeamForm(matches, teamId, maxResults?) exported from teamStorage.ts (PR #229)
@@ -123,4 +128,4 @@ Last processed: #232 (commented 2026-06-09)
 - vi.stubEnv for PROD: use boolean (true/false) not string
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
 - getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
-- Main branch test count: 108 tests (8 test files) — verified 2026-06-10
+- Main branch test count: 108 tests (8 test files) — as of 2026-06-10 (PR #237 will bring to 122/10)
