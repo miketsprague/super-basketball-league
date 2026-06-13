@@ -310,16 +310,37 @@ export async function fetchGeniusSportsMatches(competitionId: string = DEFAULT_C
 /**
  * Fetch all data from Genius Sports
  * @param competitionId - Competition ID (default: Championship)
+ *
+ * Uses Promise.allSettled so that a failure in one endpoint (e.g. standings
+ * returning HTTP 500 during the off-season) does not prevent the other
+ * endpoint's data from being shown.  Partial results are returned with a
+ * console.warn; a full error is only thrown when both endpoints fail.
  */
 export async function fetchGeniusSportsAllData(competitionId: string = DEFAULT_COMPETITION_ID): Promise<{
   matches: Match[];
   standings: StandingsEntry[];
 }> {
-  const [matches, standings] = await Promise.all([
+  const [matchResult, standingsResult] = await Promise.allSettled([
     fetchGeniusSportsMatches(competitionId),
     fetchGeniusSportsStandings(competitionId),
   ]);
-  
+
+  const matches = matchResult.status === 'fulfilled' ? matchResult.value : [];
+  const standings = standingsResult.status === 'fulfilled' ? standingsResult.value : [];
+
+  if (matchResult.status === 'rejected') {
+    console.warn('Failed to load SLB matches (API may be in off-season):', matchResult.reason);
+  }
+  if (standingsResult.status === 'rejected') {
+    console.warn('Failed to load SLB standings (API may be in off-season):', standingsResult.reason);
+  }
+
+  // If both endpoints failed, propagate the matches error so the caller can
+  // show a meaningful error message rather than silently returning empty data.
+  if (matchResult.status === 'rejected' && standingsResult.status === 'rejected') {
+    throw matchResult.reason;
+  }
+
   return { matches, standings };
 }
 

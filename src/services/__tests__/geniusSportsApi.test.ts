@@ -327,6 +327,60 @@ describe('Genius Sports API', () => {
       expect(data.matches.length).toBeGreaterThanOrEqual(3);
       expect(data.standings).toHaveLength(3);
     });
+
+    it('should return partial data (matches only) when standings endpoint fails', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ html: mockScheduleHTML, css: [], js: [] }),
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+        });
+
+      const data = await fetchGeniusSportsAllData();
+
+      expect(data.matches.length).toBeGreaterThanOrEqual(3);
+      expect(data.standings).toHaveLength(0);
+    });
+
+    it('should return partial data (standings only) when matches endpoint fails', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ html: mockStandingsHTML, css: [], js: [] }),
+        });
+
+      const data = await fetchGeniusSportsAllData();
+
+      expect(data.matches).toHaveLength(0);
+      expect(data.standings).toHaveLength(3);
+    });
+
+    it('should throw when both endpoints fail', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+        });
+
+      await expect(fetchGeniusSportsAllData()).rejects.toThrow(
+        'Genius Sports API error: 500 Internal Server Error',
+      );
+    });
   });
 
   describe('fetchGeniusSportsMatchDetails', () => {
