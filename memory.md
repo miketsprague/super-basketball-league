@@ -1,12 +1,13 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-13T15:30:00Z
+2026-06-14T15:42:00Z
 
 ## Last Run Tasks
-- Task 5 (maintain PRs): Verified PR #237 (clean, CI passing), #163 (clean), #225 (clean), #228 (clean), #233 (clean). PR #178 (App tests) has mergeable_state: unknown — file is new so should be clean.
-- Task 7 (labeling): No labeling needed — all issues have appropriate labels.
-- Task 10 (forward progress): Created PR #238 — fix: use Promise.allSettled in fetchGeniusSportsAllData for partial failure resilience (3 new tests, 111 total ✅)
+- Task 5 (maintain PRs): Verified PRs #238, #237 CI status (pending — recently pushed). PRs #163, #178, #213 all mergeable_state: clean ✅
+- Task 1 (triage issues): No new issues since June 13. Cursor remains at #236.
+- Task 9 (new contributors): No new issues/PRs in last 24 hours.
+- Task 10 (forward progress): Created PR #239 — feat: improve Fixtures accessibility with ARIA roles/labels + 15 tests (123 total ✅)
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -25,17 +26,17 @@ Last processed: #236 (commented 2026-06-12)
 - #235 (2026-06-12): Repo Assist workflow failure (authentication expired mid-run) — infrastructure issue, no code fix needed
 - #236 (2026-06-12): API health check failure — recurring off-season pattern; linked to fix PRs #233 and #234
 
-## Open Repo Assist PRs (as of 2026-06-13 15:30)
-- #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — clean ✅
+## Open Repo Assist PRs (as of 2026-06-14 15:42)
+- #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — mergeable_state: clean ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
 - #166: feat: PWA manifest and basketball icon — 81 tests ✅
 - #168: feat: team logos + W% in LeagueTable — 81 tests ✅
 - #169: feat: ARIA tab roles — SUPERSEDED by #180
-- #171: test: ErrorBoundary/LeagueSelector/LeagueTable — SUPERSEDED by #237 (conflicted with main)
+- #171: test: ErrorBoundary/LeagueSelector/LeagueTable — SUPERSEDED by #237
 - #173: test: Fixtures (25 tests) — SUPERSEDED by #228
 - #176: test: MatchDetail (29 tests) — 110 total ✅
-- #178: test: App (17 tests) — mergeable_state: unknown (file is new, should be clean)
+- #178: test: App (17 tests) — mergeable_state: clean ✅
 - #180: feat: keyboard nav + ARIA roles for tabs — 91 tests ✅
 - #182: test: TeamView (12 tests) — 93 total ✅
 - #184: feat: configurable playoff/relegation zones — 89 tests ✅
@@ -50,16 +51,17 @@ Last processed: #236 (commented 2026-06-12)
 - #205: feat: dark mode toggle — 91 tests ✅
 - #207: feat: season record stats banner in TeamView — 91 tests ✅
 - #211: feat: sortable columns in LeagueTable — 93 tests ✅
-- #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅
+- #213: fix: preserve existing data when auto-refresh fails — 86 tests ✅ mergeable_state: clean
 - #225: fix: move match utility functions to src/utils/matchUtils.ts — 108 tests ✅ lint clean — mergeable_state: clean
 - #226: chore: release v0.1.0 — CHANGELOG.md + version bump — 108 tests ✅
 - #227: feat: add head-to-head season record section to MatchDetail — 119 tests ✅
-- #228: test: add Fixtures component tests (26 tests) — CI passing ✅ — clean
+- #228: test: add Fixtures component tests (26 tests) — CI passing ✅ — mergeable_state: clean
 - #229: feat: pre-match team form guide in MatchDetail — 117 tests ✅
-- #233: ci: deduplicate health check failure issues — workflow only, no tests — mergeable_state: clean
-- #234: ci: make API health check season-aware for Genius Sports — workflow only, no tests
-- #237: test: add ErrorBoundary and LeagueSelector component tests (14 tests) — closes #171 — 122 tests ✅ — clean
-- #238: fix: use Promise.allSettled in fetchGeniusSportsAllData — 111 tests ✅ — CREATED 2026-06-13
+- #233: ci: deduplicate health check failure issues — workflow only — mergeable_state: clean
+- #234: ci: make API health check season-aware for Genius Sports — workflow only
+- #237: test: add ErrorBoundary and LeagueSelector component tests (14 tests) — 122 tests ✅ — CI pending
+- #238: fix: use Promise.allSettled in fetchGeniusSportsAllData — 111 tests ✅ — CI pending
+- #239: feat: improve Fixtures accessibility (ARIA roles/labels) — 123 tests ✅ — CREATED 2026-06-14
 
 ## Recently Merged PRs
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED (2026-06-01)
@@ -89,16 +91,18 @@ Last processed: #236 (commented 2026-06-12)
 - Main branch test count: 108 tests (8 test files) — current main
 - PR #237 (pending): will bring to 122/10 tests
 - PR #238 (pending): uses Promise.allSettled in fetchGeniusSportsAllData — 111 tests on its branch
+- PR #239 (pending): accessibility improvements to Fixtures.tsx — 123 tests on its branch
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-13)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-14)
 
 ## API Health Check Pattern
 - Genius Sports failures: Jun 1 (/standings), Jun 8 (/standings), Jun 9 (/standings AND /schedule), Jun 12 (/standings HTTP 500)
 - Jun 13: API Health Check PASSED ✅
+- Jun 14 09:46 UTC: API Health Check PASSED ✅ (run #102)
 - EuroLeague endpoints: passed all runs
 - Season-end confirmed: SLB season typically ends April/May; off-season HTML lacks CSS selectors
 - PR #231 (MERGED 2026-06-09): adds diagnostic info to failure issues
@@ -107,8 +111,8 @@ Last processed: #236 (commented 2026-06-12)
 - PR #238 (open): fetchGeniusSportsAllData now returns partial data if only one endpoint fails
 
 ## Round-Robin Next
-- 2026-06-13 15:30: Task 5 (PR checks), Task 7 (labeling), Task 10 (PR #238 fix), Task 11 (monthly summary)
-- Next: Task 1 (triage issues), Task 2 (fix issues), Task 9 (new contributors), Task 8 (release prep)
+- 2026-06-14 15:42: Task 1 (issue triage), Task 9 (new contributors), Task 10 (PR #239 accessibility), Task 11 (monthly summary)
+- Next: Task 2 (fix issues), Task 3 (codebase study), Task 6 (stale PR nudges), Task 8 (release prep)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -124,7 +128,8 @@ Last processed: #236 (commented 2026-06-12)
 - src/__tests__/ does NOT exist on main
 - src/components/__tests__/ has 3 test files on main: Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
 - PR #237 adds: ErrorBoundary.test.tsx + LeagueSelector.test.tsx (components/__tests__/)
-- PR #178 adds: App.test.tsx (components/__tests__/) — mergeable_state unknown
+- PR #178 adds: App.test.tsx — located in src/__tests__/App.test.tsx
+- PR #213 adds: src/__tests__/App.test.tsx (isInitialLoad bug fix tests)
 - getMatchWinner/getMatchMargin in Fixtures.tsx (2 ESLint errors — moved to utils in PR #225)
 - computeH2HRecord + H2HRecord exported from dataProvider.ts (PR #227, not yet merged)
 - computeTeamForm(matches, teamId, maxResults?) exported from teamStorage.ts (PR #229)
@@ -137,3 +142,5 @@ Last processed: #236 (commented 2026-06-12)
 - Fixtures shows match.homeTeam.shortName and match.awayTeam.shortName (not fullName) in match cards
 - getCurrentSeasonYear(): August = season transition month (euroleagueApi.ts, pending PR #163)
 - fetchGeniusSportsAllData now uses Promise.allSettled (PR #238) — returns partial data on single-endpoint failure
+- Fixtures.tsx ARIA (PR #239): role="tablist" on filter bar, role="tab"/aria-selected on each tab, role="tabpanel" on matches container, aria-label on each match card button
+- Fixtures.accessibility.test.tsx: uses real useSearchParams (only mocks useNavigate), MemoryRouter with initialEntries for tab state
