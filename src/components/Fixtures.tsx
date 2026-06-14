@@ -187,6 +187,28 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
     return dateStr < today;
   };
 
+  const getMatchAriaLabel = (match: Match): string => {
+    const home = match.homeTeam.name;
+    const away = match.awayTeam.name;
+    if (match.status === 'completed') {
+      const homeScore = match.homeScore ?? 0;
+      const awayScore = match.awayScore ?? 0;
+      const winner = homeScore > awayScore ? home : awayScore > homeScore ? away : null;
+      const result = winner ? `, ${winner} won ${homeScore}–${awayScore}` : `, ${homeScore}–${awayScore}`;
+      return `${home} vs ${away}. Full time${result}. View match details.`;
+    }
+    if (match.status === 'live') {
+      const score = (match.homeScore != null && match.awayScore != null)
+        ? `, ${match.homeScore}–${match.awayScore} live`
+        : '';
+      return `LIVE — ${home} vs ${away}${score}. View match details.`;
+    }
+    const datePart = formatDateHeader(match.date);
+    const timePart = match.time ? ` at ${match.time}` : '';
+    const venuePart = match.venue && match.venue !== 'TBC' ? `. Venue: ${match.venue}` : '';
+    return `${home} vs ${away}. ${datePart}${timePart}${venuePart}. View match details.`;
+  };
+
   const tabs: { key: FilterTab; label: string; count: number }[] = [
     { key: 'fixtures', label: 'Fixtures', count: counts.fixtures },
     { key: 'results', label: 'Results', count: counts.results },
@@ -196,10 +218,19 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
   return (
     <div className="space-y-4">
       {/* Filter Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+      <div
+        className="flex gap-1 bg-gray-100 p-1 rounded-lg"
+        role="tablist"
+        aria-label="Filter fixtures"
+      >
         {tabs.map((tab) => (
           <button
             key={tab.key}
+            role="tab"
+            id={`filter-tab-${tab.key}`}
+            aria-selected={activeTab === tab.key}
+            aria-controls={`filter-panel-${tab.key}`}
+            tabIndex={activeTab === tab.key ? 0 : -1}
             onClick={() => setActiveTab(tab.key)}
             className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
               activeTab === tab.key
@@ -217,181 +248,189 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
         ))}
       </div>
 
-      {/* Empty state for filtered view */}
-      {filteredMatches.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          {activeTab === 'fixtures' && 'No upcoming fixtures'}
-          {activeTab === 'results' && 'No results yet'}
-          {activeTab === 'all' && 'No fixtures available'}
-        </div>
-      )}
+      {/* Empty state and match list — single tabpanel */}
+      <div
+        role="tabpanel"
+        id={`filter-panel-${activeTab}`}
+        aria-labelledby={`filter-tab-${activeTab}`}
+      >
+        {/* Empty state for filtered view */}
+        {filteredMatches.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            {activeTab === 'fixtures' && 'No upcoming fixtures'}
+            {activeTab === 'results' && 'No results yet'}
+            {activeTab === 'all' && 'No fixtures available'}
+          </div>
+        )}
 
-      {/* Matches grouped by date */}
-      <div className="space-y-6">
-        {groupedMatches.map((group) => (
-          <div key={group.date}>
-            {/* Date Header */}
-            <div className={`py-2 px-1 -mx-1 rounded ${
-              isToday(group.date) 
-                ? 'bg-orange-50' 
-                : isPast(group.date)
-                ? 'bg-gray-50'
-                : 'bg-green-50'
-            }`}>
-              <h3 className={`text-sm font-semibold ${
-                isToday(group.date)
-                  ? 'text-orange-700'
+        {/* Matches grouped by date */}
+        <div className="space-y-6">
+          {groupedMatches.map((group) => (
+            <div key={group.date}>
+              {/* Date Header */}
+              <div className={`py-2 px-1 -mx-1 rounded ${
+                isToday(group.date) 
+                  ? 'bg-orange-50' 
                   : isPast(group.date)
-                  ? 'text-gray-600'
-                  : 'text-green-700'
+                  ? 'bg-gray-50'
+                  : 'bg-green-50'
               }`}>
-                {formatDateHeader(group.date)}
-                <span className="ml-2 text-xs font-normal opacity-75">
-                  ({group.matches.length} {group.matches.length === 1 ? 'match' : 'matches'})
-                </span>
-              </h3>
-            </div>
+                <h3 className={`text-sm font-semibold ${
+                  isToday(group.date)
+                    ? 'text-orange-700'
+                    : isPast(group.date)
+                    ? 'text-gray-600'
+                    : 'text-green-700'
+                }`}>
+                  {formatDateHeader(group.date)}
+                  <span className="ml-2 text-xs font-normal opacity-75">
+                    ({group.matches.length} {group.matches.length === 1 ? 'match' : 'matches'})
+                  </span>
+                </h3>
+              </div>
 
-            {/* Matches for this date */}
-            <div className="space-y-3 mt-2">
-              {group.matches.map((match) => {
-                const winner = getMatchWinner(match);
-                const margin = getMatchMargin(match);
-                return (
-                <button
-                  key={match.id}
-                  onClick={() => handleMatchClick(match.id)}
-                  className={`w-full text-left bg-white rounded-lg shadow p-4 border-l-4 hover:shadow-md transition-all cursor-pointer ${
-                    match.status === 'live'
-                      ? 'border-red-500 hover:border-red-600'
-                      : match.status === 'completed'
-                      ? 'border-gray-400 hover:border-gray-500'
-                      : 'border-orange-500 hover:border-orange-600'
-                  }`}
-                >
-                  <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span>{formatTime(match.time)}</span>
-                      {winner && margin != null && margin > 0 && (
-                        <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 text-xs font-medium">
-                          +{margin}
+              {/* Matches for this date */}
+              <div className="space-y-3 mt-2">
+                {group.matches.map((match) => {
+                  const winner = getMatchWinner(match);
+                  const margin = getMatchMargin(match);
+                  return (
+                  <button
+                    key={match.id}
+                    onClick={() => handleMatchClick(match.id)}
+                    aria-label={getMatchAriaLabel(match)}
+                    className={`w-full text-left bg-white rounded-lg shadow p-4 border-l-4 hover:shadow-md transition-all cursor-pointer ${
+                      match.status === 'live'
+                        ? 'border-red-500 hover:border-red-600'
+                        : match.status === 'completed'
+                        ? 'border-gray-400 hover:border-gray-500'
+                        : 'border-orange-500 hover:border-orange-600'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span>{formatTime(match.time)}</span>
+                        {winner && margin != null && margin > 0 && (
+                          <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 text-xs font-medium">
+                            +{margin}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {showLeagueName && match.leagueName && (
+                          <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-medium">
+                            {match.leagueName}
+                          </span>
+                        )}
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                          match.status === 'live' 
+                            ? 'bg-red-100 text-red-700 animate-pulse' 
+                            : match.status === 'completed'
+                            ? 'bg-gray-100 text-gray-600'
+                            : 'bg-green-100 text-green-700'
+                        }`}>
+                          {match.status === 'live' ? 'LIVE' : match.status === 'completed' ? 'FT' : 'Upcoming'}
                         </span>
-                      )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {showLeagueName && match.leagueName && (
-                        <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-medium">
-                          {match.leagueName}
-                        </span>
-                      )}
-                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                        match.status === 'live' 
-                          ? 'bg-red-100 text-red-700 animate-pulse' 
-                          : match.status === 'completed'
-                          ? 'bg-gray-100 text-gray-600'
-                          : 'bg-green-100 text-green-700'
-                      }`}>
-                        {match.status === 'live' ? 'LIVE' : match.status === 'completed' ? 'FT' : 'Upcoming'}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          {match.homeTeam.logo && (
-                            <img 
-                              src={match.homeTeam.logo} 
-                              alt="" 
-                              className="w-6 h-6 object-contain"
-                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                            />
-                          )}
-                          <span className={`font-medium ${
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            {match.homeTeam.logo && (
+                              <img 
+                                src={match.homeTeam.logo} 
+                                alt="" 
+                                className="w-6 h-6 object-contain"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                              />
+                            )}
+                            <span className={`font-medium ${
+                              winner === 'home'
+                                ? 'text-gray-900 font-bold'
+                                : winner === 'away'
+                                ? 'text-gray-400'
+                                : 'text-gray-900'
+                            }`}>
+                              {match.homeTeam.shortName}
+                              {winner === 'home' && <span className="ml-1 text-xs text-green-600">W</span>}
+                            </span>
+                          </div>
+                          <span className={`text-xl font-bold ${
                             winner === 'home'
-                              ? 'text-gray-900 font-bold'
+                              ? 'text-gray-900'
                               : winner === 'away'
                               ? 'text-gray-400'
-                              : 'text-gray-900'
+                              : match.status === 'completed'
+                              ? 'text-gray-900'
+                              : 'text-gray-400'
                           }`}>
-                            {match.homeTeam.shortName}
-                            {winner === 'home' && <span className="ml-1 text-xs text-green-600">W</span>}
+                            {match.homeScore ?? '-'}
                           </span>
                         </div>
-                        <span className={`text-xl font-bold ${
-                          winner === 'home'
-                            ? 'text-gray-900'
-                            : winner === 'away'
-                            ? 'text-gray-400'
-                            : match.status === 'completed'
-                            ? 'text-gray-900'
-                            : 'text-gray-400'
-                        }`}>
-                          {match.homeScore ?? '-'}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {match.awayTeam.logo && (
-                            <img 
-                              src={match.awayTeam.logo} 
-                              alt="" 
-                              className="w-6 h-6 object-contain"
-                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                            />
-                          )}
-                          <span className={`font-medium ${
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {match.awayTeam.logo && (
+                              <img 
+                                src={match.awayTeam.logo} 
+                                alt="" 
+                                className="w-6 h-6 object-contain"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                              />
+                            )}
+                            <span className={`font-medium ${
+                              winner === 'away'
+                                ? 'text-gray-900 font-bold'
+                                : winner === 'home'
+                                ? 'text-gray-400'
+                                : 'text-gray-900'
+                            }`}>
+                              {match.awayTeam.shortName}
+                              {winner === 'away' && <span className="ml-1 text-xs text-green-600">W</span>}
+                            </span>
+                          </div>
+                          <span className={`text-xl font-bold ${
                             winner === 'away'
-                              ? 'text-gray-900 font-bold'
+                              ? 'text-gray-900'
                               : winner === 'home'
                               ? 'text-gray-400'
-                              : 'text-gray-900'
+                              : match.status === 'completed'
+                              ? 'text-gray-900'
+                              : 'text-gray-400'
                           }`}>
-                            {match.awayTeam.shortName}
-                            {winner === 'away' && <span className="ml-1 text-xs text-green-600">W</span>}
+                            {match.awayScore ?? '-'}
                           </span>
                         </div>
-                        <span className={`text-xl font-bold ${
-                          winner === 'away'
-                            ? 'text-gray-900'
-                            : winner === 'home'
-                            ? 'text-gray-400'
-                            : match.status === 'completed'
-                            ? 'text-gray-900'
-                            : 'text-gray-400'
-                        }`}>
-                          {match.awayScore ?? '-'}
-                        </span>
                       </div>
                     </div>
-                  </div>
-                  
-                  {match.venue && match.venue !== 'TBC' && (
-                    <div className="text-xs text-gray-400 mt-2 flex justify-between items-center">
-                      <span className="truncate max-w-[70%]">{match.venue}</span>
-                      <span className="text-orange-500 flex-shrink-0">View details →</span>
-                    </div>
-                  )}
-                  {(!match.venue || match.venue === 'TBC') && (
-                    <div className="text-xs text-gray-400 mt-2 text-right">
-                      <span className="text-orange-500">View details →</span>
-                    </div>
-                  )}
-                </button>
-                );
-              })}
+                    
+                    {match.venue && match.venue !== 'TBC' && (
+                      <div className="text-xs text-gray-400 mt-2 flex justify-between items-center">
+                        <span className="truncate max-w-[70%]">{match.venue}</span>
+                        <span className="text-orange-500 flex-shrink-0">View details →</span>
+                      </div>
+                    )}
+                    {(!match.venue || match.venue === 'TBC') && (
+                      <div className="text-xs text-gray-400 mt-2 text-right">
+                        <span className="text-orange-500">View details →</span>
+                      </div>
+                    )}
+                  </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Load more hint for 'all' tab */}
-      {activeTab === 'all' && matches.length > 50 && (
-        <div className="text-center py-4 text-xs text-gray-400">
-          Showing all {matches.length} fixtures
+          ))}
         </div>
-      )}
+
+        {/* Load more hint for 'all' tab */}
+        {activeTab === 'all' && matches.length > 50 && (
+          <div className="text-center py-4 text-xs text-gray-400">
+            Showing all {matches.length} fixtures
+          </div>
+        )}
+      </div>
     </div>
   );
 }
