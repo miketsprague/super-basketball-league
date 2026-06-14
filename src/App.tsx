@@ -87,27 +87,39 @@ function HomePage() {
 
   // Fetch data when selected league changes
   useEffect(() => {
+    let isInitialLoad = true;
+
     const fetchData = async () => {
-      setLoading(true);
-      setError(null);
+      const initial = isInitialLoad;
+      if (initial) {
+        setLoading(true);
+        setError(null);
+      }
       try {
         const data = await fetchAllData(selectedLeague.id);
         setMatches(data.matches);
         setStandings(data.standings);
+        // Clear any stale error once data arrives (e.g. after a transient failure)
+        setError(null);
       } catch (error) {
         console.error('Failed to fetch data:', error);
-        const errorDetail = getErrorMessage(error);
-        setError(`Unable to load data: ${errorDetail}`);
-        setMatches([]);
-        setStandings([]);
+        if (initial) {
+          // On initial load failure, show the error and clear any stale data
+          const errorDetail = getErrorMessage(error);
+          setError(`Unable to load data: ${errorDetail}`);
+          setMatches([]);
+          setStandings([]);
+        }
+        // On auto-refresh failure, keep the data already on screen
       } finally {
-        setLoading(false);
+        if (initial) setLoading(false);
       }
     };
 
     fetchData();
+    isInitialLoad = false;
 
-    // Optional: Auto-refresh every 5 minutes
+    // Auto-refresh every 5 minutes
     const interval = setInterval(fetchData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [selectedLeague]);
