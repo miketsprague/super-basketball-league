@@ -24,6 +24,7 @@ import type { Match, MatchDetails, StandingsEntry, QuarterScores, TeamStatistics
 
 const GENIUS_SPORTS_BASE = 'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en';
 const DEFAULT_COMPETITION_ID = '41897'; // Championship
+const REQUEST_TIMEOUT_MS = 10000; // 10-second timeout for all API requests
 
 interface GeniusSportsResponse {
   css: string[];
@@ -36,19 +37,31 @@ interface GeniusSportsResponse {
  */
 async function fetchFromGeniusSports(endpoint: string): Promise<string> {
   const url = `${GENIUS_SPORTS_BASE}${endpoint}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-  const response = await fetch(url, {
-    headers: {
-      'Accept': 'application/json',
-    },
-  });
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal: controller.signal,
+    });
 
-  if (!response.ok) {
-    throw new Error(`Genius Sports API error: ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+      throw new Error(`Genius Sports API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data: GeniusSportsResponse = await response.json();
+    return data.html;
+  } catch (fetchError) {
+    if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+      throw new Error('Genius Sports API request timed out');
+    }
+    throw fetchError;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  const data: GeniusSportsResponse = await response.json();
-  return data.html;
 }
 
 /**

@@ -616,4 +616,60 @@ describe('Helper Functions', () => {
       expect(match?.time).toMatch(/^\d{2}:\d{2}$/);
     });
   });
+
+  describe('request timeout', () => {
+    it('should throw a timeout error when V1 request is aborted', async () => {
+      const abortError = new Error('The user aborted a request.');
+      abortError.name = 'AbortError';
+      mockFetch.mockRejectedValueOnce(abortError);
+
+      await expect(fetchEuroLeagueStandings('euroleague')).rejects.toThrow(
+        'EuroLeague API request timed out',
+      );
+    });
+
+    it('should return empty array when both V1 and V2 time out (graceful degradation)', async () => {
+      const abortError = new Error('The user aborted a request.');
+      abortError.name = 'AbortError';
+      mockFetch
+        .mockRejectedValueOnce(abortError)
+        .mockRejectedValueOnce(abortError);
+
+      // Both APIs swallow errors and return [] — fetchEuroLeagueMatches is resilient
+      const result = await fetchEuroLeagueMatches('euroleague');
+      expect(result).toEqual([]);
+    });
+
+    it('should pass AbortSignal to V1 fetch', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        text: async () => mockV1StandingsXML,
+      });
+
+      await fetchEuroLeagueStandings('euroleague');
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+    });
+
+    it('should pass AbortSignal to V2 fetch', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          text: async () => '<?xml version="1.0"?><results></results>',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => mockV2GamesResponse,
+        });
+
+      await fetchEuroLeagueMatches('euroleague');
+
+      // Second call is the V2 request
+      const secondCall = mockFetch.mock.calls[1];
+      expect(secondCall[1]).toMatchObject({ signal: expect.any(AbortSignal) });
+    });
+  });
 });
