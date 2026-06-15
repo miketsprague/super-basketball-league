@@ -32,6 +32,7 @@ const EUROLEAGUE_V2_API_BASE = 'https://feeds.incrowdsports.com/provider/eurolea
 
 // Current season code format: E2025 for EuroLeague 2025-26, U2025 for EuroCup 2025-26
 const CURRENT_SEASON_YEAR = '2025';
+const REQUEST_TIMEOUT_MS = 10000; // 10-second timeout for all API requests
 
 // Parsed game from XML (V1 API - completed games)
 interface ParsedGame {
@@ -104,6 +105,8 @@ interface ParsedStanding {
  */
 async function fetchXMLFromEuroLeague(endpoint: string): Promise<Document> {
   const url = `${EUROLEAGUE_V1_API_BASE}${endpoint}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   let response: Response;
   try {
@@ -111,10 +114,16 @@ async function fetchXMLFromEuroLeague(endpoint: string): Promise<Document> {
       headers: {
         'Accept': 'application/xml',
       },
+      signal: controller.signal,
     });
   } catch (fetchError) {
+    if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+      throw new APIError('EuroLeague API request timed out');
+    }
     const message = fetchError instanceof Error ? fetchError.message : 'Network request failed';
     throw new APIError(`EuroLeague API network error: ${message}`);
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   if (!response.ok) {
@@ -146,6 +155,8 @@ async function fetchXMLFromEuroLeague(endpoint: string): Promise<Document> {
  */
 async function fetchJSONFromEuroLeagueV2(endpoint: string): Promise<V2GamesResponse> {
   const url = `${EUROLEAGUE_V2_API_BASE}${endpoint}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   let response: Response;
   try {
@@ -153,10 +164,16 @@ async function fetchJSONFromEuroLeagueV2(endpoint: string): Promise<V2GamesRespo
       headers: {
         'Accept': 'application/json',
       },
+      signal: controller.signal,
     });
   } catch (fetchError) {
+    if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+      throw new APIError('EuroLeague V2 API request timed out');
+    }
     const message = fetchError instanceof Error ? fetchError.message : 'Network request failed';
     throw new APIError(`EuroLeague V2 API network error: ${message}`);
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   if (!response.ok) {

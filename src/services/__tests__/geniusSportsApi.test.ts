@@ -416,4 +416,28 @@ describe('Helper Functions', () => {
       });
     });
   });
+
+  describe('request timeout', () => {
+    it('should throw a timeout error when the request is aborted', async () => {
+      const abortError = new Error('The user aborted a request.');
+      abortError.name = 'AbortError';
+      mockFetch.mockRejectedValueOnce(abortError);
+
+      await expect(fetchGeniusSportsMatches()).rejects.toThrow('Genius Sports API request timed out');
+    });
+
+    it('should pass AbortSignal to fetch', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ html: mockScheduleHTML, css: [], js: [] }),
+      });
+
+      await fetchGeniusSportsMatches();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+    });
+  });
 });
