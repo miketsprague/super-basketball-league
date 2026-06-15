@@ -1,13 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-14T15:42:00Z
+2026-06-15T18:22:00Z
 
 ## Last Run Tasks
-- Task 5 (maintain PRs): Verified PRs #238, #237 CI status (pending — recently pushed). PRs #163, #178, #213 all mergeable_state: clean ✅
-- Task 1 (triage issues): No new issues since June 13. Cursor remains at #236.
-- Task 9 (new contributors): No new issues/PRs in last 24 hours.
-- Task 10 (forward progress): Created PR #239 — feat: improve Fixtures accessibility with ARIA roles/labels + 15 tests (123 total ✅)
+- Task 5 (maintain PRs): Verified PRs #237, #238, #239 CI status — all passing ✅
+- Task 3/10 (codebase study / forward progress): Created PR #240 — feat: add 10-second request timeout to Genius Sports and EuroLeague API fetch calls — 114 tests ✅
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -61,7 +59,8 @@ Last processed: #236 (commented 2026-06-12)
 - #234: ci: make API health check season-aware for Genius Sports — workflow only
 - #237: test: add ErrorBoundary and LeagueSelector component tests (14 tests) — 122 tests ✅ — CI pending
 - #238: fix: use Promise.allSettled in fetchGeniusSportsAllData — 111 tests ✅ — CI pending
-- #239: feat: improve Fixtures accessibility (ARIA roles/labels) — 123 tests ✅ — CREATED 2026-06-14
+- #239: feat: improve Fixtures accessibility (ARIA roles/labels) — 123 tests ✅ — CI PASSING ✅
+- #240: feat: add 10-second request timeout to Genius Sports + EuroLeague API fetch calls — 114 tests ✅ — CREATED 2026-06-15
 
 ## Recently Merged PRs
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED (2026-06-01)
@@ -89,6 +88,9 @@ Last processed: #236 (commented 2026-06-12)
 - PR #233: deduplication (comment on existing issue), clean against main — protected file
 - PR #234: season-aware health check, clean against main — protected file; non-conflicting with #233
 - Main branch test count: 108 tests (8 test files) — current main
+- PR #240 (pending): 10-second AbortController timeout in fetchFromGeniusSports, fetchXMLFromEuroLeague, fetchJSONFromEuroLeagueV2 — 114 tests on its branch
+- AbortError detection: fetchError instanceof Error && fetchError.name === 'AbortError'
+- REQUEST_TIMEOUT_MS = 10000 added to both geniusSportsApi.ts and euroleagueApi.ts
 - PR #237 (pending): will bring to 122/10 tests
 - PR #238 (pending): uses Promise.allSettled in fetchGeniusSportsAllData — 111 tests on its branch
 - PR #239 (pending): accessibility improvements to Fixtures.tsx — 123 tests on its branch
@@ -111,8 +113,8 @@ Last processed: #236 (commented 2026-06-12)
 - PR #238 (open): fetchGeniusSportsAllData now returns partial data if only one endpoint fails
 
 ## Round-Robin Next
-- 2026-06-14 15:42: Task 1 (issue triage), Task 9 (new contributors), Task 10 (PR #239 accessibility), Task 11 (monthly summary)
-- Next: Task 2 (fix issues), Task 3 (codebase study), Task 6 (stale PR nudges), Task 8 (release prep)
+- 2026-06-15 18:22: Task 3/10 (API request timeouts PR #240), Task 5 (CI verify), Task 11 (monthly summary)
+- Next: Task 1 (issue triage), Task 4 (deps), Task 7 (labels), Task 9 (new contributors)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
