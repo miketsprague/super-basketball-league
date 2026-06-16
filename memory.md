@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-15T18:22:00Z
+2026-06-16T18:30:00Z
 
 ## Last Run Tasks
-- Task 5 (maintain PRs): Verified PRs #237, #238, #239 CI status — all passing ✅
-- Task 3/10 (codebase study / forward progress): Created PR #240 — feat: add 10-second request timeout to Genius Sports and EuroLeague API fetch calls — 114 tests ✅
+- Task 10 (forward progress): Created PR #241 — feat: add computeTeamRecord utility to teamStorage — 117 tests ✅
+- Task 5 (maintain PRs): Verified PRs #237, #238, #239, #240 CI status — all passing ✅
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -24,7 +24,7 @@ Last processed: #236 (commented 2026-06-12)
 - #235 (2026-06-12): Repo Assist workflow failure (authentication expired mid-run) — infrastructure issue, no code fix needed
 - #236 (2026-06-12): API health check failure — recurring off-season pattern; linked to fix PRs #233 and #234
 
-## Open Repo Assist PRs (as of 2026-06-14 15:42)
+## Open Repo Assist PRs (as of 2026-06-16 18:30)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — mergeable_state: clean ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -57,10 +57,11 @@ Last processed: #236 (commented 2026-06-12)
 - #229: feat: pre-match team form guide in MatchDetail — 117 tests ✅
 - #233: ci: deduplicate health check failure issues — workflow only — mergeable_state: clean
 - #234: ci: make API health check season-aware for Genius Sports — workflow only
-- #237: test: add ErrorBoundary and LeagueSelector component tests (14 tests) — 122 tests ✅ — CI pending
-- #238: fix: use Promise.allSettled in fetchGeniusSportsAllData — 111 tests ✅ — CI pending
+- #237: test: add ErrorBoundary and LeagueSelector component tests (14 tests) — 122 tests ✅ — CI PASSING ✅
+- #238: fix: use Promise.allSettled in fetchGeniusSportsAllData — 111 tests ✅ — CI PASSING ✅
 - #239: feat: improve Fixtures accessibility (ARIA roles/labels) — 123 tests ✅ — CI PASSING ✅
-- #240: feat: add 10-second request timeout to Genius Sports + EuroLeague API fetch calls — 114 tests ✅ — CREATED 2026-06-15
+- #240: feat: add 10-second request timeout to Genius Sports + EuroLeague API fetch calls — 114 tests ✅ — CI PASSING ✅
+- #241: feat: add computeTeamRecord utility to teamStorage — 117 tests ✅ — CREATED 2026-06-16
 
 ## Recently Merged PRs
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED (2026-06-01)
@@ -85,9 +86,11 @@ Last processed: #236 (commented 2026-06-12)
 - computeTeamForm(matches, teamId, maxResults?) now exported from teamStorage.ts (added in PR #229)
 - FormResult = 'W' | 'L' exported from teamStorage.ts
 - computeH2HRecord + H2HRecord exported from dataProvider.ts (added in PR #227, not yet merged)
+- computeTeamRecord + TeamRecord exported from teamStorage.ts (added in PR #241)
 - PR #233: deduplication (comment on existing issue), clean against main — protected file
 - PR #234: season-aware health check, clean against main — protected file; non-conflicting with #233
 - Main branch test count: 108 tests (8 test files) — current main
+- PR #241 (pending): 117 tests on its branch; adds computeTeamRecord to teamStorage.ts
 - PR #240 (pending): 10-second AbortController timeout in fetchFromGeniusSports, fetchXMLFromEuroLeague, fetchJSONFromEuroLeagueV2 — 114 tests on its branch
 - AbortError detection: fetchError instanceof Error && fetchError.name === 'AbortError'
 - REQUEST_TIMEOUT_MS = 10000 added to both geniusSportsApi.ts and euroleagueApi.ts
@@ -99,7 +102,7 @@ Last processed: #236 (commented 2026-06-12)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-14)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-16)
 
 ## API Health Check Pattern
 - Genius Sports failures: Jun 1 (/standings), Jun 8 (/standings), Jun 9 (/standings AND /schedule), Jun 12 (/standings HTTP 500)
@@ -113,7 +116,7 @@ Last processed: #236 (commented 2026-06-12)
 - PR #238 (open): fetchGeniusSportsAllData now returns partial data if only one endpoint fails
 
 ## Round-Robin Next
-- 2026-06-15 18:22: Task 3/10 (API request timeouts PR #240), Task 5 (CI verify), Task 11 (monthly summary)
+- 2026-06-16 18:30: Task 10 (computeTeamRecord PR #241), Task 5 (CI verify), Task 11 (monthly summary)
 - Next: Task 1 (issue triage), Task 4 (deps), Task 7 (labels), Task 9 (new contributors)
 
 ## Key Code Notes
@@ -135,6 +138,7 @@ Last processed: #236 (commented 2026-06-12)
 - getMatchWinner/getMatchMargin in Fixtures.tsx (2 ESLint errors — moved to utils in PR #225)
 - computeH2HRecord + H2HRecord exported from dataProvider.ts (PR #227, not yet merged)
 - computeTeamForm(matches, teamId, maxResults?) exported from teamStorage.ts (PR #229)
+- computeTeamRecord(matches, teamId) + TeamRecord exported from teamStorage.ts (PR #241)
 - FormResult = 'W' | 'L' exported from teamStorage.ts
 - LeagueTable: uses named export: { LeagueTable } not default export
 - App.tsx: POLL_INTERVAL hardcoded at 5min on main (PR #197 adds adaptive polling, not merged)
