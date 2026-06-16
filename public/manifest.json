@@ -1,0 +1,26 @@
+{
+  "name": "Super League Basketball",
+  "short_name": "Basketball",
+  "description": "Live scores, fixtures, and standings for Super League Basketball, EuroLeague, and EuroCup",
+  "start_url": "/super-basketball-league/",
+  "scope": "/super-basketball-league/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f4f6",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "/super-basketball-league/basketball.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/super-basketball-league/basketball.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["sports", "news"]
+}
