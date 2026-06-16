@@ -1,3 +1,5 @@
+import type { Match } from '../types';
+
 const FOLLOWED_TEAM_KEY = 'basketball-followed-team';
 
 export interface FollowedTeam {
@@ -49,6 +51,66 @@ export function clearFollowedTeam(): void {
  */
 export function normaliseTeamName(name: string): string {
   return name.trim().toLowerCase();
+}
+
+/**
+ * Season record for a team, computed from match results.
+ */
+export interface TeamRecord {
+  played: number;
+  won: number;
+  lost: number;
+  pointsFor: number;
+  pointsAgainst: number;
+  pointsDifference: number;
+  winPercentage: number;
+}
+
+/**
+ * Compute a team's season record from a list of completed matches.
+ *
+ * Only completed matches where the team appears (home or away) are counted.
+ * `teamId` is matched against `homeTeam.id` and `awayTeam.id`.
+ */
+export function computeTeamRecord(matches: Match[], teamId: string): TeamRecord {
+  const completed = matches.filter(
+    (m) =>
+      m.status === 'completed' &&
+      m.homeScore !== undefined &&
+      m.awayScore !== undefined &&
+      (m.homeTeam.id === teamId || m.awayTeam.id === teamId),
+  );
+
+  let won = 0;
+  let lost = 0;
+  let pointsFor = 0;
+  let pointsAgainst = 0;
+
+  for (const m of completed) {
+    const isHome = m.homeTeam.id === teamId;
+    const teamScore = isHome ? m.homeScore! : m.awayScore!;
+    const oppScore = isHome ? m.awayScore! : m.homeScore!;
+
+    pointsFor += teamScore;
+    pointsAgainst += oppScore;
+
+    if (teamScore > oppScore) {
+      won++;
+    } else {
+      lost++;
+    }
+  }
+
+  const played = completed.length;
+  return {
+    played,
+    won,
+    lost,
+    pointsFor,
+    pointsAgainst,
+    pointsDifference: pointsFor - pointsAgainst,
+    winPercentage: played === 0 ? 0 : Math.round((won / played) * 1000) / 10,
+  };
 }
 
 /**
