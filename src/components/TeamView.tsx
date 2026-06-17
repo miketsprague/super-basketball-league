@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
-import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import { getFollowedTeam, setFollowedTeam, clearFollowedTeam, computeNextFixture } from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -59,6 +59,16 @@ export function TeamView() {
     navigate(-1);
   };
 
+  const nextFixture = useMemo(
+    () => (loading ? null : computeNextFixture(matches, decodedTeamName)),
+    [matches, decodedTeamName, loading],
+  );
+
+  const formatNextFixtureDate = (dateStr: string) => {
+    const date = new Date(dateStr + 'T12:00:00');
+    return date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  };
+
   if (!decodedTeamName) {
     return (
       <div className="min-h-screen bg-gray-100">
@@ -104,6 +114,29 @@ export function TeamView() {
 
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">
+        {/* Next Game Banner */}
+        {nextFixture && (
+          <button
+            onClick={() => navigate(`/match/${nextFixture.id}${nextFixture.leagueId ? `?league=${encodeURIComponent(nextFixture.leagueId)}` : ''}`)}
+            className="w-full text-left bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4 hover:bg-orange-100 transition-colors"
+          >
+            <p className="text-xs font-semibold text-orange-700 uppercase tracking-wide mb-2">Next Game</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-semibold text-gray-900">
+                  {nextFixture.homeTeam.shortName} <span className="text-gray-400 font-normal">vs</span> {nextFixture.awayTeam.shortName}
+                </p>
+                <p className="text-sm text-gray-600 mt-0.5">
+                  {formatNextFixtureDate(nextFixture.date)} · {nextFixture.time || 'TBC'}
+                </p>
+                {nextFixture.venue && nextFixture.venue !== 'TBC' && (
+                  <p className="text-xs text-gray-400 mt-0.5">{nextFixture.venue}</p>
+                )}
+              </div>
+              <span className="text-orange-400 text-lg">→</span>
+            </div>
+          </button>
+        )}
         {error ? (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
             <p>{error}</p>
