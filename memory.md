@@ -1,15 +1,16 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-16T18:30:00Z
+2026-06-17T16:58:00Z
 
 ## Last Run Tasks
-- Task 10 (forward progress): Created PR #241 — feat: add computeTeamRecord utility to teamStorage — 117 tests ✅
-- Task 5 (maintain PRs): Verified PRs #237, #238, #239, #240 CI status — all passing ✅
+- Task 10 (forward progress): Created PR #242 — feat: add computeNextFixture utility and Next Game banner in TeamView — 116 tests ✅
+- Task 5 (maintain PRs): Verified PRs #163, #178 CI status — both mergeable_state: clean ✅
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
 Last processed: #236 (commented 2026-06-12)
+No new issues since #236 as of 2026-06-17.
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -24,7 +25,7 @@ Last processed: #236 (commented 2026-06-12)
 - #235 (2026-06-12): Repo Assist workflow failure (authentication expired mid-run) — infrastructure issue, no code fix needed
 - #236 (2026-06-12): API health check failure — recurring off-season pattern; linked to fix PRs #233 and #234
 
-## Open Repo Assist PRs (as of 2026-06-16 18:30)
+## Open Repo Assist PRs (as of 2026-06-17 16:58)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — mergeable_state: clean ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -62,6 +63,7 @@ Last processed: #236 (commented 2026-06-12)
 - #239: feat: improve Fixtures accessibility (ARIA roles/labels) — 123 tests ✅ — CI PASSING ✅
 - #240: feat: add 10-second request timeout to Genius Sports + EuroLeague API fetch calls — 114 tests ✅ — CI PASSING ✅
 - #241: feat: add computeTeamRecord utility to teamStorage — 117 tests ✅ — CREATED 2026-06-16
+- #242: feat: add computeNextFixture utility and Next Game banner in TeamView — 116 tests ✅ — CREATED 2026-06-17
 
 ## Recently Merged PRs
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED (2026-06-01)
@@ -87,9 +89,11 @@ Last processed: #236 (commented 2026-06-12)
 - FormResult = 'W' | 'L' exported from teamStorage.ts
 - computeH2HRecord + H2HRecord exported from dataProvider.ts (added in PR #227, not yet merged)
 - computeTeamRecord + TeamRecord exported from teamStorage.ts (added in PR #241)
+- computeNextFixture(matches, teamName) exported from teamStorage.ts (added in PR #242)
 - PR #233: deduplication (comment on existing issue), clean against main — protected file
 - PR #234: season-aware health check, clean against main — protected file; non-conflicting with #233
 - Main branch test count: 108 tests (8 test files) — current main
+- PR #242 (pending): 116 tests on its branch; adds computeNextFixture to teamStorage.ts + Next Game banner to TeamView
 - PR #241 (pending): 117 tests on its branch; adds computeTeamRecord to teamStorage.ts
 - PR #240 (pending): 10-second AbortController timeout in fetchFromGeniusSports, fetchXMLFromEuroLeague, fetchJSONFromEuroLeagueV2 — 114 tests on its branch
 - AbortError detection: fetchError instanceof Error && fetchError.name === 'AbortError'
@@ -102,12 +106,13 @@ Last processed: #236 (commented 2026-06-12)
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-16)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-17)
 
 ## API Health Check Pattern
 - Genius Sports failures: Jun 1 (/standings), Jun 8 (/standings), Jun 9 (/standings AND /schedule), Jun 12 (/standings HTTP 500)
 - Jun 13: API Health Check PASSED ✅
 - Jun 14 09:46 UTC: API Health Check PASSED ✅ (run #102)
+- Jun 17 11:07 UTC: API Health Check PASSED ✅ (run #105)
 - EuroLeague endpoints: passed all runs
 - Season-end confirmed: SLB season typically ends April/May; off-season HTML lacks CSS selectors
 - PR #231 (MERGED 2026-06-09): adds diagnostic info to failure issues
@@ -116,8 +121,8 @@ Last processed: #236 (commented 2026-06-12)
 - PR #238 (open): fetchGeniusSportsAllData now returns partial data if only one endpoint fails
 
 ## Round-Robin Next
-- 2026-06-16 18:30: Task 10 (computeTeamRecord PR #241), Task 5 (CI verify), Task 11 (monthly summary)
-- Next: Task 1 (issue triage), Task 4 (deps), Task 7 (labels), Task 9 (new contributors)
+- 2026-06-17 16:58: Task 10 (computeNextFixture PR #242), Task 5 (CI verify #163, #178), Task 11 (monthly summary)
+- Next: Task 1 (issue triage — no new issues), Task 4 (deps — blocked), Task 7 (labels), Task 9 (new contributors), Task 6 (stale PR nudges)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -139,6 +144,7 @@ Last processed: #236 (commented 2026-06-12)
 - computeH2HRecord + H2HRecord exported from dataProvider.ts (PR #227, not yet merged)
 - computeTeamForm(matches, teamId, maxResults?) exported from teamStorage.ts (PR #229)
 - computeTeamRecord(matches, teamId) + TeamRecord exported from teamStorage.ts (PR #241)
+- computeNextFixture(matches, teamName): Match | null — exported from teamStorage.ts (PR #242)
 - FormResult = 'W' | 'L' exported from teamStorage.ts
 - LeagueTable: uses named export: { LeagueTable } not default export
 - App.tsx: POLL_INTERVAL hardcoded at 5min on main (PR #197 adds adaptive polling, not merged)
@@ -150,3 +156,4 @@ Last processed: #236 (commented 2026-06-12)
 - fetchGeniusSportsAllData now uses Promise.allSettled (PR #238) — returns partial data on single-endpoint failure
 - Fixtures.tsx ARIA (PR #239): role="tablist" on filter bar, role="tab"/aria-selected on each tab, role="tabpanel" on matches container, aria-label on each match card button
 - Fixtures.accessibility.test.tsx: uses real useSearchParams (only mocks useNavigate), MemoryRouter with initialEntries for tab state
+- TeamView.tsx: uses useMemo for computeNextFixture; shows "Next Game" banner above fixtures when upcoming match exists
