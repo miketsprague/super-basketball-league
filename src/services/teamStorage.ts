@@ -1,3 +1,5 @@
+import type { Match } from '../types';
+
 const FOLLOWED_TEAM_KEY = 'basketball-followed-team';
 
 export interface FollowedTeam {
@@ -65,4 +67,26 @@ export function matchInvolvesTeam(
     normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised ||
     normaliseTeamName(match.awayTeam.shortName ?? match.awayTeam.name) === normalised
   );
+}
+
+/**
+ * Find the next upcoming fixture for a given team from a list of matches.
+ * Returns the earliest scheduled or live match on or after today, or null if none exists.
+ */
+export function computeNextFixture(matches: Match[], teamName: string): Match | null {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const todayStr = `${year}-${month}-${day}`;
+
+  const upcoming = matches
+    .filter(m => matchInvolvesTeam(m, teamName))
+    .filter(m => (m.status === 'scheduled' || m.status === 'live') && m.date >= todayStr)
+    .sort((a, b) => {
+      const dateCmp = a.date.localeCompare(b.date);
+      return dateCmp !== 0 ? dateCmp : a.time.localeCompare(b.time);
+    });
+
+  return upcoming[0] ?? null;
 }
