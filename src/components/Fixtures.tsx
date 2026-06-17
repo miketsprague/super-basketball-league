@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useEffect, useCallback, useState } from 'react';
 import type { Match } from '../types';
 
 export type MatchWinner = 'home' | 'away' | 'draw';
@@ -31,6 +31,7 @@ const SCROLL_KEY = 'fixtures-scroll-position';
 export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [teamSearch, setTeamSearch] = useState('');
   
   // Get active tab from URL or default to 'fixtures'
   const activeTab = (searchParams.get('tab') as FilterTab) || 'fixtures';
@@ -41,8 +42,9 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
       newParams.set('tab', tab);
       return newParams;
     }, { replace: true });
-    // Reset scroll position when changing tabs
+    // Reset scroll position and search when changing tabs
     sessionStorage.removeItem(SCROLL_KEY);
+    setTeamSearch('');
   }, [setSearchParams]);
 
   // Get today's date in local timezone (YYYY-MM-DD format)
@@ -55,7 +57,7 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
   }, []);
 
   // Filter matches based on active tab
-  const filteredMatches = useMemo(() => {
+  const tabFilteredMatches = useMemo(() => {
     switch (activeTab) {
       case 'fixtures':
         // Show matches from today onwards, limit to reasonable amount
@@ -74,6 +76,18 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
         return matches;
     }
   }, [matches, activeTab, today]);
+
+  // Further filter by team search (case-insensitive name match)
+  const filteredMatches = useMemo(() => {
+    const query = teamSearch.trim().toLowerCase();
+    if (!query) return tabFilteredMatches;
+    return tabFilteredMatches.filter(m =>
+      m.homeTeam.name.toLowerCase().includes(query) ||
+      m.homeTeam.shortName.toLowerCase().includes(query) ||
+      m.awayTeam.name.toLowerCase().includes(query) ||
+      m.awayTeam.shortName.toLowerCase().includes(query)
+    );
+  }, [tabFilteredMatches, teamSearch]);
 
   // Group matches by date
   const groupedMatches = useMemo(() => {
@@ -217,12 +231,41 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
         ))}
       </div>
 
+      {/* Team search */}
+      <div className="relative">
+        <label htmlFor="team-search" className="sr-only">Search by team</label>
+        <input
+          id="team-search"
+          type="search"
+          value={teamSearch}
+          onChange={e => setTeamSearch(e.target.value)}
+          placeholder="Search by team…"
+          className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+          aria-label="Search by team"
+        />
+        <svg
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+        </svg>
+      </div>
+
       {/* Empty state for filtered view */}
       {filteredMatches.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          {activeTab === 'fixtures' && 'No upcoming fixtures'}
-          {activeTab === 'results' && 'No results yet'}
-          {activeTab === 'all' && 'No fixtures available'}
+          {teamSearch.trim()
+            ? `No matches found for "${teamSearch.trim()}"`
+            : activeTab === 'fixtures'
+            ? 'No upcoming fixtures'
+            : activeTab === 'results'
+            ? 'No results yet'
+            : 'No fixtures available'}
         </div>
       )}
 
