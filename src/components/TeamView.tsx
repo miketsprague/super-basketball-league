@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
 import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import { generateICalContent, downloadCalendar } from '../utils/calendarExport';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -59,6 +60,14 @@ export function TeamView() {
     navigate(-1);
   };
 
+  const handleExportCalendar = () => {
+    const icsContent = generateICalContent(matches, decodedTeamName);
+    const safeName = decodedTeamName.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+    downloadCalendar(icsContent, `${safeName}-fixtures.ics`);
+  };
+
+  const upcomingCount = matches.filter((m) => m.status === 'scheduled').length;
+
   if (!decodedTeamName) {
     return (
       <div className="min-h-screen bg-gray-100">
@@ -100,6 +109,18 @@ export function TeamView() {
       <div className="bg-gray-800 text-white py-4 px-4 text-center border-t border-gray-700">
         <h1 className="text-lg font-bold">{decodedTeamName}</h1>
         <p className="text-xs text-gray-400 mt-1">All fixtures across all leagues</p>
+        {!loading && upcomingCount > 0 && (
+          <button
+            onClick={handleExportCalendar}
+            className="mt-3 inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"
+            aria-label={`Export ${upcomingCount} upcoming fixture${upcomingCount === 1 ? '' : 's'} to calendar`}
+          >
+            <span aria-hidden="true">📅</span>
+            <span>
+              Export {upcomingCount} fixture{upcomingCount === 1 ? '' : 's'} to calendar
+            </span>
+          </button>
+        )}
       </div>
 
       {/* Main Content */}
