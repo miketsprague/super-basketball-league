@@ -1,16 +1,16 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-17T16:58:00Z
+2026-06-18T16:47:00Z
 
 ## Last Run Tasks
-- Task 10 (forward progress): Created PR #242 — feat: add computeNextFixture utility and Next Game banner in TeamView — 116 tests ✅
-- Task 5 (maintain PRs): Verified PRs #163, #178 CI status — both mergeable_state: clean ✅
+- Task 10 (forward progress): Created PR #243 — feat: add iCal calendar export for team fixtures — 135 tests ✅
+- Task 5 (maintain PRs): Verified PRs #241, #242 CI status — both test: success ✅
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
 Last processed: #236 (commented 2026-06-12)
-No new issues since #236 as of 2026-06-17.
+No new issues since #236 as of 2026-06-18.
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -62,8 +62,9 @@ No new issues since #236 as of 2026-06-17.
 - #238: fix: use Promise.allSettled in fetchGeniusSportsAllData — 111 tests ✅ — CI PASSING ✅
 - #239: feat: improve Fixtures accessibility (ARIA roles/labels) — 123 tests ✅ — CI PASSING ✅
 - #240: feat: add 10-second request timeout to Genius Sports + EuroLeague API fetch calls — 114 tests ✅ — CI PASSING ✅
-- #241: feat: add computeTeamRecord utility to teamStorage — 117 tests ✅ — CREATED 2026-06-16
-- #242: feat: add computeNextFixture utility and Next Game banner in TeamView — 116 tests ✅ — CREATED 2026-06-17
+- #241: feat: add computeTeamRecord utility to teamStorage — 117 tests ✅ — CREATED 2026-06-16 — CI PASSING ✅
+- #242: feat: add computeNextFixture utility and Next Game banner in TeamView — 116 tests ✅ — CREATED 2026-06-17 — CI PASSING ✅
+- #243: feat: add iCal calendar export for team fixtures — 135 tests ✅ — CREATED 2026-06-18 — src/utils/calendarExport.ts (new), src/utils/__tests__/calendarExport.test.ts (27 tests)
 
 ## Recently Merged PRs
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED (2026-06-01)
@@ -102,11 +103,13 @@ No new issues since #236 as of 2026-06-17.
 - PR #238 (pending): uses Promise.allSettled in fetchGeniusSportsAllData — 111 tests on its branch
 - PR #239 (pending): accessibility improvements to Fixtures.tsx — 123 tests on its branch
 
+- PR #243 (pending): iCal calendar export — generateICalContent, formatICalDateTime, escapeICalText, downloadCalendar in src/utils/calendarExport.ts — 135 tests on its branch
+
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-17)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-18)
 
 ## API Health Check Pattern
 - Genius Sports failures: Jun 1 (/standings), Jun 8 (/standings), Jun 9 (/standings AND /schedule), Jun 12 (/standings HTTP 500)
@@ -121,7 +124,7 @@ No new issues since #236 as of 2026-06-17.
 - PR #238 (open): fetchGeniusSportsAllData now returns partial data if only one endpoint fails
 
 ## Round-Robin Next
-- 2026-06-17 16:58: Task 10 (computeNextFixture PR #242), Task 5 (CI verify #163, #178), Task 11 (monthly summary)
+- 2026-06-18 16:47: Task 10 (calendar export PR #243), Task 5 (CI verify #241, #242), Task 11 (monthly summary)
 - Next: Task 1 (issue triage — no new issues), Task 4 (deps — blocked), Task 7 (labels), Task 9 (new contributors), Task 6 (stale PR nudges)
 
 ## Key Code Notes
@@ -156,4 +159,7 @@ No new issues since #236 as of 2026-06-17.
 - fetchGeniusSportsAllData now uses Promise.allSettled (PR #238) — returns partial data on single-endpoint failure
 - Fixtures.tsx ARIA (PR #239): role="tablist" on filter bar, role="tab"/aria-selected on each tab, role="tabpanel" on matches container, aria-label on each match card button
 - Fixtures.accessibility.test.tsx: uses real useSearchParams (only mocks useNavigate), MemoryRouter with initialEntries for tab state
-- TeamView.tsx: uses useMemo for computeNextFixture; shows "Next Game" banner above fixtures when upcoming match exists
+- TeamView.tsx: uses useMemo for computeNextFixture; shows "Next Game" banner above fixtures when upcoming match exists (PR #242)
+- TeamView.tsx: shows "📅 Export N fixtures to calendar" button in team banner when upcoming > 0 (PR #243)
+- src/utils/calendarExport.ts (new in PR #243): generateICalContent, formatICalDateTime, escapeICalText, downloadCalendar
+- src/utils/__tests__/calendarExport.test.ts: 27 tests for calendarExport utility
