@@ -25,10 +25,17 @@ function getErrorMessage(error: unknown): string {
 type Tab = 'fixtures' | 'table';
 
 const LEAGUE_PARAM = 'league';
+const TAB_PARAM = 'tab';
 
 function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<Tab>('fixtures');
+
+  const getActiveTab = useCallback((): Tab => {
+    const tab = searchParams.get(TAB_PARAM);
+    return tab === 'table' ? 'table' : 'fixtures';
+  }, [searchParams]);
+
+  const activeTab = getActiveTab();
   const [matches, setMatches] = useState<Match[]>([]);
   const [standings, setStandings] = useState<StandingsEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,6 +61,18 @@ function HomePage() {
 
   const selectedLeague = getSelectedLeague();
 
+  const setActiveTab = useCallback((tab: Tab) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      if (tab === 'fixtures') {
+        newParams.delete(TAB_PARAM);
+      } else {
+        newParams.set(TAB_PARAM, tab);
+      }
+      return newParams;
+    }, { replace: true });
+  }, [setSearchParams]);
+
   // Check if selected league supports standings
   const leagueHasStandings = getLeagueConfig(selectedLeague.id)?.hasStandings !== false;
 
@@ -62,7 +81,7 @@ function HomePage() {
     if (!leagueHasStandings && activeTab === 'table') {
       setActiveTab('fixtures');
     }
-  }, [leagueHasStandings, activeTab]);
+  }, [leagueHasStandings, activeTab, setActiveTab]);
 
   // Fetch available leagues on mount
   useEffect(() => {
