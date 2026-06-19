@@ -166,7 +166,18 @@ function HomePage() {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Fixtures & Results
+            <span className="inline-flex items-center gap-1.5">
+              Fixtures & Results
+              {matches.filter(m => m.status === 'live').length > 0 && (
+                <span
+                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-semibold animate-pulse"
+                  aria-label={`${matches.filter(m => m.status === 'live').length} live match${matches.filter(m => m.status === 'live').length > 1 ? 'es' : ''}`}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" aria-hidden="true" />
+                  LIVE
+                </span>
+              )}
+            </span>
           </button>
           {leagueHasStandings && (
             <button
