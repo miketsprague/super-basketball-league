@@ -24,11 +24,12 @@ interface FixturesProps {
   matches: Match[];
   loading: boolean;
   showLeagueName?: boolean;
+  lastRefreshed?: Date | null;
 }
 
 const SCROLL_KEY = 'fixtures-scroll-position';
 
-export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
+export function Fixtures({ matches, loading, showLeagueName, lastRefreshed }: FixturesProps) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   
@@ -126,6 +127,10 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
     navigate(`/match/${matchId}${league ? `?league=${encodeURIComponent(league)}` : ''}`);
   };
 
+  const formatLastRefreshed = (date: Date) => {
+    return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -136,8 +141,15 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
 
   if (matches.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        No fixtures available
+      <div>
+        <div className="text-center py-12 text-gray-500">
+          No fixtures available
+        </div>
+        {lastRefreshed && (
+          <p className="text-xs text-gray-400 text-right" aria-live="polite">
+            Updated {formatLastRefreshed(lastRefreshed)}
+          </p>
+        )}
       </div>
     );
   }
@@ -216,6 +228,13 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
           </button>
         ))}
       </div>
+
+      {/* Last refreshed indicator */}
+      {lastRefreshed && (
+        <p className="text-xs text-gray-400 text-right" aria-live="polite">
+          Updated {formatLastRefreshed(lastRefreshed)}
+        </p>
+      )}
 
       {/* Empty state for filtered view */}
       {filteredMatches.length === 0 && (

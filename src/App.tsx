@@ -33,6 +33,7 @@ function HomePage() {
   const [standings, setStandings] = useState<StandingsEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   
   // League state
   const [leagues, setLeagues] = useState<League[]>(predefinedLeagues);
@@ -94,6 +95,7 @@ function HomePage() {
         const data = await fetchAllData(selectedLeague.id);
         setMatches(data.matches);
         setStandings(data.standings);
+        setLastRefreshed(new Date());
       } catch (error) {
         console.error('Failed to fetch data:', error);
         const errorDetail = getErrorMessage(error);
@@ -128,6 +130,7 @@ function HomePage() {
       .then(data => {
         setMatches(data.matches);
         setStandings(data.standings);
+        setLastRefreshed(new Date());
       })
       .catch(err => {
         console.error('Retry failed:', err);
@@ -205,7 +208,7 @@ function HomePage() {
             </button>
           </div>
         ) : activeTab === 'fixtures' ? (
-          <Fixtures matches={matches} loading={loading} />
+          <Fixtures matches={matches} loading={loading} lastRefreshed={lastRefreshed} />
         ) : (
           <LeagueTable standings={standings} loading={loading} matches={matches} />
         )}
