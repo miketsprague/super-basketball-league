@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
-import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import { getFollowedTeam, setFollowedTeam, clearFollowedTeam, computeHomeAwayRecord } from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -55,6 +55,14 @@ export function TeamView() {
     }
   };
 
+  const homeAwayRecord = useMemo(
+    () => computeHomeAwayRecord(matches, decodedTeamName),
+    [matches, decodedTeamName],
+  );
+
+  const hasRecord =
+    homeAwayRecord.home.played > 0 || homeAwayRecord.away.played > 0;
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -100,6 +108,30 @@ export function TeamView() {
       <div className="bg-gray-800 text-white py-4 px-4 text-center border-t border-gray-700">
         <h1 className="text-lg font-bold">{decodedTeamName}</h1>
         <p className="text-xs text-gray-400 mt-1">All fixtures across all leagues</p>
+        {!loading && hasRecord && (
+          <div
+            className="mt-3 flex justify-center gap-6 text-xs"
+            aria-label="Home and away record"
+          >
+            <div className="text-center">
+              <span className="block text-gray-400 mb-0.5">Home</span>
+              <span className="font-semibold text-white">
+                {homeAwayRecord.home.won}
+                <span className="text-gray-400 font-normal">-</span>
+                {homeAwayRecord.home.lost}
+              </span>
+            </div>
+            <div className="w-px bg-gray-600" />
+            <div className="text-center">
+              <span className="block text-gray-400 mb-0.5">Away</span>
+              <span className="font-semibold text-white">
+                {homeAwayRecord.away.won}
+                <span className="text-gray-400 font-normal">-</span>
+                {homeAwayRecord.away.lost}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
