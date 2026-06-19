@@ -26,6 +26,35 @@ https://api-live.euroleague.net/v1/standings?seasoncode=E2025
 
 ## GitHub Actions Issues
 
+### Repo Assist `create_pull_request` MCP Tool — "context is not defined"
+**Symptom:** Repo Assist workflow runs successfully but cannot create pull requests.
+The `create_pull_request` MCP tool returns "context is not defined" on every attempt.
+This blocked PR creation for 35+ consecutive daily runs (March–April 2026).
+
+**Root Cause:** A bug in the `gh-aw` safeoutputs MCP server — the component that handles
+safe-output tool calls (like `create_pull_request`) during the agent job. The bug was
+tracked upstream as `github/gh-aw#18751` and `github/gh-aw#18643` (both now closed/fixed).
+The `repo-assist.lock.yml` was pinned to `gh-aw v0.50.6` (schema v1, MCP Gateway v0.1.5)
+which contained the buggy safeoutputs server code.
+
+**Solution:** Regenerate the lock file to pick up the fixed infrastructure:
+```bash
+# Option 1 — upgrade all agentic workflows in the repo
+gh aw upgrade
+
+# Option 2 — recompile and validate lock files
+gh aw compile --validate --verbose
+
+# Then commit the updated lock files
+git add .github/workflows/*.lock.yml
+git commit -m "fix: regenerate agentic workflow lock files"
+git push
+```
+
+**Verification:** After regenerating, trigger a manual Repo Assist run via
+`workflow_dispatch` and check that the `create_pull_request` tool call succeeds
+in the safe_outputs job logs.
+
 ### Environment Secrets Not Working
 **Symptom:** Environment secrets not accessible during build  
 **Cause:** Job missing environment declaration  
