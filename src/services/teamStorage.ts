@@ -1,3 +1,5 @@
+import type { Match } from '../types';
+
 const FOLLOWED_TEAM_KEY = 'basketball-followed-team';
 
 export interface FollowedTeam {
@@ -65,4 +67,45 @@ export function matchInvolvesTeam(
     normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised ||
     normaliseTeamName(match.awayTeam.shortName ?? match.awayTeam.name) === normalised
   );
+}
+
+export interface HomeAwayRecord {
+  home: { played: number; won: number; lost: number };
+  away: { played: number; won: number; lost: number };
+}
+
+/**
+ * Compute a team's separate home and away win/loss records from a list of completed matches.
+ * Uses case-insensitive name matching (same logic as matchInvolvesTeam).
+ */
+export function computeHomeAwayRecord(matches: Match[], teamName: string): HomeAwayRecord {
+  const normalised = normaliseTeamName(teamName);
+  const record: HomeAwayRecord = {
+    home: { played: 0, won: 0, lost: 0 },
+    away: { played: 0, won: 0, lost: 0 },
+  };
+
+  for (const match of matches) {
+    if (match.status !== 'completed') continue;
+    if (match.homeScore == null || match.awayScore == null) continue;
+
+    const homeNorm =
+      normaliseTeamName(match.homeTeam.name) === normalised ||
+      normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised;
+    const awayNorm =
+      normaliseTeamName(match.awayTeam.name) === normalised ||
+      normaliseTeamName(match.awayTeam.shortName ?? match.awayTeam.name) === normalised;
+
+    if (homeNorm) {
+      record.home.played++;
+      if (match.homeScore > match.awayScore) record.home.won++;
+      else record.home.lost++;
+    } else if (awayNorm) {
+      record.away.played++;
+      if (match.awayScore > match.homeScore) record.away.won++;
+      else record.away.lost++;
+    }
+  }
+
+  return record;
 }
