@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import { Fixtures } from './components/Fixtures';
 import { LeagueTable } from './components/LeagueTable';
@@ -25,6 +25,8 @@ function getErrorMessage(error: unknown): string {
 type Tab = 'fixtures' | 'table';
 
 const LEAGUE_PARAM = 'league';
+const POLL_INTERVAL_NORMAL = 5 * 60 * 1000; // 5 minutes
+const POLL_INTERVAL_LIVE   = 30 * 1000;      // 30 seconds when live matches are on
 
 function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -85,32 +87,38 @@ function HomePage() {
     loadLeagues();
   }, []);
 
-  // Fetch data when selected league changes
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchAllData(selectedLeague.id);
-        setMatches(data.matches);
-        setStandings(data.standings);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-        const errorDetail = getErrorMessage(error);
-        setError(`Unable to load data: ${errorDetail}`);
-        setMatches([]);
-        setStandings([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // Optional: Auto-refresh every 5 minutes
-    const interval = setInterval(fetchData, 5 * 60 * 1000);
-    return () => clearInterval(interval);
+  // Fetch data for the selected league
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await fetchAllData(selectedLeague.id);
+      setMatches(data.matches);
+      setStandings(data.standings);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+      const errorDetail = getErrorMessage(error);
+      setError(`Unable to load data: ${errorDetail}`);
+      setMatches([]);
+      setStandings([]);
+    } finally {
+      setLoading(false);
+    }
   }, [selectedLeague]);
+
+  // Initial fetch when league changes
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Adaptive polling: refresh every 30 s when live matches are on, otherwise every 5 min
+  const hasLiveMatches = useMemo(() => matches.some(m => m.status === 'live'), [matches]);
+
+  useEffect(() => {
+    const pollInterval = hasLiveMatches ? POLL_INTERVAL_LIVE : POLL_INTERVAL_NORMAL;
+    const interval = setInterval(fetchData, pollInterval);
+    return () => clearInterval(interval);
+  }, [hasLiveMatches, fetchData]);
 
   const handleLeagueChange = (league: League) => {
     // Update URL params to persist league selection
@@ -122,19 +130,7 @@ function HomePage() {
   };
 
   const handleRetry = () => {
-    setError(null);
-    setLoading(true);
-    fetchAllData(selectedLeague.id)
-      .then(data => {
-        setMatches(data.matches);
-        setStandings(data.standings);
-      })
-      .catch(err => {
-        console.error('Retry failed:', err);
-        const errorDetail = getErrorMessage(err);
-        setError(`Unable to load data: ${errorDetail}`);
-      })
-      .finally(() => setLoading(false));
+    fetchData();
   };
 
   return (
@@ -182,6 +178,17 @@ function HomePage() {
           )}
         </div>
       </nav>
+
+      {/* Live-refresh notice */}
+      {hasLiveMatches && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="bg-red-50 border-b border-red-100 text-red-700 text-xs text-center py-1 px-4"
+        >
+          🔴 Live matches in progress — refreshing every 30 s
+        </div>
+      )}
 
       {/* Leagues error banner (non-blocking) */}
       {leaguesError && (
