@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
-import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import { getFollowedTeam, setFollowedTeam, clearFollowedTeam, computeWinStreak } from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -100,6 +100,27 @@ export function TeamView() {
       <div className="bg-gray-800 text-white py-4 px-4 text-center border-t border-gray-700">
         <h1 className="text-lg font-bold">{decodedTeamName}</h1>
         <p className="text-xs text-gray-400 mt-1">All fixtures across all leagues</p>
+        {(() => {
+          if (loading || matches.length === 0) return null;
+          const streak = computeWinStreak(matches, decodedTeamName);
+          if (!streak) return null;
+          const isWin = streak.type === 'W';
+          return (
+            <div className="mt-2 flex justify-center">
+              <span
+                className={`inline-flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                  isWin
+                    ? 'bg-green-600 text-white'
+                    : 'bg-red-600 text-white'
+                }`}
+                aria-label={`Current streak: ${streak.count} ${isWin ? 'win' : 'loss'}${streak.count !== 1 ? 's' : ''} in a row`}
+              >
+                <span>{isWin ? '↑' : '↓'}</span>
+                <span>{streak.type}{streak.count}</span>
+              </span>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Main Content */}

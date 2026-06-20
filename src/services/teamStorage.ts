@@ -1,3 +1,5 @@
+import type { Match } from '../types';
+
 const FOLLOWED_TEAM_KEY = 'basketball-followed-team';
 
 export interface FollowedTeam {
@@ -49,6 +51,61 @@ export function clearFollowedTeam(): void {
  */
 export function normaliseTeamName(name: string): string {
   return name.trim().toLowerCase();
+}
+
+export type WinStreakType = 'W' | 'L';
+
+export interface WinStreak {
+  type: WinStreakType;
+  count: number;
+}
+
+/**
+ * Compute the current win/loss streak for a team from a list of matches.
+ * Considers only completed matches with scores, sorted by date descending.
+ * Returns null if no completed matches are found.
+ */
+export function computeWinStreak(matches: Match[], teamName: string): WinStreak | null {
+  const normalised = normaliseTeamName(teamName);
+
+  const isTeamHome = (match: Match): boolean =>
+    normaliseTeamName(match.homeTeam.name) === normalised ||
+    normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised;
+
+  const completed = matches
+    .filter(
+      (m) =>
+        m.status === 'completed' &&
+        matchInvolvesTeam(m, teamName) &&
+        m.homeScore !== undefined &&
+        m.awayScore !== undefined,
+    )
+    .sort((a, b) => {
+      const dateA = new Date(`${a.date}T${a.time || '00:00'}`).getTime();
+      const dateB = new Date(`${b.date}T${b.time || '00:00'}`).getTime();
+      return dateB - dateA;
+    });
+
+  if (completed.length === 0) return null;
+
+  const getResult = (match: Match): WinStreakType => {
+    const home = isTeamHome(match);
+    const teamScore = home ? match.homeScore! : match.awayScore!;
+    const opponentScore = home ? match.awayScore! : match.homeScore!;
+    return teamScore > opponentScore ? 'W' : 'L';
+  };
+
+  const streakType = getResult(completed[0]);
+  let count = 0;
+  for (const match of completed) {
+    if (getResult(match) === streakType) {
+      count++;
+    } else {
+      break;
+    }
+  }
+
+  return { type: streakType, count };
 }
 
 /**
