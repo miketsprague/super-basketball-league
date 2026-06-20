@@ -1,15 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-19T16:30:00Z
+2026-06-20T15:29:00Z
 
 ## Last Run Tasks
-- Task 10 (forward progress): Created PR #244 — feat: add home/away record to TeamView — computeHomeAwayRecord utility, 10 new tests (118 total ✅)
+- Task 10 (forward progress): Created PR #245 — feat: add win streak badge to TeamView — computeWinStreak utility, 11 new tests (119 total ✅)
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
 Last processed: #236 (commented 2026-06-12)
-No new issues since #236 as of 2026-06-19.
+No new issues since #236 as of 2026-06-20.
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -24,7 +24,7 @@ No new issues since #236 as of 2026-06-19.
 - #235 (2026-06-12): Repo Assist workflow failure (authentication expired mid-run) — infrastructure issue, no code fix needed
 - #236 (2026-06-12): API health check failure — recurring off-season pattern; linked to fix PRs #233 and #234
 
-## Open Repo Assist PRs (as of 2026-06-19 16:30)
+## Open Repo Assist PRs (as of 2026-06-20 15:29)
 - #163: fix: replace hardcoded CURRENT_SEASON_YEAR (Closes #101) — mergeable_state: clean ✅
 - #164: docs: fix ARCHITECTURE.md (Closes #145) — docs only
 - #165: feat: persist active tab in URL — 81 tests ✅
@@ -64,7 +64,8 @@ No new issues since #236 as of 2026-06-19.
 - #241: feat: add computeTeamRecord utility to teamStorage — 117 tests ✅ — CREATED 2026-06-16 — CI PASSING ✅
 - #242: feat: add computeNextFixture utility and Next Game banner in TeamView — 116 tests ✅ — CREATED 2026-06-17 — CI PASSING ✅
 - #243: feat: add iCal calendar export for team fixtures — 135 tests ✅ — CREATED 2026-06-18
-- #244: feat: add home/away record to TeamView — 118 tests ✅ — CREATED 2026-06-19
+- #244: feat: add home/away record to TeamView — 118 tests ✅ — CREATED 2026-06-19 — CI PASSING ✅
+- #245: feat: add win streak badge to TeamView — 119 tests ✅ — CREATED 2026-06-20
 
 ## Recently Merged PRs
 - #199: feat: add share/copy-link button to MatchDetail ✅ MERGED (2026-06-01)
@@ -92,16 +93,17 @@ No new issues since #236 as of 2026-06-19.
 - computeTeamRecord + TeamRecord exported from teamStorage.ts (added in PR #241)
 - computeNextFixture(matches, teamName): Match | null — exported from teamStorage.ts (added in PR #242)
 - HomeAwayRecord + computeHomeAwayRecord(matches, teamName) exported from teamStorage.ts (added in PR #244)
+- WinStreak + WinStreakType + computeWinStreak(matches, teamName) exported from teamStorage.ts (added in PR #245)
 - PR #233: deduplication (comment on existing issue), clean against main — protected file
 - PR #234: season-aware health check, clean against main — protected file; non-conflicting with #233
 - Main branch test count: 108 tests (8 test files) — current main
-- PR #244 (pending): 118 tests on its branch; adds computeHomeAwayRecord to teamStorage.ts + H/A split to TeamView
+- PR #245 (pending): 119 tests on its branch; adds computeWinStreak to teamStorage.ts + streak badge to TeamView
 
 ## Proxy Issues to Close
 #115, #116, #118, #120, #121, #123, #124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-- Issue #222: OPEN (June 2026) — updated this run (2026-06-19)
+- Issue #222: OPEN (June 2026) — updated this run (2026-06-20)
 
 ## API Health Check Pattern
 - Genius Sports failures: Jun 1 (/standings), Jun 8 (/standings), Jun 9 (/standings AND /schedule), Jun 12 (/standings HTTP 500)
@@ -118,8 +120,8 @@ No new issues since #236 as of 2026-06-19.
 - PR #238 (open): fetchGeniusSportsAllData now returns partial data if only one endpoint fails
 
 ## Round-Robin Next
-- 2026-06-19 16:30: Task 10 (home/away record PR #244), Task 11 (monthly summary)
-- Next: Task 1 (issue triage — no new issues), Task 5 (CI verify PRs), Task 7 (labels), Task 9 (new contributors), Task 6 (stale PR nudges)
+- 2026-06-20 15:29: Task 10 (win streak PR #245), Task 11 (monthly summary)
+- Next: Task 1 (issue triage), Task 5 (CI verify PRs), Task 7 (labels), Task 9 (new contributors), Task 6 (stale PR nudges)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -143,6 +145,7 @@ No new issues since #236 as of 2026-06-19.
 - computeTeamRecord(matches, teamId) + TeamRecord exported from teamStorage.ts (PR #241)
 - computeNextFixture(matches, teamName): Match | null — exported from teamStorage.ts (PR #242)
 - HomeAwayRecord + computeHomeAwayRecord(matches, teamName) exported from teamStorage.ts (PR #244)
+- WinStreak { type: 'W'|'L', count: number } + WinStreakType + computeWinStreak(matches, teamName) exported from teamStorage.ts (PR #245)
 - FormResult = 'W' | 'L' exported from teamStorage.ts
 - LeagueTable: uses named export: { LeagueTable } not default export
 - App.tsx: POLL_INTERVAL hardcoded at 5min on main (PR #197 adds adaptive polling, not merged)
@@ -154,5 +157,6 @@ No new issues since #236 as of 2026-06-19.
 - fetchGeniusSportsAllData now uses Promise.allSettled (PR #238) — returns partial data on single-endpoint failure
 - Fixtures.tsx ARIA (PR #239): role="tablist" on filter bar, role="tab"/aria-selected on each tab, role="tabpanel" on matches container, aria-label on each match card button
 - TeamView.tsx: shows compact Home/Away W-L split in team banner when completed results exist (PR #244)
+- TeamView.tsx: shows win/loss streak badge (W3/L2 pill) in team banner when completed results exist (PR #245)
 - src/utils/calendarExport.ts (new in PR #243): generateICalContent, formatICalDateTime, escapeICalText, downloadCalendar
 - src/utils/__tests__/calendarExport.test.ts: 27 tests for calendarExport utility
