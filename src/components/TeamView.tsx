@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
-import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import { getFollowedTeam, setFollowedTeam, clearFollowedTeam, computeScoringAverage } from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -14,6 +14,11 @@ export function TeamView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
+
+  const scoringAvg = useMemo(
+    () => (matches.length > 0 ? computeScoringAverage(matches, decodedTeamName) : null),
+    [matches, decodedTeamName],
+  );
 
   // Check if this team is the followed team
   useEffect(() => {
@@ -101,6 +106,42 @@ export function TeamView() {
         <h1 className="text-lg font-bold">{decodedTeamName}</h1>
         <p className="text-xs text-gray-400 mt-1">All fixtures across all leagues</p>
       </div>
+
+      {/* Scoring Averages */}
+      {scoringAvg && (
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-lg mx-auto px-4 py-3">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide text-center mb-2">
+              Season Scoring Average ({scoringAvg.gamesPlayed} games)
+            </p>
+            <div className="flex justify-around text-center">
+              <div>
+                <div className="text-2xl font-bold text-orange-600">{scoringAvg.avgPointsFor}</div>
+                <div className="text-xs text-gray-500 mt-0.5">Pts For</div>
+              </div>
+              <div className="w-px bg-gray-200 self-stretch my-1"></div>
+              <div>
+                <div className="text-2xl font-bold text-gray-600">{scoringAvg.avgPointsAgainst}</div>
+                <div className="text-xs text-gray-500 mt-0.5">Pts Against</div>
+              </div>
+              <div className="w-px bg-gray-200 self-stretch my-1"></div>
+              <div>
+                <div className={`text-2xl font-bold ${
+                  scoringAvg.avgPointsFor > scoringAvg.avgPointsAgainst
+                    ? 'text-green-600'
+                    : scoringAvg.avgPointsFor < scoringAvg.avgPointsAgainst
+                    ? 'text-red-500'
+                    : 'text-gray-600'
+                }`}>
+                  {scoringAvg.avgPointsFor > scoringAvg.avgPointsAgainst ? '+' : ''}
+                  {Math.round((scoringAvg.avgPointsFor - scoringAvg.avgPointsAgainst) * 10) / 10}
+                </div>
+                <div className="text-xs text-gray-500 mt-0.5">Avg Diff</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">
