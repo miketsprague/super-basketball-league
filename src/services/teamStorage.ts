@@ -1,3 +1,5 @@
+import type { Match } from '../types';
+
 const FOLLOWED_TEAM_KEY = 'basketball-followed-team';
 
 export interface FollowedTeam {
@@ -65,4 +67,58 @@ export function matchInvolvesTeam(
     normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised ||
     normaliseTeamName(match.awayTeam.shortName ?? match.awayTeam.name) === normalised
   );
+}
+
+export interface ScoringAverage {
+  /** Average points scored per game (rounded to 1 decimal place) */
+  avgPointsFor: number;
+  /** Average points conceded per game (rounded to 1 decimal place) */
+  avgPointsAgainst: number;
+  /** Number of completed games used in the calculation */
+  gamesPlayed: number;
+}
+
+/**
+ * Return true if the given team name matches the home team of a match.
+ */
+function isHomeTeam(
+  match: { homeTeam: { name: string; shortName?: string } },
+  teamName: string,
+): boolean {
+  const normalised = normaliseTeamName(teamName);
+  return (
+    normaliseTeamName(match.homeTeam.name) === normalised ||
+    normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised
+  );
+}
+
+/**
+ * Compute scoring averages for a team from their completed matches.
+ * Returns null if there are no completed matches with scores available.
+ */
+export function computeScoringAverage(matches: Match[], teamName: string): ScoringAverage | null {
+  const completed = matches.filter(
+    m =>
+      m.status === 'completed' &&
+      matchInvolvesTeam(m, teamName) &&
+      m.homeScore !== undefined &&
+      m.awayScore !== undefined,
+  );
+
+  if (completed.length === 0) return null;
+
+  let totalFor = 0;
+  let totalAgainst = 0;
+
+  for (const m of completed) {
+    const home = isHomeTeam(m, teamName);
+    totalFor += home ? m.homeScore! : m.awayScore!;
+    totalAgainst += home ? m.awayScore! : m.homeScore!;
+  }
+
+  return {
+    avgPointsFor: Math.round((totalFor / completed.length) * 10) / 10,
+    avgPointsAgainst: Math.round((totalAgainst / completed.length) * 10) / 10,
+    gamesPlayed: completed.length,
+  };
 }
