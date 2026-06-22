@@ -1,8 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
-import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import {
+  getFollowedTeam,
+  setFollowedTeam,
+  clearFollowedTeam,
+  computeCloseGameRecord,
+} from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -59,6 +64,11 @@ export function TeamView() {
     navigate(-1);
   };
 
+  const closeGameRecord = useMemo(
+    () => computeCloseGameRecord(matches, decodedTeamName),
+    [matches, decodedTeamName],
+  );
+
   if (!decodedTeamName) {
     return (
       <div className="min-h-screen bg-gray-100">
@@ -100,6 +110,17 @@ export function TeamView() {
       <div className="bg-gray-800 text-white py-4 px-4 text-center border-t border-gray-700">
         <h1 className="text-lg font-bold">{decodedTeamName}</h1>
         <p className="text-xs text-gray-400 mt-1">All fixtures across all leagues</p>
+        {closeGameRecord && (
+          <div className="mt-3 inline-flex items-center gap-2 bg-gray-700 rounded-lg px-3 py-1.5">
+            <span className="text-xs text-gray-300">Close games (≤{closeGameRecord.margin} pts)</span>
+            <span className="text-sm font-bold">
+              <span className="text-green-400">{closeGameRecord.won}W</span>
+              <span className="text-gray-400 mx-0.5">–</span>
+              <span className="text-red-400">{closeGameRecord.lost}L</span>
+            </span>
+            <span className="text-xs text-gray-400">({closeGameRecord.total} games)</span>
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
