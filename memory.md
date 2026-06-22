@@ -1,11 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-21T15:30:00Z
+2026-06-22T18:14:00Z
 
 ## Last Run Tasks
-- Task 5: PRs #244, #245 CI passing ✅
-- Task 10: Created PR #246 — computeScoringAverage + scoring stats banner in TeamView — 119 tests ✅
+- Task 10: Created PR #247 — computeCloseGameRecord + clutch record banner in TeamView — 114 tests ✅
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -24,7 +23,7 @@ Last processed: #236 (2026-06-12). No new issues since.
 - #235 (2026-06-12): Workflow auth failure — infrastructure issue
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
 
-## Open Repo Assist PRs (2026-06-21)
+## Open Repo Assist PRs (2026-06-22)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -64,7 +63,8 @@ Active (not superseded):
 - #243: feat: iCal calendar export ✅
 - #244: feat: computeHomeAwayRecord + H/A record in TeamView ✅
 - #245: feat: computeWinStreak + streak badge in TeamView ✅
-- #246: feat: computeScoringAverage + scoring avg banner in TeamView ✅ CREATED 2026-06-21
+- #246: feat: computeScoringAverage + scoring avg banner in TeamView ✅
+- #247: feat: computeCloseGameRecord + clutch record banner in TeamView ✅ CREATED 2026-06-22
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -74,7 +74,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #222: OPEN (June 2026) — updated 2026-06-21
+Issue #222: OPEN (June 2026) — updated 2026-06-22
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season)
@@ -83,7 +83,7 @@ Issue #222: OPEN (June 2026) — updated 2026-06-21
 - PR #238: Promise.allSettled partial resilience
 
 ## Round-Robin Next
-- Done 2026-06-21: Task 5, Task 10, Task 11
+- Done 2026-06-22: Task 10, Task 11
 - Next: Task 1 (issue triage), Task 7 (labels), Task 9 (new contributors), Task 6 (stale PR nudges)
 
 ## Key Code Notes
@@ -96,16 +96,17 @@ Issue #222: OPEN (June 2026) — updated 2026-06-21
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - vi.stubEnv for PROD: boolean (true/false) not string
 - ESLint errors in Fixtures.tsx (2 pre-existing react-refresh errors — fixed in PR #225)
-- computeTeamForm(matches, teamId, maxResults?) — teamStorage (PR #229)
+- computeTeamForm(matches, teamId, maxResults?) — LeagueTable (local, no export) + PR #229
 - computeTeamRecord(matches, teamId): TeamRecord — teamStorage (PR #241)
 - computeNextFixture(matches, teamName): Match | null — teamStorage (PR #242)
 - computeHomeAwayRecord(matches, teamName): HomeAwayRecord — teamStorage (PR #244)
 - computeWinStreak(matches, teamName): WinStreak | null — teamStorage (PR #245)
 - computeScoringAverage(matches, teamName): ScoringAverage | null — teamStorage (PR #246)
+- computeCloseGameRecord(matches, teamName, closeMargin?): CloseGameRecord | null — teamStorage (PR #247)
 - computeH2HRecord from dataProvider.ts (PR #227, not merged)
 - Genius Sports: User-Agent required in health check (CloudFront 403)
 - getCurrentSeasonYear(): August = season transition (euroleagueApi.ts, PR #163)
 - LeagueTable uses named export: { LeagueTable }
-- TeamView shows: H/A record (PR #244), streak badge (PR #245), scoring avg banner (PR #246)
+- TeamView shows: H/A record (PR #244), streak badge (PR #245), scoring avg banner (PR #246), clutch record (PR #247)
 - calendarExport.ts in src/utils/ (PR #243): generateICalContent, formatICalDateTime, etc.
-- Main branch test count: 108 tests — PRs add 11 each on average
+- Main branch test count: 108 tests (PRs add 6-11 each on average)
