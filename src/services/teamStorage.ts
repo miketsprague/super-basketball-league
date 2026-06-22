@@ -66,3 +66,59 @@ export function matchInvolvesTeam(
     normaliseTeamName(match.awayTeam.shortName ?? match.awayTeam.name) === normalised
   );
 }
+
+export interface CloseGameRecord {
+  won: number;
+  lost: number;
+  total: number;
+  margin: number;
+}
+
+/**
+ * Compute a team's record in close games — matches decided by `closeMargin` points or fewer.
+ * Returns null if there are fewer than 2 close games (not statistically meaningful).
+ */
+export function computeCloseGameRecord(
+  matches: {
+    homeTeam: { name: string; shortName?: string };
+    awayTeam: { name: string; shortName?: string };
+    homeScore?: number;
+    awayScore?: number;
+    status: string;
+  }[],
+  teamName: string,
+  closeMargin = 5,
+): CloseGameRecord | null {
+  const teamMatches = matches.filter(
+    m =>
+      m.status === 'completed' &&
+      m.homeScore !== undefined &&
+      m.awayScore !== undefined &&
+      matchInvolvesTeam(m, teamName),
+  );
+
+  const closeGames = teamMatches.filter(
+    m => Math.abs(m.homeScore! - m.awayScore!) <= closeMargin,
+  );
+
+  if (closeGames.length < 2) return null;
+
+  const normalised = normaliseTeamName(teamName);
+  let won = 0;
+  let lost = 0;
+
+  for (const m of closeGames) {
+    const isHome =
+      normaliseTeamName(m.homeTeam.name) === normalised ||
+      normaliseTeamName(m.homeTeam.shortName ?? m.homeTeam.name) === normalised;
+    const teamScore = isHome ? m.homeScore! : m.awayScore!;
+    const oppScore = isHome ? m.awayScore! : m.homeScore!;
+    if (teamScore > oppScore) {
+      won++;
+    } else {
+      lost++;
+    }
+  }
+
+  return { won, lost, total: closeGames.length, margin: closeMargin };
+}
