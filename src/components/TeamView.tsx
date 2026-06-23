@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
-import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import { getFollowedTeam, setFollowedTeam, clearFollowedTeam, computeAverageMargin } from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -14,6 +14,8 @@ export function TeamView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
+
+  const avgMargin = useMemo(() => computeAverageMargin(matches, decodedTeamName), [matches, decodedTeamName]);
 
   // Check if this team is the followed team
   useEffect(() => {
@@ -101,6 +103,29 @@ export function TeamView() {
         <h1 className="text-lg font-bold">{decodedTeamName}</h1>
         <p className="text-xs text-gray-400 mt-1">All fixtures across all leagues</p>
       </div>
+
+      {/* Average Margin Banner */}
+      {avgMargin && (
+        <div className="bg-gray-700 text-white py-2 px-4 border-t border-gray-600">
+          <div className="max-w-lg mx-auto flex items-center justify-center gap-4 text-sm">
+            <span className="text-gray-400 text-xs">Avg margin</span>
+            <span
+              className={`font-bold text-base ${avgMargin.avgMargin >= 0 ? 'text-green-400' : 'text-red-400'}`}
+            >
+              {avgMargin.avgMargin >= 0 ? '+' : ''}
+              {avgMargin.avgMargin.toFixed(1)}
+            </span>
+            <span className="text-gray-500 text-xs">|</span>
+            <span className="text-xs text-gray-300">
+              {avgMargin.avgPointsFor.toFixed(1)} PPG
+            </span>
+            <span className="text-gray-500 text-xs">|</span>
+            <span className="text-xs text-gray-300">
+              {avgMargin.avgPointsAgainst.toFixed(1)} OPP
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">

@@ -1,3 +1,5 @@
+import type { Match } from '../types';
+
 const FOLLOWED_TEAM_KEY = 'basketball-followed-team';
 
 export interface FollowedTeam {
@@ -65,4 +67,65 @@ export function matchInvolvesTeam(
     normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised ||
     normaliseTeamName(match.awayTeam.shortName ?? match.awayTeam.name) === normalised
   );
+}
+
+/**
+ * Determine whether the given team is the home side in a match.
+ * Compares by both name and shortName (case-insensitive).
+ */
+function isHomeTeam(match: Match, teamName: string): boolean {
+  const normalised = normaliseTeamName(teamName);
+  return (
+    normaliseTeamName(match.homeTeam.name) === normalised ||
+    normaliseTeamName(match.homeTeam.shortName ?? match.homeTeam.name) === normalised
+  );
+}
+
+export interface AverageMargin {
+  /** Number of completed matches used for the calculation. */
+  gamesPlayed: number;
+  /** Average scoring margin per game (positive = team wins on average, negative = loses). */
+  avgMargin: number;
+  /** Average points scored per game. */
+  avgPointsFor: number;
+  /** Average points conceded per game. */
+  avgPointsAgainst: number;
+}
+
+/**
+ * Compute the average scoring margin, offensive output, and defensive output for a team
+ * across all completed matches.
+ *
+ * Returns null when no completed matches with scores are available.
+ */
+export function computeAverageMargin(matches: Match[], teamName: string): AverageMargin | null {
+  const completed = matches.filter(
+    m =>
+      m.status === 'completed' &&
+      matchInvolvesTeam(m, teamName) &&
+      m.homeScore !== undefined &&
+      m.awayScore !== undefined,
+  );
+
+  if (completed.length === 0) return null;
+
+  let totalFor = 0;
+  let totalAgainst = 0;
+
+  for (const m of completed) {
+    const home = isHomeTeam(m, teamName);
+    totalFor += home ? m.homeScore! : m.awayScore!;
+    totalAgainst += home ? m.awayScore! : m.homeScore!;
+  }
+
+  const n = completed.length;
+  const avgFor = totalFor / n;
+  const avgAgainst = totalAgainst / n;
+
+  return {
+    gamesPlayed: n,
+    avgMargin: Math.round((avgFor - avgAgainst) * 10) / 10,
+    avgPointsFor: Math.round(avgFor * 10) / 10,
+    avgPointsAgainst: Math.round(avgAgainst * 10) / 10,
+  };
 }
