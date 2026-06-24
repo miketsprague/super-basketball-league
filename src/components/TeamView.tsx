@@ -1,8 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Match } from '../types';
 import { fetchMatchesForTeam } from '../services/dataProvider';
-import { getFollowedTeam, setFollowedTeam, clearFollowedTeam } from '../services/teamStorage';
+import {
+  getFollowedTeam,
+  setFollowedTeam,
+  clearFollowedTeam,
+  computeRecentRecord,
+} from '../services/teamStorage';
 import { Fixtures } from './Fixtures';
 
 export function TeamView() {
@@ -14,6 +19,11 @@ export function TeamView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
+
+  const recentRecord = useMemo(
+    () => (matches.length > 0 ? computeRecentRecord(matches, decodedTeamName) : null),
+    [matches, decodedTeamName],
+  );
 
   // Check if this team is the followed team
   useEffect(() => {
@@ -101,6 +111,47 @@ export function TeamView() {
         <h1 className="text-lg font-bold">{decodedTeamName}</h1>
         <p className="text-xs text-gray-400 mt-1">All fixtures across all leagues</p>
       </div>
+
+      {/* Recent Form Banner */}
+      {recentRecord && (
+        <div className="bg-gray-700 text-white py-3 px-4 border-t border-gray-600">
+          <p className="text-xs text-gray-400 uppercase tracking-wide text-center mb-2">
+            Last {recentRecord.played} games
+          </p>
+          <div className="flex items-center justify-center gap-3">
+            {/* Form dots */}
+            <div className="flex gap-1" aria-label={`Form: ${recentRecord.form.join('')}`}>
+              {recentRecord.form.map((result, i) => (
+                <span
+                  key={i}
+                  className={`inline-block w-3 h-3 rounded-full ${result === 'W' ? 'bg-green-400' : 'bg-red-400'}`}
+                  title={result === 'W' ? 'Win' : 'Loss'}
+                />
+              ))}
+            </div>
+            {/* Record */}
+            <span className="text-sm font-semibold">
+              {recentRecord.wins}W–{recentRecord.losses}L
+            </span>
+            {/* Scoring */}
+            <span className="text-xs text-gray-300">
+              {recentRecord.ppg} PPG ·{' '}
+              <span
+                className={
+                  recentRecord.diff > 0
+                    ? 'text-green-400'
+                    : recentRecord.diff < 0
+                      ? 'text-red-400'
+                      : 'text-gray-300'
+                }
+              >
+                {recentRecord.diff > 0 ? '+' : ''}
+                {recentRecord.diff}
+              </span>
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-lg mx-auto p-4">
