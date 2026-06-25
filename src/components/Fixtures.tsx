@@ -1,6 +1,8 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMemo, useEffect, useCallback } from 'react';
 import type { Match } from '../types';
+import { filterMatchesByTab } from '../utils/fixtureUtils';
+import type { FilterTab } from '../utils/fixtureUtils';
 
 export type MatchWinner = 'home' | 'away' | 'draw';
 
@@ -17,8 +19,6 @@ export function getMatchMargin(match: Pick<Match, 'homeScore' | 'awayScore' | 's
   if (match.homeScore == null || match.awayScore == null) return null;
   return Math.abs(match.homeScore - match.awayScore);
 }
-
-type FilterTab = 'fixtures' | 'results' | 'all';
 
 interface FixturesProps {
   matches: Match[];
@@ -56,23 +56,7 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
 
   // Filter matches based on active tab
   const filteredMatches = useMemo(() => {
-    switch (activeTab) {
-      case 'fixtures':
-        // Show matches from today onwards, limit to reasonable amount
-        return matches
-          .filter(m => m.date >= today || m.status === 'live')
-          .slice(0, 30);
-      case 'results':
-        // Show past completed matches, most recent first
-        return matches
-          .filter(m => m.date < today && m.status === 'completed')
-          .reverse()
-          .slice(0, 30);
-      case 'all':
-        return matches;
-      default:
-        return matches;
-    }
+    return filterMatchesByTab(matches, activeTab, today);
   }, [matches, activeTab, today]);
 
   // Group matches by date
