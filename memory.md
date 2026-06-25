@@ -1,11 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-24T16:05:00Z
+2026-06-25T16:15:00Z
 
 ## Last Run Tasks
-- Task 7: Labelled #236 with `needs investigation`
-- Task 10: Created PR #249 — computeRecentRecord + recent form banner in TeamView — 9 new tests (117 total ✅)
+- Task 10: Created PR #250 — fix: include today's completed matches in Results tab — 12 new tests (120 total ✅)
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -24,7 +23,7 @@ Last processed: #236 (2026-06-12). No new issues since.
 - #235 (2026-06-12): Workflow auth failure — infrastructure issue
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
 
-## Open Repo Assist PRs (2026-06-24)
+## Open Repo Assist PRs (2026-06-25)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -67,7 +66,8 @@ Active (not superseded):
 - #246: feat: computeScoringAverage + scoring avg banner in TeamView ✅
 - #247: feat: computeCloseGameRecord + clutch record banner in TeamView ✅
 - #248: feat: computeAverageMargin + avg margin banner in TeamView ✅
-- #249: feat: computeRecentRecord + recent form banner in TeamView ✅ CREATED 2026-06-24
+- #249: feat: computeRecentRecord + recent form banner in TeamView ✅
+- #250: fix: include today's completed matches in Results tab ✅ CREATED 2026-06-25
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -77,7 +77,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #222: OPEN (June 2026) — updated 2026-06-24
+Issue #222: OPEN (June 2026) — updated 2026-06-25
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season)
@@ -86,15 +86,16 @@ Issue #222: OPEN (June 2026) — updated 2026-06-24
 - PR #238: Promise.allSettled partial resilience
 
 ## Round-Robin Next
-- Done 2026-06-24: Task 7, Task 10, Task 11
-- Next: Task 1 (issue triage), Task 9 (new contributors), Task 6 (stale PR nudges), Task 2 (fix issues via PRs)
+- Done 2026-06-25: Task 10, Task 11
+- Next: Task 1 (issue triage), Task 9 (new contributors), Task 6 (stale PR nudges), Task 2 (fix issues via PRs), Task 3 (codebase study), Task 4 (deps)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
 - @testing-library/user-event NOT installed — use fireEvent
 - Match.homeTeam/awayTeam: Team { id, name, shortName, logo? }; venue required ('TBC' if unknown)
-- src/components/__tests__/: Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
+- src/components/__tests__/: Fixtures.winner.test.ts, Fixtures.filter.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
 - src/services/__tests__/: dataProvider, euroleagueApi, geniusSportsApi, leagues, teamStorage
+- src/utils/fixtureUtils.ts: filterMatchesByTab(matches, tab, today) — PR #250
 - localStorage mock: Node.js 25+ native stub shadows jsdom — use explicit storageMock pattern
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - vi.stubEnv for PROD: boolean (true/false) not string
@@ -114,4 +115,4 @@ Issue #222: OPEN (June 2026) — updated 2026-06-24
 - LeagueTable uses named export: { LeagueTable }
 - TeamView shows: H/A record (PR #244), streak badge (PR #245), scoring avg banner (PR #246), clutch record (PR #247), avg margin (PR #248), recent form banner (PR #249)
 - calendarExport.ts in src/utils/ (PR #243): generateICalContent, formatICalDateTime, etc.
-- Main branch test count: 108 tests (PRs add 6-11 each on average)
+- Main branch test count: 108 tests
