@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-25T16:15:00Z
+2026-06-26T16:05:00Z
 
 ## Last Run Tasks
-- Task 10: Created PR #250 — fix: include today's completed matches in Results tab — 12 new tests (120 total ✅)
+- Task 10: Created PR #251 — feat: extract shared date formatting utilities to src/utils/dateUtils.ts — 24 new tests (132 total ✅)
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -23,7 +23,7 @@ Last processed: #236 (2026-06-12). No new issues since.
 - #235 (2026-06-12): Workflow auth failure — infrastructure issue
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
 
-## Open Repo Assist PRs (2026-06-25)
+## Open Repo Assist PRs (2026-06-26)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -67,7 +67,8 @@ Active (not superseded):
 - #247: feat: computeCloseGameRecord + clutch record banner in TeamView ✅
 - #248: feat: computeAverageMargin + avg margin banner in TeamView ✅
 - #249: feat: computeRecentRecord + recent form banner in TeamView ✅
-- #250: fix: include today's completed matches in Results tab ✅ CREATED 2026-06-25
+- #250: fix: include today's completed matches in Results tab ✅
+- #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests (132 total ✅) CREATED 2026-06-26
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -77,7 +78,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #222: OPEN (June 2026) — updated 2026-06-25
+Issue #222: OPEN (June 2026) — updated 2026-06-26
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season)
@@ -86,7 +87,7 @@ Issue #222: OPEN (June 2026) — updated 2026-06-25
 - PR #238: Promise.allSettled partial resilience
 
 ## Round-Robin Next
-- Done 2026-06-25: Task 10, Task 11
+- Done 2026-06-26: Task 10, Task 11
 - Next: Task 1 (issue triage), Task 9 (new contributors), Task 6 (stale PR nudges), Task 2 (fix issues via PRs), Task 3 (codebase study), Task 4 (deps)
 
 ## Key Code Notes
@@ -95,6 +96,8 @@ Issue #222: OPEN (June 2026) — updated 2026-06-25
 - Match.homeTeam/awayTeam: Team { id, name, shortName, logo? }; venue required ('TBC' if unknown)
 - src/components/__tests__/: Fixtures.winner.test.ts, Fixtures.filter.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
 - src/services/__tests__/: dataProvider, euroleagueApi, geniusSportsApi, leagues, teamStorage
+- src/utils/__tests__/: dateUtils.test.ts (24 tests) — CREATED 2026-06-26
+- src/utils/dateUtils.ts: toLocalDateString, formatDateHeader, formatMatchDate, formatMatchTime — CREATED 2026-06-26
 - src/utils/fixtureUtils.ts: filterMatchesByTab(matches, tab, today) — PR #250
 - localStorage mock: Node.js 25+ native stub shadows jsdom — use explicit storageMock pattern
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
@@ -115,4 +118,4 @@ Issue #222: OPEN (June 2026) — updated 2026-06-25
 - LeagueTable uses named export: { LeagueTable }
 - TeamView shows: H/A record (PR #244), streak badge (PR #245), scoring avg banner (PR #246), clutch record (PR #247), avg margin (PR #248), recent form banner (PR #249)
 - calendarExport.ts in src/utils/ (PR #243): generateICalContent, formatICalDateTime, etc.
-- Main branch test count: 108 tests
+- Main branch test count: 108 tests (as of 2026-06-26, before PR #251)
