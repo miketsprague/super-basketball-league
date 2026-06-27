@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Match } from '../types';
 
 export type MatchWinner = 'home' | 'away' | 'draw';
@@ -28,6 +28,15 @@ interface FixturesProps {
 
 const SCROLL_KEY = 'fixtures-scroll-position';
 
+/** Returns today's date as YYYY-MM-DD in the local timezone. */
+function getLocalTodayString(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,13 +54,27 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
     sessionStorage.removeItem(SCROLL_KEY);
   }, [setSearchParams]);
 
-  // Get today's date in local timezone (YYYY-MM-DD format)
-  const today = useMemo(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  // Track today's date as state so it updates automatically at midnight.
+  // Using useMemo with [] would compute the date once on mount and never
+  // refresh it — causing stale filtering if the app is left open overnight.
+  const [today, setToday] = useState(getLocalTodayString);
+
+  useEffect(() => {
+    // Schedule an update at the next local midnight so that filters
+    // (Fixtures / Results tabs) reflect the correct date without a page reload.
+    const scheduleNextUpdate = () => {
+      const now = new Date();
+      const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      const msUntilMidnight = tomorrow.getTime() - now.getTime();
+      return setTimeout(() => {
+        setToday(getLocalTodayString());
+        // The next call will reschedule again for the following midnight.
+        scheduleNextUpdate();
+      }, msUntilMidnight);
+    };
+
+    const timeoutId = scheduleNextUpdate();
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // Filter matches based on active tab
