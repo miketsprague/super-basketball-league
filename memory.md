@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-26T16:05:00Z
+2026-06-27T15:18:00Z
 
 ## Last Run Tasks
-- Task 10: Created PR #251 — feat: extract shared date formatting utilities to src/utils/dateUtils.ts — 24 new tests (132 total ✅)
+- Task 3/10: Created PR #252 — fix: update 'today' at midnight (useMemo→useState+useEffect midnight scheduler), 5 new tests (113 total ✅)
 - Task 11: Updated June 2026 monthly activity issue #222
 
 ## Issue Backlog Cursor
@@ -69,6 +69,7 @@ Active (not superseded):
 - #249: feat: computeRecentRecord + recent form banner in TeamView ✅
 - #250: fix: include today's completed matches in Results tab ✅
 - #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests (132 total ✅) CREATED 2026-06-26
+- #252: fix: update 'today' at midnight to prevent stale Fixtures filter — useState+useEffect midnight scheduler, 5 new tests (113 total on main+5 ✅) CREATED 2026-06-27
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -78,7 +79,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #222: OPEN (June 2026) — updated 2026-06-26
+Issue #222: OPEN (June 2026) — updated 2026-06-27
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season)
@@ -87,14 +88,14 @@ Issue #222: OPEN (June 2026) — updated 2026-06-26
 - PR #238: Promise.allSettled partial resilience
 
 ## Round-Robin Next
-- Done 2026-06-26: Task 10, Task 11
-- Next: Task 1 (issue triage), Task 9 (new contributors), Task 6 (stale PR nudges), Task 2 (fix issues via PRs), Task 3 (codebase study), Task 4 (deps)
+- Done 2026-06-27: Task 3/10, Task 11
+- Next: Task 1 (issue triage), Task 9 (new contributors), Task 6 (stale PR nudges), Task 2 (fix issues via PRs), Task 4 (deps)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
 - @testing-library/user-event NOT installed — use fireEvent
 - Match.homeTeam/awayTeam: Team { id, name, shortName, logo? }; venue required ('TBC' if unknown)
-- src/components/__tests__/: Fixtures.winner.test.ts, Fixtures.filter.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
+- src/components/__tests__/: Fixtures.winner.test.ts, Fixtures.filter.test.ts, Fixtures.today.test.tsx, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
 - src/services/__tests__/: dataProvider, euroleagueApi, geniusSportsApi, leagues, teamStorage
 - src/utils/__tests__/: dateUtils.test.ts (24 tests) — CREATED 2026-06-26
 - src/utils/dateUtils.ts: toLocalDateString, formatDateHeader, formatMatchDate, formatMatchTime — CREATED 2026-06-26
@@ -118,4 +119,4 @@ Issue #222: OPEN (June 2026) — updated 2026-06-26
 - LeagueTable uses named export: { LeagueTable }
 - TeamView shows: H/A record (PR #244), streak badge (PR #245), scoring avg banner (PR #246), clutch record (PR #247), avg margin (PR #248), recent form banner (PR #249)
 - calendarExport.ts in src/utils/ (PR #243): generateICalContent, formatICalDateTime, etc.
-- Main branch test count: 108 tests (as of 2026-06-26, before PR #251)
+- Main branch test count: 108 tests (before PR #251/252 merge)
