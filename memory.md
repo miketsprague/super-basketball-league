@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-27T15:18:00Z
+2026-06-28T15:10:00Z
 
 ## Last Run Tasks
-- Task 3/10: Created PR #252 — fix: update 'today' at midnight (useMemo→useState+useEffect midnight scheduler), 5 new tests (113 total ✅)
-- Task 11: Updated June 2026 monthly activity issue #222
+- Task 4: Dependency audit — 14 packages have minor/patch updates available (react→19.2.7, react-router-dom→7.18.0, vite→7.3.6, vitest→4.1.9, tailwindcss→4.3.1, @types/react→19.2.17, eslint-plugin-react-hooks→7.1.1, typescript-eslint→8.62.0, @testing-library/react→16.3.2, @types/node→24.13.2, @vitejs/plugin-react→5.2.0, @eslint/js→9.39.4, eslint→9.39.4, react-dom→19.2.7). Blocked by protected package-lock.json.
+- Task 11: Updated June 2026 monthly activity issue #222 (reorganised Suggested Actions by priority)
 
 ## Issue Backlog Cursor
 Last processed: #236 (2026-06-12). No new issues since.
@@ -23,7 +23,7 @@ Last processed: #236 (2026-06-12). No new issues since.
 - #235 (2026-06-12): Workflow auth failure — infrastructure issue
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
 
-## Open Repo Assist PRs (2026-06-26)
+## Open Repo Assist PRs (2026-06-28)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -68,8 +68,8 @@ Active (not superseded):
 - #248: feat: computeAverageMargin + avg margin banner in TeamView ✅
 - #249: feat: computeRecentRecord + recent form banner in TeamView ✅
 - #250: fix: include today's completed matches in Results tab ✅
-- #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests (132 total ✅) CREATED 2026-06-26
-- #252: fix: update 'today' at midnight to prevent stale Fixtures filter — useState+useEffect midnight scheduler, 5 new tests (113 total on main+5 ✅) CREATED 2026-06-27
+- #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests (132 total ✅)
+- #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests (113 total ✅)
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -79,7 +79,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #222: OPEN (June 2026) — updated 2026-06-27
+Issue #222: OPEN (June 2026) — updated 2026-06-28 (reorganised by priority)
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season)
@@ -87,36 +87,44 @@ Issue #222: OPEN (June 2026) — updated 2026-06-27
 - PR #231 MERGED: adds diagnostics; PR #233 (open): dedup; PR #234 (open): season-aware
 - PR #238: Promise.allSettled partial resilience
 
+## Dependency Status (2026-06-28)
+Outdated packages (minor/patch in-range):
+- react: 19.2.3 → 19.2.7
+- react-dom: 19.2.3 → 19.2.7
+- @tailwindcss/vite: 4.1.18 → 4.3.1
+- tailwindcss: 4.1.18 → 4.3.1
+- react-router-dom: 7.12.0 → 7.18.0
+- @testing-library/react: 16.3.1 → 16.3.2
+- @types/node: 24.10.9 → 24.13.2
+- @types/react: 19.2.8 → 19.2.17
+- @vitejs/plugin-react: 5.1.2 → 5.2.0
+- eslint: 9.39.2 → 9.39.4
+- @eslint/js: 9.39.2 → 9.39.4
+- eslint-plugin-react-hooks: 7.0.1 → 7.1.1
+- typescript-eslint: 8.53.0 → 8.62.0
+- vite: 7.3.1 → 7.3.6
+- vitest: 4.0.17 → 4.1.9
+Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
+
 ## Round-Robin Next
+- Done 2026-06-28: Task 4 (deps audit), Task 11
 - Done 2026-06-27: Task 3/10, Task 11
-- Next: Task 1 (issue triage), Task 9 (new contributors), Task 6 (stale PR nudges), Task 2 (fix issues via PRs), Task 4 (deps)
+- Next: Task 1 (issue triage), Task 2 (fix issues), Task 6 (stale nudges), Task 9 (new contributors), Task 3/10
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
 - @testing-library/user-event NOT installed — use fireEvent
 - Match.homeTeam/awayTeam: Team { id, name, shortName, logo? }; venue required ('TBC' if unknown)
-- src/components/__tests__/: Fixtures.winner.test.ts, Fixtures.filter.test.ts, Fixtures.today.test.tsx, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
+- src/components/__tests__/Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
 - src/services/__tests__/: dataProvider, euroleagueApi, geniusSportsApi, leagues, teamStorage
-- src/utils/__tests__/: dateUtils.test.ts (24 tests) — CREATED 2026-06-26
-- src/utils/dateUtils.ts: toLocalDateString, formatDateHeader, formatMatchDate, formatMatchTime — CREATED 2026-06-26
-- src/utils/fixtureUtils.ts: filterMatchesByTab(matches, tab, today) — PR #250
 - localStorage mock: Node.js 25+ native stub shadows jsdom — use explicit storageMock pattern
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - vi.stubEnv for PROD: boolean (true/false) not string
 - ESLint errors in Fixtures.tsx (2 pre-existing react-refresh errors — fixed in PR #225)
 - computeTeamForm(matches, teamId, maxResults?) — LeagueTable (local, no export) + PR #229
-- computeTeamRecord(matches, teamId): TeamRecord — teamStorage (PR #241)
-- computeNextFixture(matches, teamName): Match | null — teamStorage (PR #242)
-- computeHomeAwayRecord(matches, teamName): HomeAwayRecord — teamStorage (PR #244)
-- computeWinStreak(matches, teamName): WinStreak | null — teamStorage (PR #245)
-- computeScoringAverage(matches, teamName): ScoringAverage | null — teamStorage (PR #246)
-- computeCloseGameRecord(matches, teamName, closeMargin?): CloseGameRecord | null — teamStorage (PR #247)
-- computeAverageMargin(matches, teamName): AverageMargin | null — teamStorage (PR #248)
-- computeRecentRecord(matches, teamName, lastN?): RecentRecord | null — teamStorage (PR #249)
-- computeH2HRecord from dataProvider.ts (PR #227, not merged)
+- Main branch test count: 108 tests
+- PRs #250 and #252 both modify Fixtures.tsx — merge order matters (avoid conflicts)
 - Genius Sports: User-Agent required in health check (CloudFront 403)
 - getCurrentSeasonYear(): August = season transition (euroleagueApi.ts, PR #163)
 - LeagueTable uses named export: { LeagueTable }
-- TeamView shows: H/A record (PR #244), streak badge (PR #245), scoring avg banner (PR #246), clutch record (PR #247), avg margin (PR #248), recent form banner (PR #249)
-- calendarExport.ts in src/utils/ (PR #243): generateICalContent, formatICalDateTime, etc.
-- Main branch test count: 108 tests (before PR #251/252 merge)
+- No src/utils/ directory in main branch (dateUtils, fixtureUtils, matchUtils are all in pending PRs)
