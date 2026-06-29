@@ -84,7 +84,7 @@ export function Fixtures({ matches, loading, showLeagueName }: FixturesProps) {
   // Count for tab badges
   const counts = useMemo(() => {
     const fixturesCount = matches.filter(m => m.date >= today || m.status === 'live').length;
-    const resultsCount = matches.filter(m => m.date < today && m.status === 'completed').length;
+    const resultsCount = matches.filter(m => m.date <= today && m.status === 'completed').length;
     return { fixtures: fixturesCount, results: resultsCount, all: matches.length };
   }, [matches, today]);
 
