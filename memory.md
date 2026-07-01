@@ -1,14 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-06-29T16:55:00Z
+2026-07-01T16:12:00Z
 
 ## Last Run Tasks
-- Task 5: Pushed fix to PR #250 — corrected `counts.resultsCount` badge (`< today` → `<= today`) to be consistent with `filterMatchesByTab`. 120 tests pass ✅
-- Task 11: Updated June 2026 monthly activity issue #222
+- Task 1: Commented on #253 (Repo Assist failure — transient auth issue, same as #235)
+- Task 10: Commented on PR #163 flagging August urgency for CURRENT_SEASON_YEAR transition
+- Task 11: Closed June 2026 monthly activity #222; created July 2026 monthly activity #254 (assumed)
 
 ## Issue Backlog Cursor
-Last processed: #236 (2026-06-12). No new issues since.
+Last processed: #253 (2026-06-30). No new user issues since #236.
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -18,14 +19,16 @@ Last processed: #236 (2026-06-12). No new issues since.
 - #174 (2026-05-07): Explained package-lock.json protected-file failure
 - #216 (2026-06-03): Daily-repo-status auth failure
 - #218 (2026-06-01): API health check failure — transient
-- #230 (2026-06-08): API health check failure — transient; PR #231 created
+- #230 (2026-06-08): API health check failure — transient
 - #232 (2026-06-09): Both Genius Sports endpoints failing; PR #233 created
-- #235 (2026-06-12): Workflow auth failure — infrastructure issue
+- #235 (2026-06-12): Repo Assist failure — explained as infrastructure auth issue
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
+- #253 (2026-07-01): Repo Assist failure (2026-06-30) — transient auth issue, no fix needed
+- PR #163 (2026-07-01): August urgency comment — CURRENT_SEASON_YEAR breaks in ~4 weeks
 
-## Open Repo Assist PRs (2026-06-29)
+## Open Repo Assist PRs (2026-07-01)
 Active (not superseded):
-- #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean
+- #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Aug 2026
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
 - #165: feat: persist active tab in URL
 - #166: feat: PWA manifest and basketball icon
@@ -67,9 +70,9 @@ Active (not superseded):
 - #247: feat: computeCloseGameRecord + clutch record banner in TeamView ✅
 - #248: feat: computeAverageMargin + avg margin banner in TeamView ✅
 - #249: feat: computeRecentRecord + recent form banner in TeamView ✅
-- #250: fix: include today's completed matches in Results tab ✅ (updated 2026-06-29: also fixed badge count inconsistency)
-- #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests (132 total ✅)
-- #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests (113 total ✅)
+- #250: fix: include today's completed matches in Results tab ✅ (updated 2026-06-29)
+- #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests ✅
+- #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests ✅
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -79,10 +82,12 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #222: OPEN (June 2026) — updated 2026-06-29
+Issue #254 (assumed — July 2026): created 2026-07-01 (queued via safeoutputs)
+Issue #222: CLOSED 2026-07-01 (queued via safeoutputs)
+Note: verify #254 exists on next run; if wrong number, update
 
 ## API Health Check Pattern
-- Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season)
+- Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient)
 - Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19
 - PR #231 MERGED: adds diagnostics; PR #233 (open): dedup; PR #234 (open): season-aware
 - PR #238: Promise.allSettled partial resilience
@@ -107,10 +112,11 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-07-01: Task 1 (issue triage), Task 10 (PR #163 urgency comment), Task 11
 - Done 2026-06-29: Task 5 (maintain PRs), Task 11
 - Done 2026-06-28: Task 4 (deps audit), Task 11
 - Done 2026-06-27: Task 3/10, Task 11
-- Next: Task 1 (issue triage), Task 2 (fix issues), Task 6 (stale nudges), Task 9 (new contributors), Task 3/10
+- Next: Task 2 (fix issues), Task 3/10, Task 5 (check PR conflicts), Task 6, Task 9
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -123,10 +129,17 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 - vi.stubEnv for PROD: boolean (true/false) not string
 - ESLint errors in Fixtures.tsx (2 pre-existing react-refresh errors — fixed in PR #225)
 - computeTeamForm(matches, teamId, maxResults?) — LeagueTable (local, no export) + PR #229
-- Main branch test count: 120 tests (on PR #250 branch); 108 on main
+- Main branch test count: 108 tests (on main)
 - PRs #250 and #252 both modify Fixtures.tsx — merge order matters (avoid conflicts)
 - Genius Sports: User-Agent required in health check (CloudFront 403)
 - getCurrentSeasonYear(): August = season transition (euroleagueApi.ts, PR #163)
 - LeagueTable uses named export: { LeagueTable }
 - No src/utils/ directory in main branch (dateUtils, fixtureUtils, matchUtils are all in pending PRs)
 - Bug fixed in PR #250 (2026-06-29): counts.resultsCount badge was `< today`, now `<= today` to match filterMatchesByTab
+- CURRENT_SEASON_YEAR = '2025' still hardcoded on main — ⚠️ breaks August 2026 season transition
+- Pausing new code-improvement PRs: backlog of 50+ open Repo Assist PRs, none merged since #231
+
+## Forward Work Notes
+- After PR #225 (matchUtils) and PR #229 (form guide) merged: refactor LeagueTable computeTeamForm to share
+- Do NOT create more code PRs until backlog reduces — focus on triaging and maintaining existing ones
+- August 2026 deadline: PR #163 (dynamic season year) must be merged before August or app breaks
