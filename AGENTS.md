@@ -89,9 +89,10 @@ src/
 
 ### Test File Locations
 - Service tests: `src/services/__tests__/<name>.test.ts`
-- Component tests: `src/components/__tests__/<name>.test.tsx`  
-  *(Note: this directory does not exist on `main` — create it when adding component tests.)*
-- App-level tests: `src/__tests__/App.test.tsx`
+- Component tests: `src/components/__tests__/<name>.test.tsx`
+  - For focused tests on a single feature within a component, use dot-notation: `<Component>.<feature>.test.ts[x]`
+    (e.g., `Fixtures.winner.test.ts`, `MatchDetail.shareButton.test.tsx`)
+- App-level tests: `src/__tests__/App.test.tsx` *(directory does not yet exist on `main`)*
 
 ### Router Setup
 - `App.tsx` uses `<Routes>` but **not** `<BrowserRouter>` — wrap in `<MemoryRouter>` for tests.
