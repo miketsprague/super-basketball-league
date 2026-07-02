@@ -1,15 +1,16 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-01T16:12:00Z
+2026-07-02T15:55:49Z
 
 ## Last Run Tasks
-- Task 1: Commented on #253 (Repo Assist failure — transient auth issue, same as #235)
-- Task 10: Commented on PR #163 flagging August urgency for CURRENT_SEASON_YEAR transition
-- Task 11: Closed June 2026 monthly activity #222; created July 2026 monthly activity #254 (assumed)
+- Task 3/10: Created PR #255 (docs: correct AGENTS.md test locations + naming convention)
+- Task 5: Verified all key PRs still in mergeable_state: clean (#163, #250, #252)
+- Task 11: Updated monthly activity issue #254
 
 ## Issue Backlog Cursor
-Last processed: #253 (2026-06-30). No new user issues since #236.
+Last processed: #253 (2026-07-01). No new user issues since #236.
+Note: #7 is only open real user issue; all proxy/automated issues are not user-facing.
 
 ## Comments Made
 - #7 (2026-03-03): Native Swift iOS app — feasibility overview
@@ -24,9 +25,9 @@ Last processed: #253 (2026-06-30). No new user issues since #236.
 - #235 (2026-06-12): Repo Assist failure — explained as infrastructure auth issue
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
 - #253 (2026-07-01): Repo Assist failure (2026-06-30) — transient auth issue, no fix needed
-- PR #163 (2026-07-01): August urgency comment — CURRENT_SEASON_YEAR breaks in ~4 weeks
+- PR #163 (2026-07-01): August urgency comment — CURRENT_SEASON_YEAR breaks in ~3 weeks
 
-## Open Repo Assist PRs (2026-07-01)
+## Open Repo Assist PRs (2026-07-02)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Aug 2026
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -73,6 +74,7 @@ Active (not superseded):
 - #250: fix: include today's completed matches in Results tab ✅ (updated 2026-06-29)
 - #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests ✅
 - #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests ✅
+- #255: docs: correct AGENTS.md test file locations and naming convention ✅ (created 2026-07-02)
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -82,9 +84,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (assumed — July 2026): created 2026-07-01 (queued via safeoutputs)
-Issue #222: CLOSED 2026-07-01 (queued via safeoutputs)
-Note: verify #254 exists on next run; if wrong number, update
+Issue #254 (July 2026): updated 2026-07-02
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient)
@@ -112,18 +112,21 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-07-02: Task 3/10 (PR #255 AGENTS.md fix), Task 5 (PR check), Task 11
 - Done 2026-07-01: Task 1 (issue triage), Task 10 (PR #163 urgency comment), Task 11
 - Done 2026-06-29: Task 5 (maintain PRs), Task 11
 - Done 2026-06-28: Task 4 (deps audit), Task 11
 - Done 2026-06-27: Task 3/10, Task 11
-- Next: Task 2 (fix issues), Task 3/10, Task 5 (check PR conflicts), Task 6, Task 9
+- Next: Task 1 (check for new issues), Task 2 (if fixable bug found), Task 6 (stale PR nudge), Task 9 (new contributors)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
 - @testing-library/user-event NOT installed — use fireEvent
 - Match.homeTeam/awayTeam: Team { id, name, shortName, logo? }; venue required ('TBC' if unknown)
-- src/components/__tests__/Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
+- src/components/__tests__/: EXISTS on main — Fixtures.winner.test.ts, LeagueTable.test.tsx, MatchDetail.shareButton.test.tsx
 - src/services/__tests__/: dataProvider, euroleagueApi, geniusSportsApi, leagues, teamStorage
+- src/__tests__/: does NOT exist on main yet (planned for App tests in PR #178)
+- Component test naming convention: <Component>.<feature>.test.ts[x] for focused tests
 - localStorage mock: Node.js 25+ native stub shadows jsdom — use explicit storageMock pattern
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - vi.stubEnv for PROD: boolean (true/false) not string
@@ -132,14 +135,14 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 - Main branch test count: 108 tests (on main)
 - PRs #250 and #252 both modify Fixtures.tsx — merge order matters (avoid conflicts)
 - Genius Sports: User-Agent required in health check (CloudFront 403)
-- getCurrentSeasonYear(): August = season transition (euroleagueApi.ts, PR #163)
+- getCurrentSeasonYear(): August = season transition (pending in PR #163 — NOT on main yet)
+- CURRENT_SEASON_YEAR = '2025' still hardcoded on main — ⚠️ breaks August 2026 season transition
 - LeagueTable uses named export: { LeagueTable }
 - No src/utils/ directory in main branch (dateUtils, fixtureUtils, matchUtils are all in pending PRs)
 - Bug fixed in PR #250 (2026-06-29): counts.resultsCount badge was `< today`, now `<= today` to match filterMatchesByTab
-- CURRENT_SEASON_YEAR = '2025' still hardcoded on main — ⚠️ breaks August 2026 season transition
-- Pausing new code-improvement PRs: backlog of 50+ open Repo Assist PRs, none merged since #231
 
 ## Forward Work Notes
 - After PR #225 (matchUtils) and PR #229 (form guide) merged: refactor LeagueTable computeTeamForm to share
 - Do NOT create more code PRs until backlog reduces — focus on triaging and maintaining existing ones
 - August 2026 deadline: PR #163 (dynamic season year) must be merged before August or app breaks
+- AGENTS.md fix (#255) — fix stale note about src/components/__tests__/
