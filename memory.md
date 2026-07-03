@@ -1,11 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-02T15:55:49Z
+2026-07-03T15:36:30Z
 
 ## Last Run Tasks
-- Task 3/10: Created PR #255 (docs: correct AGENTS.md test locations + naming convention)
-- Task 5: Verified all key PRs still in mergeable_state: clean (#163, #250, #252)
+- Task 5: Updated PR #255 (pushed fix: season transition month October not August in AGENTS.md)
 - Task 11: Updated monthly activity issue #254
 
 ## Issue Backlog Cursor
@@ -25,11 +24,11 @@ Note: #7 is only open real user issue; all proxy/automated issues are not user-f
 - #235 (2026-06-12): Repo Assist failure — explained as infrastructure auth issue
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
 - #253 (2026-07-01): Repo Assist failure (2026-06-30) — transient auth issue, no fix needed
-- PR #163 (2026-07-01): August urgency comment — CURRENT_SEASON_YEAR breaks in ~3 weeks
+- PR #163 (2026-07-01): August urgency comment (NOTE: was inaccurate — real deadline is October)
 
-## Open Repo Assist PRs (2026-07-02)
+## Open Repo Assist PRs (2026-07-03)
 Active (not superseded):
-- #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Aug 2026
+- #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
 - #165: feat: persist active tab in URL
 - #166: feat: PWA manifest and basketball icon
@@ -74,7 +73,7 @@ Active (not superseded):
 - #250: fix: include today's completed matches in Results tab ✅ (updated 2026-06-29)
 - #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests ✅
 - #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests ✅
-- #255: docs: correct AGENTS.md test file locations and naming convention ✅ (created 2026-07-02)
+- #255: docs: correct AGENTS.md test file locations + naming convention + season month fix ✅ (updated 2026-07-03)
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -84,7 +83,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (July 2026): updated 2026-07-02
+Issue #254 (July 2026): updated 2026-07-03
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient)
@@ -112,6 +111,7 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-07-03: Task 5 (update PR #255), Task 11
 - Done 2026-07-02: Task 3/10 (PR #255 AGENTS.md fix), Task 5 (PR check), Task 11
 - Done 2026-07-01: Task 1 (issue triage), Task 10 (PR #163 urgency comment), Task 11
 - Done 2026-06-29: Task 5 (maintain PRs), Task 11
@@ -135,8 +135,10 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 - Main branch test count: 108 tests (on main)
 - PRs #250 and #252 both modify Fixtures.tsx — merge order matters (avoid conflicts)
 - Genius Sports: User-Agent required in health check (CloudFront 403)
-- getCurrentSeasonYear(): August = season transition (pending in PR #163 — NOT on main yet)
-- CURRENT_SEASON_YEAR = '2025' still hardcoded on main — ⚠️ breaks August 2026 season transition
+- getCurrentSeasonYear(): October is season transition month (month >= 10 ? year : year - 1)
+  - Jan-Sep 2026 → returns '2025'; Oct-Dec 2026 → returns '2026'
+  - AGENTS.md previously said "August" — corrected in PR #255 commit (2026-07-03)
+- CURRENT_SEASON_YEAR = '2025' still hardcoded on main — ⚠️ breaks October 2026 season transition
 - LeagueTable uses named export: { LeagueTable }
 - No src/utils/ directory in main branch (dateUtils, fixtureUtils, matchUtils are all in pending PRs)
 - Bug fixed in PR #250 (2026-06-29): counts.resultsCount badge was `< today`, now `<= today` to match filterMatchesByTab
@@ -144,5 +146,6 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 ## Forward Work Notes
 - After PR #225 (matchUtils) and PR #229 (form guide) merged: refactor LeagueTable computeTeamForm to share
 - Do NOT create more code PRs until backlog reduces — focus on triaging and maintaining existing ones
-- August 2026 deadline: PR #163 (dynamic season year) must be merged before August or app breaks
-- AGENTS.md fix (#255) — fix stale note about src/components/__tests__/
+- October 2026 deadline: PR #163 (dynamic season year) must be merged before October or app breaks
+- AGENTS.md fix (#255) now also includes season month correction
+- PR #163 comment about "August urgency" was inaccurate — the real deadline is October
