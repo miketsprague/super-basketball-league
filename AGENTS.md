@@ -58,7 +58,7 @@ src/
 
 ### Season Year
 - Use `getCurrentSeasonYear()` from `euroleagueApi.ts` — do **not** hardcode the year.
-- August is the season transition month.
+- EuroLeague seasons start in **October**: `getCurrentSeasonYear()` returns `year - 1` for January–September and `year` for October–December. E.g. in July 2026 it returns `'2025'`; in October 2026 it returns `'2026'`.
 
 ### Auto-refresh Error Handling
 - `isInitialLoad` flag in App.tsx: only the *initial* load shows a blocking error overlay.
@@ -89,9 +89,10 @@ src/
 
 ### Test File Locations
 - Service tests: `src/services/__tests__/<name>.test.ts`
-- Component tests: `src/components/__tests__/<name>.test.tsx`  
-  *(Note: this directory does not exist on `main` — create it when adding component tests.)*
-- App-level tests: `src/__tests__/App.test.tsx`
+- Component tests: `src/components/__tests__/<name>.test.tsx`
+  - For focused tests on a single feature within a component, use dot-notation: `<Component>.<feature>.test.ts[x]`
+    (e.g., `Fixtures.winner.test.ts`, `MatchDetail.shareButton.test.tsx`)
+- App-level tests: `src/__tests__/App.test.tsx` *(directory does not yet exist on `main`)*
 
 ### Router Setup
 - `App.tsx` uses `<Routes>` but **not** `<BrowserRouter>` — wrap in `<MemoryRouter>` for tests.
