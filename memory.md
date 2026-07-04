@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-03T15:36:30Z
+2026-07-04T14:52:24Z
 
 ## Last Run Tasks
-- Task 5: Updated PR #255 (pushed fix: season transition month October not August in AGENTS.md)
+- Task 5: Verified CI clean on key PRs (#163, #213, #225, #250, #251, #252, #255)
 - Task 11: Updated monthly activity issue #254
 
 ## Issue Backlog Cursor
@@ -26,7 +26,7 @@ Note: #7 is only open real user issue; all proxy/automated issues are not user-f
 - #253 (2026-07-01): Repo Assist failure (2026-06-30) — transient auth issue, no fix needed
 - PR #163 (2026-07-01): August urgency comment (NOTE: was inaccurate — real deadline is October)
 
-## Open Repo Assist PRs (2026-07-03)
+## Open Repo Assist PRs (2026-07-04)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -83,11 +83,11 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (July 2026): updated 2026-07-03
+Issue #254 (July 2026): updated 2026-07-04
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient)
-- Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19
+- Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19, Jul 3, Jul 4
 - PR #231 MERGED: adds diagnostics; PR #233 (open): dedup; PR #234 (open): season-aware
 - PR #238: Promise.allSettled partial resilience
 
@@ -111,13 +111,14 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-07-04: Task 5 (verify CI on PRs), Task 11
 - Done 2026-07-03: Task 5 (update PR #255), Task 11
 - Done 2026-07-02: Task 3/10 (PR #255 AGENTS.md fix), Task 5 (PR check), Task 11
 - Done 2026-07-01: Task 1 (issue triage), Task 10 (PR #163 urgency comment), Task 11
 - Done 2026-06-29: Task 5 (maintain PRs), Task 11
 - Done 2026-06-28: Task 4 (deps audit), Task 11
 - Done 2026-06-27: Task 3/10, Task 11
-- Next: Task 1 (check for new issues), Task 2 (if fixable bug found), Task 6 (stale PR nudge), Task 9 (new contributors)
+- Next: Task 1 (check for new issues), Task 3/10 (codebase study), Task 7 (labels check), Task 8 (release prep check)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -134,10 +135,11 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 - computeTeamForm(matches, teamId, maxResults?) — LeagueTable (local, no export) + PR #229
 - Main branch test count: 108 tests (on main)
 - PRs #250 and #252 both modify Fixtures.tsx — merge order matters (avoid conflicts)
-- Genius Sports: User-Agent required in health check (CloudFront 403)
+- Genius Sports: User-Agent required in health check (CloudFront 403), but NOT needed in browser app (browser sends it automatically)
 - getCurrentSeasonYear(): October is season transition month (month >= 10 ? year : year - 1)
   - Jan-Sep 2026 → returns '2025'; Oct-Dec 2026 → returns '2026'
   - AGENTS.md previously said "August" — corrected in PR #255 commit (2026-07-03)
+  - PR #163 description says "August" but the CODE correctly uses October — tests confirm
 - CURRENT_SEASON_YEAR = '2025' still hardcoded on main — ⚠️ breaks October 2026 season transition
 - LeagueTable uses named export: { LeagueTable }
 - No src/utils/ directory in main branch (dateUtils, fixtureUtils, matchUtils are all in pending PRs)
@@ -148,4 +150,3 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 - Do NOT create more code PRs until backlog reduces — focus on triaging and maintaining existing ones
 - October 2026 deadline: PR #163 (dynamic season year) must be merged before October or app breaks
 - AGENTS.md fix (#255) now also includes season month correction
-- PR #163 comment about "August urgency" was inaccurate — the real deadline is October
