@@ -1,10 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-05T15:01:09Z
+2026-07-06T16:42:27Z
 
 ## Last Run Tasks
-- Task 5: Posted correction comment on PR #163 (August → October season deadline)
+- Task 8: Updated PR #226 CHANGELOG to include CI diagnostics (#231), corrected release date to 2026-06-09
+- Task 5: Verified PRs #163, #213, #255 all mergeable/CI passing
 - Task 11: Updated monthly activity issue #254
 
 ## Issue Backlog Cursor
@@ -27,7 +28,7 @@ Note: #7 is only open real user issue; all proxy/automated issues are not user-f
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-07-05)
+## Open Repo Assist PRs (2026-07-06)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -52,7 +53,7 @@ Active (not superseded):
 - #211: feat: sortable columns in LeagueTable
 - #213: fix: preserve data on auto-refresh fail ✅ clean
 - #225: fix: move match utils to matchUtils.ts ✅ clean
-- #226: chore: release v0.1.0
+- #226: chore: release v0.1.0 (UPDATED 2026-07-06: CHANGELOG now includes CI diagnostics #231, date corrected to 2026-06-09)
 - #227: feat: head-to-head section in MatchDetail
 - #228: test: Fixtures (26 tests) ✅ clean
 - #229: feat: pre-match form guide in MatchDetail
@@ -84,7 +85,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (July 2026): updated 2026-07-05
+Issue #254 (July 2026): updated 2026-07-06
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient)
@@ -112,6 +113,7 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-07-06: Task 8 (PR #226 CHANGELOG update), Task 5 (PR verification), Task 11
 - Done 2026-07-05: Task 5 (correction comment PR #163), Task 11
 - Done 2026-07-04: Task 5 (verify CI on PRs), Task 11
 - Done 2026-07-03: Task 5 (update PR #255), Task 11
@@ -120,7 +122,7 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 - Done 2026-06-29: Task 5 (maintain PRs), Task 11
 - Done 2026-06-28: Task 4 (deps audit), Task 11
 - Done 2026-06-27: Task 3/10, Task 11
-- Next: Task 1 (check #7 for new comments), Task 3/10 (codebase study), Task 7 (labels check), Task 8 (release prep check)
+- Next: Task 1 (any new issues), Task 3/10 (codebase study or forward-looking work), Task 7 (labels)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
