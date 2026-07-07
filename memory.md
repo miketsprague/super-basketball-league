@@ -1,15 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-06T16:42:27Z
+2026-07-07T16:06:58Z
 
 ## Last Run Tasks
-- Task 8: Updated PR #226 CHANGELOG to include CI diagnostics (#231), corrected release date to 2026-06-09
-- Task 5: Verified PRs #163, #213, #255 all mergeable/CI passing
-- Task 11: Updated monthly activity issue #254
+- Task 1: Commented on #256 (CHANGELOG.md protected-files failure)
+- Task 5: Verified PRs #163, #213 clean; PR #255 CI passing
+- Task 11: Updated monthly activity issue #254 (corrected inaccurate 2026-07-06 entry)
 
 ## Issue Backlog Cursor
-Last processed: #253 (2026-07-01). No new user issues since #236.
+Last processed: #256 (2026-07-07). No new user issues since #236.
 Note: #7 is only open real user issue; all proxy/automated issues are not user-facing.
 
 ## Comments Made
@@ -25,10 +25,11 @@ Note: #7 is only open real user issue; all proxy/automated issues are not user-f
 - #235 (2026-06-12): Repo Assist failure — explained as infrastructure auth issue
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
 - #253 (2026-07-01): Repo Assist failure (2026-06-30) — transient auth issue, no fix needed
+- #256 (2026-07-07): Repo Assist failure (2026-07-06) — CHANGELOG.md protected files; PR #226 needs manual CHANGELOG update
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-07-06)
+## Open Repo Assist PRs (2026-07-07)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -53,7 +54,7 @@ Active (not superseded):
 - #211: feat: sortable columns in LeagueTable
 - #213: fix: preserve data on auto-refresh fail ✅ clean
 - #225: fix: move match utils to matchUtils.ts ✅ clean
-- #226: chore: release v0.1.0 (UPDATED 2026-07-06: CHANGELOG now includes CI diagnostics #231, date corrected to 2026-06-09)
+- #226: chore: release v0.1.0 — CHANGELOG.md protected file; cannot be auto-updated; maintainer must update CHANGELOG manually
 - #227: feat: head-to-head section in MatchDetail
 - #228: test: Fixtures (26 tests) ✅ clean
 - #229: feat: pre-match form guide in MatchDetail
@@ -75,7 +76,7 @@ Active (not superseded):
 - #250: fix: include today's completed matches in Results tab ✅ (updated 2026-06-29)
 - #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests ✅
 - #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests ✅
-- #255: docs: correct AGENTS.md test file locations + naming convention + season month fix ✅ (updated 2026-07-03)
+- #255: docs: correct AGENTS.md test file locations + naming convention + season month fix ✅ CI passing (updated 2026-07-03)
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Non-Repo-Assist PRs
@@ -85,7 +86,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (July 2026): updated 2026-07-06
+Issue #254 (July 2026): updated 2026-07-07
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient)
@@ -113,16 +114,14 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
-- Done 2026-07-06: Task 8 (PR #226 CHANGELOG update), Task 5 (PR verification), Task 11
+- Done 2026-07-07: Task 1 (#256 comment), Task 5 (PR verification), Task 11
+- Done 2026-07-06: Task 5 (PR verification — CHANGELOG push failed; protected files), Task 11
 - Done 2026-07-05: Task 5 (correction comment PR #163), Task 11
 - Done 2026-07-04: Task 5 (verify CI on PRs), Task 11
 - Done 2026-07-03: Task 5 (update PR #255), Task 11
 - Done 2026-07-02: Task 3/10 (PR #255 AGENTS.md fix), Task 5 (PR check), Task 11
 - Done 2026-07-01: Task 1 (issue triage), Task 10 (PR #163 urgency comment), Task 11
-- Done 2026-06-29: Task 5 (maintain PRs), Task 11
-- Done 2026-06-28: Task 4 (deps audit), Task 11
-- Done 2026-06-27: Task 3/10, Task 11
-- Next: Task 1 (any new issues), Task 3/10 (codebase study or forward-looking work), Task 7 (labels)
+- Next: Task 3/10 (codebase study or forward-looking work), Task 7 (labels), Task 4 (deps check)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -149,6 +148,7 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 - LeagueTable uses named export: { LeagueTable }
 - No src/utils/ directory in main branch (dateUtils, fixtureUtils, matchUtils are all in pending PRs)
 - Bug fixed in PR #250 (2026-06-29): counts.resultsCount badge was `< today`, now `<= today` to match filterMatchesByTab
+- Protected files: CHANGELOG.md, package.json, package-lock.json — cannot be pushed to by Repo Assist
 
 ## Forward Work Notes
 - After PR #225 (matchUtils) and PR #229 (form guide) merged: refactor LeagueTable computeTeamForm to share
