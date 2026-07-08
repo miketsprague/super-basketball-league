@@ -1,15 +1,14 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-07T16:06:58Z
+2026-07-08T15:53:13Z
 
 ## Last Run Tasks
-- Task 1: Commented on #256 (CHANGELOG.md protected-files failure)
-- Task 5: Verified PRs #163, #213 clean; PR #255 CI passing
-- Task 11: Updated monthly activity issue #254 (corrected inaccurate 2026-07-06 entry)
+- Task 1: Commented on #257 (off-season API health check failure)
+- Task 11: Updated monthly activity issue #254
 
 ## Issue Backlog Cursor
-Last processed: #256 (2026-07-07). No new user issues since #236.
+Last processed: #257 (2026-07-08). No new user issues since #236.
 Note: #7 is only open real user issue; all proxy/automated issues are not user-facing.
 
 ## Comments Made
@@ -26,10 +25,11 @@ Note: #7 is only open real user issue; all proxy/automated issues are not user-f
 - #236 (2026-06-12): API health check failure — off-season; linked to #233/#234
 - #253 (2026-07-01): Repo Assist failure (2026-06-30) — transient auth issue, no fix needed
 - #256 (2026-07-07): Repo Assist failure (2026-07-06) — CHANGELOG.md protected files; PR #226 needs manual CHANGELOG update
+- #257 (2026-07-08): API health check failure — off-season HTTP 500 same pattern as Jun; PR #234 would fix
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-07-07)
+## Open Repo Assist PRs (2026-07-08)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -86,10 +86,10 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (July 2026): updated 2026-07-07
+Issue #254 (July 2026): updated 2026-07-08
 
 ## API Health Check Pattern
-- Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient)
+- Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
 - Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19, Jul 3, Jul 4
 - PR #231 MERGED: adds diagnostics; PR #233 (open): dedup; PR #234 (open): season-aware
 - PR #238: Promise.allSettled partial resilience
@@ -114,6 +114,7 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-07-08: Task 1 (#257 comment), Task 11
 - Done 2026-07-07: Task 1 (#256 comment), Task 5 (PR verification), Task 11
 - Done 2026-07-06: Task 5 (PR verification — CHANGELOG push failed; protected files), Task 11
 - Done 2026-07-05: Task 5 (correction comment PR #163), Task 11
@@ -121,7 +122,7 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 - Done 2026-07-03: Task 5 (update PR #255), Task 11
 - Done 2026-07-02: Task 3/10 (PR #255 AGENTS.md fix), Task 5 (PR check), Task 11
 - Done 2026-07-01: Task 1 (issue triage), Task 10 (PR #163 urgency comment), Task 11
-- Next: Task 3/10 (codebase study or forward-looking work), Task 7 (labels), Task 4 (deps check)
+- Next: Task 3/10 (codebase study or forward-looking work), Task 7 (labels check), Task 4 (deps check)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
