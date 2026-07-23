@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-22T15:23:00Z
+2026-07-23T15:35:00Z
 
 ## Last Run Tasks
-- Task 5: Verified PRs #163, #213, #255 all mergeable_state clean (run #29932947202)
+- Task 5: Verified PRs #213, #255 `mergeable_state: clean`; API Health Check passing (run #30021116627)
 - Task 11: Updated monthly activity issue #254
 
 ## Issue Backlog Cursor
@@ -30,7 +30,7 @@ Issue #258: agentic-workflows Detection Runs — infrastructure, no action neede
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-07-22)
+## Open Repo Assist PRs (2026-07-23)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -87,11 +87,11 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (July 2026): updated 2026-07-22
+Issue #254 (July 2026): updated 2026-07-23
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
-- Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19, Jul 3, Jul 4, Jul 7, Jul 9, Jul 15
+- Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19, Jul 3, Jul 4, Jul 7, Jul 9, Jul 15, Jul 22, Jul 23
 - PR #231 MERGED: adds diagnostics; PR #233 (open): dedup; PR #234 (open): season-aware
 - PR #238: Promise.allSettled partial resilience
 
@@ -115,6 +115,7 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-07-23: Task 5 (PR CI verification), Task 11
 - Done 2026-07-22: Task 5 (PR CI verification), Task 11
 - Done 2026-07-21: Task 5 (PR CI verification), Task 11
 - Done 2026-07-20: Task 5 (PR CI verification), Task 11
