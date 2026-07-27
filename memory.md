@@ -1,7 +1,7 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-26T14:51:00Z
+2026-07-27T16:02:00Z
 
 ## Last Run Tasks
 - Task 5: Verified CI: PRs #163, #255 both mergeable_state: clean; no new user issues or PRs
@@ -30,7 +30,7 @@ Issue #258: agentic-workflows Detection Runs — infrastructure, no action neede
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-07-26)
+## Open Repo Assist PRs (2026-07-27)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -87,7 +87,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (July 2026): updated 2026-07-26
+Issue #254 (July 2026): updated 2026-07-27
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
@@ -115,6 +115,7 @@ Outdated packages (minor/patch in-range):
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-07-27: Task 5 (PR CI verification), Task 11
 - Done 2026-07-26: Task 5 (PR CI verification), Task 11
 - Done 2026-07-25: Task 5 (PR CI verification), Task 11
 - Done 2026-07-24: Task 5 (PR CI verification), Task 11
