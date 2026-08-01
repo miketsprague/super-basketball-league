@@ -1,11 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-07-31T15:40:00Z
+2026-08-01T14:47:00Z
 
 ## Last Run Tasks
-- Task 5: Verified CI on PRs #255 (test: success), #163, #213, #252 (clean); no new user issues
-- Task 11: Updated monthly activity issue #254
+- Task 11: Closed July #254, created August activity issue (new number TBD)
 
 ## Issue Backlog Cursor
 Last processed: #257 (2026-07-08). No new user issues since #236.
@@ -30,7 +29,7 @@ Issue #258: agentic-workflows Detection Runs — infrastructure, no action neede
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-07-31)
+## Open Repo Assist PRs (2026-08-01)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -87,7 +86,8 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 #115-#116, #118, #120-#121, #123-#124, #126, #128, #130-#133, #135-#138, #140-#143, #147, #149, #151, #153, #155, #158-#161
 
 ## Monthly Activity Summary
-Issue #254 (July 2026): updated 2026-07-31
+Issue #254 (July 2026): CLOSED 2026-08-01
+Issue #259 (August 2026): created 2026-08-01 (number TBD — check next run)
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
@@ -96,61 +96,15 @@ Issue #254 (July 2026): updated 2026-07-31
 - PR #238: Promise.allSettled partial resilience
 
 ## Dependency Status (2026-06-28)
-Outdated packages (minor/patch in-range):
-- react: 19.2.3 → 19.2.7
-- react-dom: 19.2.3 → 19.2.7
-- @tailwindcss/vite: 4.1.18 → 4.3.1
-- tailwindcss: 4.1.18 → 4.3.1
-- react-router-dom: 7.12.0 → 7.18.0
-- @testing-library/react: 16.3.1 → 16.3.2
-- @types/node: 24.10.9 → 24.13.2
-- @types/react: 19.2.8 → 19.2.17
-- @vitejs/plugin-react: 5.1.2 → 5.2.0
-- eslint: 9.39.2 → 9.39.4
-- @eslint/js: 9.39.2 → 9.39.4
-- eslint-plugin-react-hooks: 7.0.1 → 7.1.1
-- typescript-eslint: 8.53.0 → 8.62.0
-- vite: 7.3.1 → 7.3.6
-- vitest: 4.0.17 → 4.1.9
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-08-01: Task 11 (close July, open August)
 - Done 2026-07-31: Task 5 (PR CI verification), Task 11
 - Done 2026-07-30: Task 5 (PR CI verification), Task 11
 - Done 2026-07-29: Task 1 (issue triage), Task 11
 - Done 2026-07-28: Task 5 (PR CI verification), Task 11
-- Done 2026-07-27: Task 5 (PR CI verification), Task 11
-- Done 2026-07-26: Task 5 (PR CI verification), Task 11
-- Done 2026-07-25: Task 5 (PR CI verification), Task 11
-- Done 2026-07-24: Task 5 (PR CI verification), Task 11
-- Done 2026-07-23: Task 5 (PR CI verification), Task 11
-- Done 2026-07-22: Task 5 (PR CI verification), Task 11
-- Done 2026-07-21: Task 5 (PR CI verification), Task 11
-- Done 2026-07-20: Task 5 (PR CI verification), Task 11
-- Done 2026-07-19: Task 5 (PR CI verification), Task 11
-- Done 2026-07-18: Task 5 (PR CI verification), Task 11
-- Done 2026-07-17: Task 5 (PR CI verification), Task 11
-- Done 2026-07-16: Task 5 (PR CI verification), Task 11
-- Done 2026-07-15: Task 5 (API health check passing), Task 11
-- Done 2026-07-14: Task 5 (PR CI verification), Task 11
-- Done 2026-07-13: Task 5 (PR CI verification), Task 11
-- Done 2026-07-12: Task 5 (PR CI verification), Task 11
-- Done 2026-07-11: Task 5 (PR verification), Task 11
-- Done 2026-07-09: Task 7 (labelled 19 PRs), Task 5 (PR verification), Task 10 (codebase study), Task 11
-- Done 2026-07-08: Task 1 (#257 comment), Task 11
-- Done 2026-07-07: Task 1 (#256 comment), Task 5 (PR verification), Task 11
-- Next: Task 1 (issue triage), Task 10 (forward progress)
-
-## PR Label Status (2026-07-09)
-Newly labelled PRs:
-- #252: added `bug`
-- #255: added `documentation`
-- #251: added `enhancement`
-- #249-#245: added `enhancement`
-- #242, #241: added `enhancement`
-- #240: added `enhancement`, `performance`
-- #239, #229, #227: added `enhancement`
-- #211, #207, #205, #203, #193: added `enhancement`
+- Next: Task 1 (issue triage), Task 5 (PR CI check), Task 10 (forward progress)
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
