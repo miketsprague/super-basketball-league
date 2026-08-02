@@ -1,10 +1,12 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-08-01T14:47:00Z
+2026-08-02T14:49:00Z
 
 ## Last Run Tasks
-- Task 11: Closed July #254, created August activity issue (new number TBD)
+- Task 5: CI verification (PR #252 ✅, #163 no checks)
+- Task 1: Issue triage — no new user issues
+- Task 11: Updated monthly activity issue #259
 
 ## Issue Backlog Cursor
 Last processed: #257 (2026-07-08). No new user issues since #236.
@@ -29,7 +31,7 @@ Issue #258: agentic-workflows Detection Runs — infrastructure, no action neede
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-08-01)
+## Open Repo Assist PRs (2026-08-02)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -75,7 +77,7 @@ Active (not superseded):
 - #249: feat: computeRecentRecord + recent form banner in TeamView ✅
 - #250: fix: include today's completed matches in Results tab ✅ clean
 - #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests ✅
-- #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests ✅ clean
+- #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests ✅ clean (CI passing as of 2026-08-02)
 - #255: docs: correct AGENTS.md test file locations + naming convention + season month fix ✅ CI passing
 Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
@@ -87,7 +89,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Monthly Activity Summary
 Issue #254 (July 2026): CLOSED 2026-08-01
-Issue #259 (August 2026): created 2026-08-01 (number TBD — check next run)
+Issue #259 (August 2026): open — updated 2026-08-02
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
@@ -99,12 +101,13 @@ Issue #259 (August 2026): created 2026-08-01 (number TBD — check next run)
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-08-02: Task 5 (CI verification), Task 1 (issue triage), Task 11
 - Done 2026-08-01: Task 11 (close July, open August)
 - Done 2026-07-31: Task 5 (PR CI verification), Task 11
 - Done 2026-07-30: Task 5 (PR CI verification), Task 11
 - Done 2026-07-29: Task 1 (issue triage), Task 11
 - Done 2026-07-28: Task 5 (PR CI verification), Task 11
-- Next: Task 1 (issue triage), Task 5 (PR CI check), Task 10 (forward progress)
+- Next: Task 3 (codebase study/improvements), Task 7 (labelling), Task 10 (forward progress), Task 11
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
