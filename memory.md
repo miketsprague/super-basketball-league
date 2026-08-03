@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-08-02T14:49:00Z
+2026-08-03T16:06:00Z
 
 ## Last Run Tasks
-- Task 5: CI verification (PR #252 ✅, #163 no checks)
-- Task 1: Issue triage — no new user issues
+- Task 7: Labelling scan — all open issues already labelled appropriately, no changes needed
+- Task 1: No new user issues since #257
 - Task 11: Updated monthly activity issue #259
 
 ## Issue Backlog Cursor
@@ -31,7 +31,7 @@ Issue #258: agentic-workflows Detection Runs — infrastructure, no action neede
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-08-02)
+## Open Repo Assist PRs (2026-08-03)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) ✅ clean — ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -89,7 +89,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Monthly Activity Summary
 Issue #254 (July 2026): CLOSED 2026-08-01
-Issue #259 (August 2026): open — updated 2026-08-02
+Issue #259 (August 2026): open — updated 2026-08-03
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
@@ -101,13 +101,14 @@ Issue #259 (August 2026): open — updated 2026-08-02
 Blocked: package.json + package-lock.json are protected files. Maintainer must run `npm update` + commit manually.
 
 ## Round-Robin Next
+- Done 2026-08-03: Task 7 (labelling scan), Task 1 (issue triage), Task 11
 - Done 2026-08-02: Task 5 (CI verification), Task 1 (issue triage), Task 11
 - Done 2026-08-01: Task 11 (close July, open August)
 - Done 2026-07-31: Task 5 (PR CI verification), Task 11
 - Done 2026-07-30: Task 5 (PR CI verification), Task 11
 - Done 2026-07-29: Task 1 (issue triage), Task 11
 - Done 2026-07-28: Task 5 (PR CI verification), Task 11
-- Next: Task 3 (codebase study/improvements), Task 7 (labelling), Task 10 (forward progress), Task 11
+- Next: Task 3 (codebase study/improvements), Task 5 (CI check), Task 10 (forward progress), Task 11
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
