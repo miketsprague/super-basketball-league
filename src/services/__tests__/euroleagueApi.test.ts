@@ -4,6 +4,7 @@ import {
   fetchEuroLeagueMatches,
   fetchEuroLeagueAllData,
   fetchEuroLeagueMatchDetails,
+  getCurrentSeasonYear,
 } from '../euroleagueApi';
 
 // Mock V1 XML response (completed games)
@@ -615,5 +616,45 @@ describe('Helper Functions', () => {
       // Time should be in HH:MM format
       expect(match?.time).toMatch(/^\d{2}:\d{2}$/);
     });
+  });
+});
+
+describe('getCurrentSeasonYear', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('returns previous year in April (mid-season)', () => {
+    vi.setSystemTime(new Date('2026-04-17T12:00:00Z'));
+    expect(getCurrentSeasonYear()).toBe('2025');
+  });
+
+  it('returns previous year in September (pre-season)', () => {
+    vi.setSystemTime(new Date('2026-09-30T12:00:00Z'));
+    expect(getCurrentSeasonYear()).toBe('2025');
+  });
+
+  it('returns current year in October (season start)', () => {
+    vi.setSystemTime(new Date('2026-10-01T12:00:00Z'));
+    expect(getCurrentSeasonYear()).toBe('2026');
+  });
+
+  it('returns current year in December', () => {
+    vi.setSystemTime(new Date('2026-12-15T12:00:00Z'));
+    expect(getCurrentSeasonYear()).toBe('2026');
+  });
+
+  it('returns current year in January (new calendar year, same season)', () => {
+    vi.setSystemTime(new Date('2027-01-10T12:00:00Z'));
+    expect(getCurrentSeasonYear()).toBe('2026');
+  });
+
+  it('returns correct year for season transition boundary', () => {
+    // Sep 30: still last season
+    vi.setSystemTime(new Date('2025-09-30T23:59:59Z'));
+    expect(getCurrentSeasonYear()).toBe('2024');
+    // Oct 1: new season starts
+    vi.setSystemTime(new Date('2025-10-01T00:00:00Z'));
+    expect(getCurrentSeasonYear()).toBe('2025');
   });
 });

@@ -31,7 +31,21 @@ const EUROLEAGUE_V1_API_BASE = 'https://api-live.euroleague.net/v1';
 const EUROLEAGUE_V2_API_BASE = 'https://feeds.incrowdsports.com/provider/euroleague-feeds/v2';
 
 // Current season code format: E2025 for EuroLeague 2025-26, U2025 for EuroCup 2025-26
-const CURRENT_SEASON_YEAR = '2025';
+/**
+ * Returns the EuroLeague/EuroCup season year string used in API season codes.
+ *
+ * The season year is the calendar year in which the season *starts*:
+ * - Season 2025-26 → '2025' (used in codes E2025, U2025)
+ * - October is the season transition month: on/after 1 Oct, use current year; before, use previous year.
+ *
+ * @returns Four-digit year string, e.g. '2025'
+ */
+export function getCurrentSeasonYear(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1; // 1-12
+  return String(month >= 10 ? year : year - 1);
+}
 
 // Parsed game from XML (V1 API - completed games)
 interface ParsedGame {
@@ -415,7 +429,7 @@ function getCompetitionCode(leagueId: string): string {
  */
 async function fetchCompletedMatches(leagueId: string): Promise<Match[]> {
   const competitionCode = getCompetitionCode(leagueId);
-  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const seasonCode = `${competitionCode}${getCurrentSeasonYear()}`;
 
   try {
     const doc = await fetchXMLFromEuroLeague(`/results?seasoncode=${seasonCode}`);
@@ -433,7 +447,7 @@ async function fetchCompletedMatches(leagueId: string): Promise<Match[]> {
  */
 async function fetchUpcomingMatches(leagueId: string): Promise<Match[]> {
   const competitionCode = getCompetitionCode(leagueId);
-  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const seasonCode = `${competitionCode}${getCurrentSeasonYear()}`;
 
   try {
     // V2 API returns games in pages, get first 100 (usually covers several rounds)
@@ -487,7 +501,7 @@ export async function fetchEuroLeagueMatches(leagueId: string): Promise<Match[]>
  */
 export async function fetchEuroLeagueStandings(leagueId: string): Promise<StandingsEntry[]> {
   const competitionCode = getCompetitionCode(leagueId);
-  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const seasonCode = `${competitionCode}${getCurrentSeasonYear()}`;
 
   const doc = await fetchXMLFromEuroLeague(`/standings?seasoncode=${seasonCode}`);
   const standings = parseStandingsXML(doc);
@@ -655,7 +669,7 @@ async function fetchGameDetails(gameCode: string, competitionCode: string): Prom
   homePlayers: PlayerStatistics[];
   awayPlayers: PlayerStatistics[];
 } | null> {
-  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const seasonCode = `${competitionCode}${getCurrentSeasonYear()}`;
   const url = `${EUROLEAGUE_V1_API_BASE}/games?gameCode=${gameCode}&seasonCode=${seasonCode}`;
   
   try {
