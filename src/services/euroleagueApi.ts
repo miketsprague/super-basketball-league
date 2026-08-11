@@ -31,9 +31,15 @@ const EUROLEAGUE_V1_API_BASE = 'https://api-live.euroleague.net/v1';
 const EUROLEAGUE_V2_API_BASE = 'https://feeds.incrowdsports.com/provider/euroleague-feeds/v2';
 
 // Current season code format: E2025 for EuroLeague 2025-26, U2025 for EuroCup 2025-26
-// The EuroLeague season starts in October; e.g. the 2025-26 season uses code '2025'.
-// We derive the season year dynamically: if current month >= 10 (October), the season year
-// is the current calendar year; otherwise it's the previous calendar year.
+/**
+ * Returns the EuroLeague/EuroCup season year string used in API season codes.
+ *
+ * The season year is the calendar year in which the season *starts*:
+ * - Season 2025-26 → '2025' (used in codes E2025, U2025)
+ * - October is the season transition month: on/after 1 Oct, use current year; before, use previous year.
+ *
+ * @returns Four-digit year string, e.g. '2025'
+ */
 export function getCurrentSeasonYear(): string {
   const now = new Date();
   const year = now.getFullYear();
