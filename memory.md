@@ -1,10 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-08-11T14:44:00Z
+2026-08-12T14:39:00Z
 
 ## Last Run Tasks
-- Task 5: Pushed update to PR #163 (JSDoc for getCurrentSeasonYear, triggers CI), 87 tests ✅
+- Task 1: No new user issues since cursor #257
+- Task 5: CI verified — PR #163 ✅ tests passing
 - Task 11: Updated monthly activity issue #259
 
 ## Issue Backlog Cursor
@@ -30,9 +31,9 @@ Issue #258: agentic-workflows Detection Runs — infrastructure, no action neede
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-08-11)
+## Open Repo Assist PRs (2026-08-12)
 Active (not superseded):
-- #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) — CI triggered 2026-08-11 ⚠️ URGENT: breaks Oct 2026 season transition
+- #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) — CI ✅ passing ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
 - #165: feat: persist active tab in URL
 - #166: feat: PWA manifest and basketball icon
@@ -88,7 +89,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Monthly Activity Summary
 Issue #254 (July 2026): CLOSED 2026-08-01
-Issue #259 (August 2026): open — updated 2026-08-11
+Issue #259 (August 2026): open — updated 2026-08-12
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
@@ -101,6 +102,7 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintainer should run `npm audit fix`.
 
 ## Round-Robin Next
+- Done 2026-08-12: Task 1, Task 5 (CI verify), Task 11
 - Done 2026-08-11: Task 5 (PR #163 CI trigger), Task 11
 - Done 2026-08-10: Task 5, Task 11
 - Done 2026-08-09: Task 1, Task 5, Task 11
@@ -111,7 +113,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - Done 2026-08-03: Task 7 (labelling scan), Task 1 (issue triage), Task 11
 - Done 2026-08-02: Task 5 (CI verification), Task 1 (issue triage), Task 11
 - Done 2026-08-01: Task 11 (close July, open August)
-- Next: Task 1 (issue triage), Task 2 (fix check), Task 10 (forward progress), Task 11
+- Next: Task 3 (improvement study), Task 6 (stale PR check), Task 7 (label scan), Task 11
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
@@ -134,7 +136,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
   - AGENTS.md previously said "August" — corrected in PR #255 commit (2026-07-03)
   - PR #163 description says "August" but the CODE correctly uses October — tests confirm
   - PR #163 urgency comments: Jul-01 inaccurately said "August"; corrected Jul-05 to say "October"
-  - PR #163 updated 2026-08-11: JSDoc added to getCurrentSeasonYear; CI now triggered
+  - PR #163 updated 2026-08-11: JSDoc added to getCurrentSeasonYear; CI now triggered and passing ✅
 - CURRENT_SEASON_YEAR = '2025' still hardcoded on main — ⚠️ breaks October 2026 season transition
 - LeagueTable uses named export: { LeagueTable }
 - No src/utils/ directory in main branch (dateUtils, fixtureUtils, matchUtils are all in pending PRs)
