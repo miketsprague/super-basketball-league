@@ -1,12 +1,12 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-08-13T14:39:49Z
+2026-08-14T14:33:58Z
 
 ## Last Run Tasks
-- Task 5: CI verified — PR #163 ✅ still passing (last CI 2026-08-11)
-- Task 6: No non-Repo-Assist stale PRs to nudge (#99 already nudged twice)
-- Task 7: Label scan — all open issues already appropriately labelled
+- Task 1: No new user issues since cursor #257
+- Task 5: CI verified — PR #163 ✅ passing (2026-08-11), PR #255 ✅ passing (2026-07-03)
+- Task 8: No new release; PR #226 still awaiting maintainer CHANGELOG update
 - Task 11: Updated monthly activity issue #259
 
 ## Issue Backlog Cursor
@@ -32,7 +32,7 @@ Issue #258: agentic-workflows Detection Runs — infrastructure, no action neede
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-08-13)
+## Open Repo Assist PRs (2026-08-14)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) — CI ✅ passing ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -90,7 +90,7 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Monthly Activity Summary
 Issue #254 (July 2026): CLOSED 2026-08-01
-Issue #259 (August 2026): open — updated 2026-08-13
+Issue #259 (August 2026): open — updated 2026-08-14
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
@@ -103,6 +103,7 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintainer should run `npm audit fix`.
 
 ## Round-Robin Next
+- Done 2026-08-14: Task 1, Task 5, Task 8, Task 11
 - Done 2026-08-13: Task 5, Task 6, Task 7, Task 11
 - Done 2026-08-12: Task 1, Task 5 (CI verify), Task 11
 - Done 2026-08-11: Task 5 (PR #163 CI trigger), Task 11
@@ -115,7 +116,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - Done 2026-08-03: Task 7 (labelling scan), Task 1 (issue triage), Task 11
 - Done 2026-08-02: Task 5 (CI verification), Task 1 (issue triage), Task 11
 - Done 2026-08-01: Task 11 (close July, open August)
-- Next: Task 1 (issue triage), Task 3 (improvement study), Task 8 (release check), Task 11
+- Next: Task 2/3 (improvement study or fix), Task 6 (stale PR nudge check), Task 9 (new contributors), Task 11
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
