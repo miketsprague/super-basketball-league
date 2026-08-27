@@ -1,14 +1,15 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-08-26T14:22:00Z
+2026-08-27T23:03:59Z
 
 ## Last Run Tasks
+- Task 5: CI verified — API health check passing (2026-08-27); PR #163 CI passing (2026-08-27)
+- Task 7: Label scan — no new labelling needed (2026-08-27)
+- Task 2: No fixable issues; PR backlog at 50+ — not adding new PRs (2026-08-27)
+- Task 11: Updated monthly activity issue #259 (2026-08-27)
 - Task 1: Scanned open issues — no new actionable items since #257 (2026-08-26)
 - Task 6: No non-RA stale PRs to nudge (PR #99 already nudged twice) (2026-08-26)
-- Task 11: Updated monthly activity issue #259 (2026-08-26)
-- Task 3: Codebase study — no new PRs (backlog at 50+ open PRs) (2026-08-25)
-- Task 5: CI verified — API health check passing; PR #163 CI passing (2026-08-25)
 - Task 8: Release prep — PR #226 still open; no new release PR needed (2026-08-25)
 - Task 9: Welcome check — no new contributors (2026-08-25)
 
@@ -34,7 +35,7 @@ Note: #7 is only open real user issue; all proxy/automated issues are not user-f
 - PR #163 (2026-07-01): August urgency comment (INACCURATE — corrected 2026-07-05)
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
-## Open Repo Assist PRs (2026-08-26)
+## Open Repo Assist PRs (2026-08-27)
 Active (not superseded):
 - #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) — CI ✅ passing ⚠️ URGENT: breaks Oct 2026 season transition
 - #164: docs: fix ARCHITECTURE.md (Closes #145)
@@ -92,11 +93,11 @@ Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
 
 ## Monthly Activity Summary
 Issue #254 (July 2026): CLOSED 2026-08-01
-Issue #259 (August 2026): open — updated 2026-08-26
+Issue #259 (August 2026): open — updated 2026-08-27
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
-- Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19, Jul 3, Jul 4, Jul 7, Jul 9, Jul 15, Jul 22, Jul 23, Aug 2-5, Aug 10, Aug 11, Aug 14, Aug 15, Aug 16, Aug 18, Aug 19, Aug 20, Aug 21, Aug 22, Aug 23, Aug 24, Aug 25
+- Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19, Jul 3, Jul 4, Jul 7, Jul 9, Jul 15, Jul 22, Jul 23, Aug 2-5, Aug 10, Aug 11, Aug 14, Aug 15, Aug 16, Aug 18, Aug 19, Aug 20, Aug 21, Aug 22, Aug 23, Aug 24, Aug 25, Aug 26, Aug 27
 - PR #231 MERGED: adds diagnostics; PR #233 (open): dedup; PR #234 (open): season-aware
 - PR #238: Promise.allSettled partial resilience
 
@@ -105,6 +106,7 @@ Blocked: package.json + package-lock.json are protected files. Maintainer must r
 Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintainer should run `npm audit fix`.
 
 ## Round-Robin Next
+- Done 2026-08-27: Task 2, Task 5, Task 7, Task 11
 - Done 2026-08-26: Task 1, Task 6, Task 11
 - Done 2026-08-25: Task 3, Task 5, Task 8, Task 9, Task 11
 - Done 2026-08-24: Task 1, Task 5, Task 6, Task 7, Task 11
@@ -119,7 +121,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - Done 2026-08-15: Task 5, Task 6, Task 9, Task 11
 - Done 2026-08-14: Task 1, Task 5, Task 8, Task 11
 - Done 2026-08-13: Task 5, Task 6, Task 7, Task 11
-- Next: Task 2, Task 5, Task 7, Task 11
+- Next: Task 1, Task 5, Task 8, Task 11
 
 ## Key Code Notes
 - vitest: import { describe, it, expect, vi } from 'vitest' explicitly
