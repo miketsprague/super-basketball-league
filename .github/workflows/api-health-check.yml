@@ -10,11 +10,45 @@ jobs:
   health-check:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       issues: write
     env:
       # Real browser User-Agent required - CloudFront blocks headless Chrome with 403
       USER_AGENT: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
     steps:
+      - name: Check out repository configuration
+        uses: actions/checkout@v4
+
+      - name: Read Genius Sports competition configuration
+        run: |
+          CHAMPIONSHIP_ID=$(sed -n "s/^[[:space:]]*CHAMPIONSHIP: '\\([^']*\\)'.*/\\1/p" src/services/leagues.ts)
+          if [ -z "$CHAMPIONSHIP_ID" ]; then
+            echo "::error::Could not read SLB_COMPETITION_IDS.CHAMPIONSHIP from src/services/leagues.ts"
+            exit 1
+          fi
+          echo "GENIUS_CHAMPIONSHIP_COMPETITION_ID=$CHAMPIONSHIP_ID" >> "$GITHUB_ENV"
+
+      - name: Compute current EuroLeague/EuroCup season codes
+        id: season
+        run: |
+          # Mirrors getCurrentSeasonYear() in src/services/euroleagueApi.ts:
+          # seasons run roughly October-June, but the provider typically
+          # publishes the new season's fixtures from around August onwards.
+          # Jan-Jul  => still last season (started previous calendar year)
+          # Aug-Dec  => new season (started this calendar year)
+          MONTH=$(date -u +%-m)
+          YEAR=$(date -u +%Y)
+          if [ "$MONTH" -ge 8 ]; then
+            SEASON_YEAR="$YEAR"
+          else
+            SEASON_YEAR=$((YEAR - 1))
+          fi
+
+          echo "Computed season year: $SEASON_YEAR (current UTC date: $(date -u +%F))"
+          echo "season_year=$SEASON_YEAR" >> "$GITHUB_OUTPUT"
+          echo "euroleague_season=E${SEASON_YEAR}" >> "$GITHUB_OUTPUT"
+          echo "eurocup_season=U${SEASON_YEAR}" >> "$GITHUB_OUTPUT"
+
       - name: Check Genius Sports - Standings
         id: genius_standings
         continue-on-error: true
@@ -25,7 +59,7 @@ jobs:
           HTTP_CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "User-Agent: $USER_AGENT" \
-            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/standings")
+            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/${GENIUS_CHAMPIONSHIP_COMPETITION_ID}/standings")
 
           echo "HTTP status: $HTTP_CODE"
           echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
@@ -77,7 +111,7 @@ jobs:
           HTTP_CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "User-Agent: $USER_AGENT" \
-            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/schedule?roundNumber=-1")
+            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/${GENIUS_CHAMPIONSHIP_COMPETITION_ID}/schedule?roundNumber=-1")
 
           echo "HTTP status: $HTTP_CODE"
           echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
@@ -147,7 +181,7 @@ jobs:
             -o "$BODY_FILE" -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "User-Agent: $USER_AGENT" \
-            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/41897/match/${MATCH_ID}/boxscore")
+            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/${GENIUS_CHAMPIONSHIP_COMPETITION_ID}/match/${MATCH_ID}/boxscore")
 
           echo "HTTP status: $HTTP_CODE"
           echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
@@ -178,67 +212,77 @@ jobs:
       - name: Check EuroLeague V1 API (XML)
         id: euroleague_v1
         continue-on-error: true
+        env:
+          SEASON_CODES: ${{ steps.season.outputs.euroleague_season }} ${{ steps.season.outputs.eurocup_season }}
         run: |
-          BODY_FILE=$(mktemp)
-          trap 'rm -f "$BODY_FILE"' EXIT
+          for SEASON_CODE in $SEASON_CODES; do
+            BODY_FILE=$(mktemp)
+            HTTP_CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" \
+              -H "Accept: application/xml" \
+              -H "User-Agent: $USER_AGENT" \
+              "https://api-live.euroleague.net/v1/results?seasoncode=${SEASON_CODE}")
 
-          HTTP_CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" \
-            -H "Accept: application/xml" \
-            -H "User-Agent: $USER_AGENT" \
-            "https://api-live.euroleague.net/v1/results?seasoncode=E2025")
+            echo "$SEASON_CODE HTTP status: $HTTP_CODE"
+            if [ "$HTTP_CODE" != "200" ]; then
+              echo "::error::V1 results for $SEASON_CODE returned HTTP $HTTP_CODE"
+              echo "failure_reason=$SEASON_CODE HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
+              rm -f "$BODY_FILE"
+              exit 1
+            fi
 
-          echo "HTTP status: $HTTP_CODE"
-          echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "::error::EuroLeague V1 results endpoint returned HTTP $HTTP_CODE"
-            echo "failure_reason=HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
+            # A newly rolled-over season can legitimately have no completed
+            # fixtures yet, so absence of games is warning-only.
+            if ! grep -qi "game" "$BODY_FILE"; then
+              echo "::warning::V1 results for $SEASON_CODE have no completed fixtures yet"
+            fi
+            rm -f "$BODY_FILE"
+          done
 
-          # Verify XML response contains game data (warning-only: off-season may have no games)
-          if ! grep -qi "game\|Game" "$BODY_FILE"; then
-            echo "::warning::EuroLeague V1 response may not contain game data (possibly off-season)"
-          fi
-
-          echo "✅ EuroLeague V1 API (XML) endpoint healthy"
+          echo "http_status=200" >> "$GITHUB_OUTPUT"
+          echo "✅ EuroLeague and EuroCup V1 endpoints healthy"
 
       - name: Check EuroLeague V2 API (JSON)
         id: euroleague_v2
         continue-on-error: true
+        env:
+          EURO_LEAGUE_SEASON: ${{ steps.season.outputs.euroleague_season }}
+          EURO_CUP_SEASON: ${{ steps.season.outputs.eurocup_season }}
         run: |
-          BODY_FILE=$(mktemp)
-          trap 'rm -f "$BODY_FILE"' EXIT
+          for COMPETITION_AND_SEASON in "E:$EURO_LEAGUE_SEASON" "U:$EURO_CUP_SEASON"; do
+            COMPETITION=${COMPETITION_AND_SEASON%%:*}
+            SEASON_CODE=${COMPETITION_AND_SEASON#*:}
+            BODY_FILE=$(mktemp)
 
-          HTTP_CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" \
-            -H "Accept: application/json" \
-            -H "User-Agent: $USER_AGENT" \
-            "https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/E2025/games?pageSize=100")
+            HTTP_CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" \
+              -H "Accept: application/json" \
+              -H "User-Agent: $USER_AGENT" \
+              "https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/${COMPETITION}/seasons/${SEASON_CODE}/games?limit=100&offset=0")
 
-          echo "HTTP status: $HTTP_CODE"
-          echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "::error::EuroLeague V2 games endpoint returned HTTP $HTTP_CODE"
-            echo "failure_reason=HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
+            echo "$SEASON_CODE HTTP status: $HTTP_CODE"
+            if [ "$HTTP_CODE" != "200" ]; then
+              echo "::error::V2 fixtures for $SEASON_CODE returned HTTP $HTTP_CODE"
+              echo "failure_reason=$SEASON_CODE HTTP $HTTP_CODE" >> "$GITHUB_OUTPUT"
+              rm -f "$BODY_FILE"
+              exit 1
+            fi
 
-          # Verify response is valid JSON
-          if ! jq empty "$BODY_FILE" 2>/dev/null; then
-            echo "::error::EuroLeague V2 response is not valid JSON"
-            echo "Response preview: $(head -c 200 "$BODY_FILE")"
-            echo "failure_reason=response not valid JSON" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
+            if ! jq -e '.data | type == "array"' "$BODY_FILE" >/dev/null 2>&1; then
+              echo "::error::V2 fixtures for $SEASON_CODE are invalid or missing the data array"
+              echo "failure_reason=$SEASON_CODE response missing data array" >> "$GITHUB_OUTPUT"
+              rm -f "$BODY_FILE"
+              exit 1
+            fi
 
-          # Verify JSON response contains data array
-          DATA_CHECK=$(jq -r '.data // empty' "$BODY_FILE")
-          if [ -z "$DATA_CHECK" ]; then
-            echo "::error::EuroLeague V2 response missing 'data' field"
-            echo "failure_reason=response missing data field" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
+            FUTURE_COUNT=$(jq --arg today "$(date -u +%F)" \
+              '[.data[] | select((.date // "") >= $today)] | length' "$BODY_FILE")
+            if [ "$FUTURE_COUNT" = "0" ]; then
+              echo "::warning::V2 has no future fixtures for $SEASON_CODE yet; this can be expected around season rollover"
+            fi
+            rm -f "$BODY_FILE"
+          done
 
-          echo "✅ EuroLeague V2 API (JSON) endpoint healthy"
+          echo "http_status=200" >> "$GITHUB_OUTPUT"
+          echo "✅ EuroLeague and EuroCup V2 endpoints healthy"
 
       - name: Evaluate results and open issue on failure
         if: |

@@ -5,6 +5,7 @@ import {
   fetchGeniusSportsAllData,
   fetchGeniusSportsMatchDetails,
 } from '../geniusSportsApi';
+import { SLB_COMPETITION_IDS } from '../leagues';
 
 // Sample HTML responses that match the actual Genius Sports format
 const mockStandingsHTML = `
@@ -172,7 +173,7 @@ describe('Genius Sports API', () => {
       const standings = await fetchGeniusSportsStandings();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/standings',
+        `https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/${SLB_COMPETITION_IDS.CHAMPIONSHIP}/standings`,
         expect.objectContaining({ headers: { Accept: 'application/json' } })
       );
 
@@ -240,11 +241,27 @@ describe('Genius Sports API', () => {
       const matches = await fetchGeniusSportsMatches();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/schedule?roundNumber=-1',
+        `https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/${SLB_COMPETITION_IDS.CHAMPIONSHIP}/schedule?roundNumber=-1`,
         expect.objectContaining({ headers: { Accept: 'application/json' } })
       );
 
       expect(matches.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should never use the bare /schedule endpoint, which is pinned to a stale season', async () => {
+      // The bare endpoint is pinned server-side to one competition and did
+      // not roll over when the 2026-27 season was published, so it must
+      // always be competition-scoped - including for the default competition.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ html: mockScheduleHTML, css: [], js: [] }),
+      });
+
+      await fetchGeniusSportsMatches();
+
+      const requestedUrl = mockFetch.mock.calls[0][0] as string;
+      expect(requestedUrl).toContain(`/competition/${SLB_COMPETITION_IDS.CHAMPIONSHIP}/schedule`);
+      expect(requestedUrl).not.toMatch(/\/en\/schedule\?/);
     });
 
     it('should parse completed match with scores', async () => {
@@ -326,6 +343,39 @@ describe('Genius Sports API', () => {
 
       expect(data.matches.length).toBeGreaterThanOrEqual(3);
       expect(data.standings).toHaveLength(3);
+    });
+
+    it('should preserve fixtures when the standings request fails', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ html: mockScheduleHTML, css: [], js: [] }),
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+        });
+
+      const data = await fetchGeniusSportsAllData();
+
+      expect(data.matches.length).toBeGreaterThanOrEqual(3);
+      expect(data.standings).toEqual([]);
+    });
+
+    it('should propagate the error when fetching matches fails, even if standings succeed', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ html: mockStandingsHTML, css: [], js: [] }),
+        });
+
+      await expect(fetchGeniusSportsAllData()).rejects.toThrow('Genius Sports API error: 500 Internal Server Error');
     });
   });
 

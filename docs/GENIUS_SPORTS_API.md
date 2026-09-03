@@ -19,32 +19,61 @@ The JSON API (`/embednf/`) returns parseable responses while the HTML pages are 
 
 ## Competition IDs
 
-SLB has multiple competitions, each with a unique ID:
+SLB has multiple competitions, each with a unique ID. The single source of
+truth for these IDs is `SLB_COMPETITION_IDS` in `src/services/leagues.ts` -
+`geniusSportsApi.ts`'s `DEFAULT_COMPETITION_ID` imports from there rather
+than redeclaring the value, so the ID only needs to be updated in one place:
 
 | Competition | ID | Description |
 |-------------|-----|-------------|
-| Championship | `41897` | Regular season (32 games per team) |
-| Trophy | `42212` | Group stage + knockout tournament |
-| Cup | `47714` | Knockout tournament |
-| Playoffs | TBD | Top 8 knockout (created closer to May) |
+| Championship | `49597` | Regular season 26-27 (36 games per team, 10 clubs) |
+| Cup | `49599` | Knockout 26-27 (Play-In, QF, two-legged SF, Final) |
+| Trophy | `42212` | **Discontinued.** Final 2025-26 edition, hidden from the selector |
+| Play-offs | Not yet added | Top 6 knockout (created closer to May) |
 
-**Important:** Each competition has its own schedule and standings. Trophy and Cup matches are **not** included in the main Championship schedule.
+**Important:** Each competition has its own schedule and standings. Cup
+matches are **not** included in the main Championship schedule.
+
+### IDs are per-season and must be refreshed every year
+
+Genius Sports mints a **brand new competition ID for every edition of every
+competition** - IDs are not stable across seasons. The published list lives in
+the competition chooser on <https://hosted.dcd.shared.geniussports.com/SLB/en/>,
+as a `<select id="competitionChooser">` of `competition/{id}` URLs labelled by
+season. Read the new IDs from there each August; never guess or derive them.
+
+Previous seasons, for reference:
+
+| Season | Championship | Trophy | Cup | Play-offs |
+|--------|-------------|--------|-----|-----------|
+| 2025-26 | `41897` | `42212` | `47714` | `48758` |
+| 2024-25 | `39625` | `39626` | `39732` | `39733` |
+
+**Do not guess the Play-offs competition ID.** It is not published until
+Genius Sports creates the competition (~May), and it will **not** be the
+same ID as the Championship. Only add a `PLAYOFFS` entry to
+`SLB_COMPETITION_IDS`/`predefinedLeagues` once the real ID has been
+confirmed.
 
 ## Endpoints
+
+> **Always use the competition-scoped form.** The bare `/standings` and
+> `/schedule` endpoints are pinned server-side to a single competition and do
+> **not** roll over to the new season - they were still serving 2025-26 data
+> (competition `41897`) after the 2026-27 season had been published. Using
+> them makes the app silently show a stale season.
 
 ### Standings
 
 ```
-GET /standings
 GET /competition/{competitionId}/standings
 ```
 
-Returns current league standings. Use the competition-specific endpoint for Trophy/Cup standings.
+Returns current league standings for that competition.
 
 **Examples:**
-- Championship: `/standings` or `/competition/41897/standings`
-- Trophy: `/competition/42212/standings` (group standings)
-- Cup: `/competition/47714/standings` (empty - knockout format)
+- Championship: `/competition/49597/standings`
+- Cup: `/competition/49599/standings` (empty - knockout format)
 
 **Response Format:**
 ```json
@@ -80,7 +109,6 @@ Returns current league standings. Use the competition-specific endpoint for Trop
 ### Schedule / Fixtures
 
 ```
-GET /schedule?roundNumber=-1
 GET /competition/{competitionId}/schedule?roundNumber=-1
 ```
 
@@ -89,9 +117,8 @@ Returns all fixtures for the competition (completed and upcoming).
 **Important:** Without `roundNumber=-1`, only recent matches are returned (typically ~6). Use this parameter to get the full season schedule.
 
 **Examples:**
-- Championship: `/schedule?roundNumber=-1` (~145 matches)
-- Trophy: `/competition/42212/schedule?roundNumber=-1` (~15 matches)
-- Cup: `/competition/47714/schedule?roundNumber=-1` (~10 matches)
+- Championship: `/competition/49597/schedule?roundNumber=-1` (~173 matches)
+- Cup: `/competition/49599/schedule?roundNumber=-1` (~6 matches so far)
 
 **Response Format:**
 ```json
@@ -195,7 +222,7 @@ The API does not appear to have strict rate limits for reasonable usage, but:
 ### Box Score (Match Statistics)
 
 ```
-GET /competition/41897/match/{matchId}/boxscore
+GET /competition/49597/match/{matchId}/boxscore
 ```
 
 Returns detailed player statistics and team totals for a completed match.
@@ -258,7 +285,7 @@ Returns detailed player statistics and team totals for a completed match.
 ### Play-by-Play
 
 ```
-GET /competition/41897/match/{matchId}/playbyplay
+GET /competition/49597/match/{matchId}/playbyplay
 ```
 
 Returns play-by-play data with running scores.
@@ -290,7 +317,7 @@ Returns play-by-play data with running scores.
 ### Shot Chart
 
 ```
-GET /competition/41897/match/{matchId}/shotchart
+GET /competition/49597/match/{matchId}/shotchart
 ```
 
 Returns shot chart data (not currently used in our app).
@@ -304,6 +331,24 @@ Returns shot chart data (not currently used in our app).
 | 500+ | Server error |
 
 On error, the API may return HTML error pages instead of JSON. Always check `response.ok` before parsing.
+
+### Resilience: standings failures don't lose fixtures
+
+`fetchGeniusSportsAllData()` fetches matches and standings independently
+(via `Promise.allSettled`, not `Promise.all`). If the standings request
+fails but matches succeed, fixtures are still returned with an empty
+standings array rather than discarding everything. If the matches request
+itself fails, the error is propagated (fixtures are the primary data the
+app needs). This matters most for the Cup, whose knockout format standings
+sometimes differ in shape from the round-robin competitions.
+
+### Knockout-only competitions skip standings entirely
+
+For competitions with `hasStandings: false` in `leagues.ts` (currently only
+the Cup), `dataProvider.fetchAllData()` skips the standings request
+entirely rather than calling an endpoint that has nothing meaningful to
+return - it calls `fetchGeniusSportsMatches()` directly and returns an
+empty standings array.
 
 ## Example Usage
 

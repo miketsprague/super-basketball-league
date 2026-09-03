@@ -45,21 +45,26 @@ dataProvider.ts  →  geniusSportsApi.ts  (SLB leagues)
 
 ### Competition IDs
 
-| Competition | ID | Has Standings |
+Read from `SLB_COMPETITION_IDS` in `src/services/leagues.ts` (single source of truth). **These change every season** — refresh them each August from the competition chooser on <https://hosted.dcd.shared.geniussports.com/SLB/en/>.
+
+| Competition | ID (2026-27) | Has Standings |
 |-------------|----|---------------|
-| Championship | 41897 | Yes |
-| Trophy | 42212 | Yes |
-| Cup | 47714 | No (knockout) |
-| Playoffs | TBD (created ~May 2026) | No |
+| Championship | 49597 | Yes |
+| Cup | 49599 | No (knockout) |
+| Trophy | 42212 (2025-26) | Discontinued — `hidden: true` |
+| Play-offs | TBD (created ~May 2027) | No |
+
+Superseded: 2025-26 Championship 41897, Trophy 42212, Cup 47714, Play-offs 48758.
 
 ### Critical Pitfalls
 
 1. **`roundNumber=-1` is REQUIRED** for the schedule endpoint to return the full season. Without it, only the 6 most recent matches are returned. This was the source of a major bug early in development.
-2. **HTML parsing required**: The API returns JSON with a `html` field containing an HTML string. You must parse this HTML to extract data (standings tables, fixture lists, box scores).
-3. **Match IDs**: Extract from `id="extfix_XXXXXX"` attributes in the HTML.
-4. **Match status**: Determined by CSS classes — `STATUS_COMPLETE`, `STATUS_SCHEDULED`, `STATUS_LIVE`.
-5. **Date format**: US format strings like `"Jan 30, 2026, 7:30 PM"` — parseable by the JS `Date` constructor.
-6. **Trophy/Cup matches are NOT in the main schedule endpoint** — each competition requires its own `/competition/{id}/schedule` call.
+2. **Never use the bare `/schedule` or `/standings` endpoints.** They are pinned server-side to a fixed competition and do not roll over — they still served 2025-26 data after the 2026-27 season went live. Always use the `/competition/{id}/...` form, including for the default competition.
+3. **HTML parsing required**: The API returns JSON with a `html` field containing an HTML string. You must parse this HTML to extract data (standings tables, fixture lists, box scores).
+4. **Match IDs**: Extract from `id="extfix_XXXXXX"` attributes in the HTML. Note the real markup uses `id = "extfix_..."` with spaces around `=`, so parse with DOMParser rather than a naive regex.
+5. **Match status**: Determined by CSS classes — `STATUS_COMPLETE`, `STATUS_SCHEDULED`, `STATUS_LIVE`.
+6. **Date format**: US format strings like `"Jan 30, 2026, 7:30 PM"` — parseable by the JS `Date` constructor.
+7. **Cup matches are NOT in the Championship schedule endpoint** — each competition requires its own `/competition/{id}/schedule` call.
 7. **CloudFront blocks headless Chrome**: Genius Sports returns 403 for HeadlessChrome user agent strings. Use a real browser UA when testing with Playwright or similar.
 
 ### SLB Teams (2025–26)

@@ -4,7 +4,13 @@ import {
   fetchEuroLeagueMatches,
   fetchEuroLeagueAllData,
   fetchEuroLeagueMatchDetails,
+  getCurrentSeasonYear,
 } from '../euroleagueApi';
+
+// Fix "now" to a date within the 2025-26 season (Jan 2026) so that all the
+// season-code assertions below (E2025/U2025) remain stable regardless of
+// when these tests actually run in CI.
+const FIXED_NOW = new Date('2026-01-15T12:00:00Z');
 
 // Mock V1 XML response (completed games)
 const mockV1ResultsXML = `<?xml version="1.0" encoding="utf-8"?>
@@ -181,12 +187,15 @@ const mockFetch = vi.fn();
 
 describe('EuroLeague API', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(FIXED_NOW);
     vi.stubGlobal('fetch', mockFetch);
     mockFetch.mockReset();
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   describe('fetchEuroLeagueStandings', () => {
@@ -552,12 +561,15 @@ describe('EuroLeague API', () => {
 
 describe('Helper Functions', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(FIXED_NOW);
     vi.stubGlobal('fetch', mockFetch);
     mockFetch.mockReset();
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   describe('getShortName', () => {
@@ -615,5 +627,207 @@ describe('Helper Functions', () => {
       // Time should be in HH:MM format
       expect(match?.time).toMatch(/^\d{2}:\d{2}$/);
     });
+  });
+});
+
+describe('getCurrentSeasonYear', () => {
+  it('should return the previous calendar year in January (mid-season)', () => {
+    expect(getCurrentSeasonYear(new Date('2026-01-15T12:00:00Z'))).toBe('2025');
+  });
+
+  it('should return the previous calendar year in July (end of season)', () => {
+    expect(getCurrentSeasonYear(new Date('2026-07-31T23:59:59Z'))).toBe('2025');
+  });
+
+  it('should roll over to the current calendar year on 1 August (new season)', () => {
+    expect(getCurrentSeasonYear(new Date('2026-08-01T00:00:00Z'))).toBe('2026');
+  });
+
+  it('should return the current calendar year in December (season underway)', () => {
+    expect(getCurrentSeasonYear(new Date('2026-12-25T00:00:00Z'))).toBe('2026');
+  });
+
+  it('should default to the current date when no reference date is provided', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-09-03T00:00:00Z'));
+    try {
+      expect(getCurrentSeasonYear()).toBe('2026');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('EuroLeague V2 pagination (offset/limit)', () => {
+  const mockFetch = vi.fn();
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-15T12:00:00Z'));
+    vi.stubGlobal('fetch', mockFetch);
+    mockFetch.mockReset();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+
+  function makeV2Game(code: number, dateIso: string) {
+    return {
+      id: `id-${code}`,
+      identifier: `E2025_${code}`,
+      code,
+      date: dateIso,
+      status: 'confirmed',
+      home: { code: 'AAA', name: 'Team A', abbreviatedName: 'A', score: 0 },
+      away: { code: 'BBB', name: 'Team B', abbreviatedName: 'B', score: 0 },
+      venue: { name: 'Arena' },
+    };
+  }
+
+  it('should page through the complete fixture collection using offset/limit, not a single pageSize/pageNumber request', async () => {
+    // V1: no completed games
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      text: async () => '<?xml version="1.0"?><results></results>',
+    });
+
+    // V2 page 1: 100 games, totalItems indicates more pages remain
+    const page1Games = Array.from({ length: 100 }, (_, i) => makeV2Game(i + 1, '2026-02-01T19:00:00.000Z'));
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        status: 'success',
+        data: page1Games,
+        metadata: { totalItems: 120, pageNumber: 0, pageSize: 100, totalPages: 2 },
+      }),
+    });
+
+    // V2 page 2: remaining 20 games
+    const page2Games = Array.from({ length: 20 }, (_, i) => makeV2Game(101 + i, '2026-02-05T19:00:00.000Z'));
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        status: 'success',
+        data: page2Games,
+        metadata: { totalItems: 120, pageNumber: 1, pageSize: 100, totalPages: 2 },
+      }),
+    });
+
+    const matches = await fetchEuroLeagueMatches('euroleague');
+
+    // All 120 games across both pages should be present
+    expect(matches).toHaveLength(120);
+
+    // Should have made 2 V2 requests (offset=0, offset=100) plus 1 V1 request
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+    expect(mockFetch).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining('offset=0'),
+      expect.any(Object)
+    );
+    expect(mockFetch).toHaveBeenNthCalledWith(
+      2,
+      expect.stringMatching(/limit=\d+/),
+      expect.any(Object)
+    );
+    expect(mockFetch).toHaveBeenNthCalledWith(
+      2,
+      expect.not.stringContaining('pageSize'),
+      expect.any(Object)
+    );
+    expect(mockFetch).toHaveBeenNthCalledWith(
+      3,
+      expect.stringContaining('offset=100'),
+      expect.any(Object)
+    );
+  });
+
+  it('should stop paging once fewer items than the page limit are returned', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      text: async () => '<?xml version="1.0"?><results></results>',
+    });
+
+    const games = [makeV2Game(1, '2026-02-01T19:00:00.000Z'), makeV2Game(2, '2026-02-02T19:00:00.000Z')];
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        status: 'success',
+        data: games,
+        metadata: { totalItems: 2, pageNumber: 0, pageSize: 100, totalPages: 1 },
+      }),
+    });
+
+    const matches = await fetchEuroLeagueMatches('euroleague');
+
+    expect(matches).toHaveLength(2);
+    // Only 1 V1 + 1 V2 request needed since totalItems fit on the first page
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('fetchEuroLeagueAllData resilience', () => {
+  const mockFetch = vi.fn();
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-15T12:00:00Z'));
+    vi.stubGlobal('fetch', mockFetch);
+    mockFetch.mockReset();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+
+  it('should preserve fixtures when standings fail', async () => {
+    // V1 results: succeeds
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      text: async () => mockV1ResultsXML,
+    });
+    // V2 games: succeeds
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ status: 'success', data: [], metadata: { totalItems: 0 } }),
+    });
+    // V1 standings: fails
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: 'Internal Server Error',
+    });
+
+    const data = await fetchEuroLeagueAllData('euroleague');
+
+    expect(data.matches.length).toBeGreaterThan(0);
+    expect(data.standings).toEqual([]);
+  });
+
+  it('should reject when both fixture APIs fail', async () => {
+    // V1 results fails
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: 'Internal Server Error',
+    });
+    // V2 games fails too
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 503,
+      statusText: 'Service Unavailable',
+    });
+    // Standings request still succeeds, but fixtures are the primary data.
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      text: async () => mockV1StandingsXML,
+    });
+
+    await expect(fetchEuroLeagueAllData('euroleague')).rejects.toThrow(
+      'Both EuroLeague fixture APIs failed',
+    );
   });
 });

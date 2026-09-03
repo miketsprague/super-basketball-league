@@ -2,7 +2,7 @@ import type { Match, MatchDetails, StandingsEntry, League } from '../types';
 import * as mockProvider from './mockProvider';
 import * as euroleagueApi from './euroleagueApi';
 import * as geniusSportsApi from './geniusSportsApi';
-import { predefinedLeagues, getApiProvider, getLeagueConfig, LEAGUE_IDS, type LeagueConfig } from './leagues';
+import { predefinedLeagues, visibleLeagues, getApiProvider, getLeagueConfig, LEAGUE_IDS, type LeagueConfig } from './leagues';
 import { matchInvolvesTeam } from './teamStorage';
 
 /**
@@ -35,8 +35,9 @@ const USE_MOCK_FALLBACK = import.meta.env.VITE_USE_MOCK_FALLBACK === 'true';
  */
 
 export async function fetchLeagues(): Promise<League[]> {
-  // Return predefined leagues (convert LeagueConfig to League type)
-  return predefinedLeagues.map((league: LeagueConfig): League => ({
+  // Return browsable leagues only (convert LeagueConfig to League type).
+  // Discontinued competitions are excluded so they don't appear in the selector.
+  return visibleLeagues.map((league: LeagueConfig): League => ({
     id: league.id,
     name: league.name,
     shortName: league.shortName,
@@ -92,14 +93,41 @@ export async function fetchStandings(leagueId: string): Promise<StandingsEntry[]
   }
 }
 
+/**
+ * Fetch matches only, without standings. Used for knockout-only
+ * competitions (`hasStandings: false`) where there is no meaningful
+ * standings table to request, so we avoid hitting that endpoint at all.
+ */
+async function fetchMatchesOnly(
+  apiProvider: ReturnType<typeof getApiProvider>,
+  leagueId: string,
+  leagueConfig?: LeagueConfig,
+): Promise<Match[]> {
+  switch (apiProvider) {
+    case 'geniussports':
+      return geniusSportsApi.fetchGeniusSportsMatches(leagueConfig?.geniusSportsCompetitionId);
+    case 'euroleague':
+      return euroleagueApi.fetchEuroLeagueMatches(leagueId);
+    case 'mock':
+    default:
+      return mockProvider.fetchMockMatches(leagueId);
+  }
+}
+
 export async function fetchAllData(leagueId: string): Promise<{
   matches: Match[];
   standings: StandingsEntry[];
 }> {
   const apiProvider = getApiProvider(leagueId);
   const leagueConfig = getLeagueConfig(leagueId);
+  const skipStandings = leagueConfig?.hasStandings === false;
 
   try {
+    if (skipStandings) {
+      const matches = await fetchMatchesOnly(apiProvider, leagueId, leagueConfig);
+      return { matches, standings: [] };
+    }
+
     switch (apiProvider) {
       case 'geniussports':
         return await geniusSportsApi.fetchGeniusSportsAllData(leagueConfig?.geniusSportsCompetitionId);
@@ -178,12 +206,15 @@ export async function fetchMatchDetails(matchId: string, leagueId?: string): Pro
 }
 
 /**
- * Fetch matches from all leagues and filter by team name.
+ * Fetch matches from all current-season leagues and filter by team name.
  * Each match is annotated with leagueId and leagueName.
+ *
+ * Uses `visibleLeagues` so a discontinued competition's final season doesn't
+ * leak stale fixtures into the current-season team record.
  */
 export async function fetchMatchesForTeam(teamName: string): Promise<Match[]> {
   const results = await Promise.allSettled(
-    predefinedLeagues.map(async (league) => {
+    visibleLeagues.map(async (league) => {
       const matches = await fetchMatches(league.id);
       return matches.map((m) => ({
         ...m,
