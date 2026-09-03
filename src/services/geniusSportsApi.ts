@@ -10,12 +10,17 @@ import { SLB_COMPETITION_IDS } from './leagues';
  * Base URL: https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/
  * 
  * Competition IDs (see `SLB_COMPETITION_IDS` in `./leagues.ts`, the single
- * source of truth so IDs are never duplicated/guessed in more than one place):
- *   - 41897: Championship (regular season)
- *   - 42212: Trophy (group stage + knockout)
- *   - 47714: Cup (knockout tournament)
+ * source of truth so IDs are never duplicated/guessed in more than one place).
+ * Genius Sports mints a new ID per competition per season, so these must be
+ * refreshed every year from the competition chooser on
+ * https://hosted.dcd.shared.geniussports.com/SLB/en/
  *
- * New competitions (e.g. a future Playoffs bracket) should only be added to
+ * Current (2026-27):
+ *   - 49597: Championship (regular season)
+ *   - 49599: Cup (knockout tournament - Play-In, QF, two-legged SF, Final)
+ *   - 42212: Trophy 2025-26 (competition discontinued; retained for old links)
+ *
+ * New competitions (e.g. a future Play-offs bracket) should only be added to
  * `leagues.ts` once their real Genius Sports competition ID has been
  * published — never guessed or reused from another competition.
  *
@@ -284,27 +289,29 @@ function getShortName(name: string): string {
 
 /**
  * Fetch standings from Genius Sports
+ *
+ * Always uses the competition-scoped endpoint. The bare `/standings`
+ * endpoint is pinned server-side to a fixed competition (it still served
+ * 2025-26 after the 2026-27 season was published), so relying on it made
+ * the app silently show a stale season.
+ *
  * @param competitionId - Competition ID (default: Championship)
  */
 export async function fetchGeniusSportsStandings(competitionId: string = DEFAULT_COMPETITION_ID): Promise<StandingsEntry[]> {
-  // Use competition-specific endpoint for non-default competitions
-  const endpoint = competitionId === DEFAULT_COMPETITION_ID 
-    ? '/standings'
-    : `/competition/${competitionId}/standings`;
-  const html = await fetchFromGeniusSports(endpoint);
+  const html = await fetchFromGeniusSports(`/competition/${competitionId}/standings`);
   return parseStandingsHTML(html);
 }
 
 /**
  * Fetch matches/fixtures from Genius Sports
+ *
+ * Always uses the competition-scoped endpoint - see the note on
+ * `fetchGeniusSportsStandings` about the stale bare endpoint.
+ *
  * @param competitionId - Competition ID (default: Championship)
  */
 export async function fetchGeniusSportsMatches(competitionId: string = DEFAULT_COMPETITION_ID): Promise<Match[]> {
-  // Use competition-specific endpoint for non-default competitions
-  const endpoint = competitionId === DEFAULT_COMPETITION_ID
-    ? '/schedule?roundNumber=-1'
-    : `/competition/${competitionId}/schedule?roundNumber=-1`;
-  const html = await fetchFromGeniusSports(endpoint);
+  const html = await fetchFromGeniusSports(`/competition/${competitionId}/schedule?roundNumber=-1`);
   const matches = parseScheduleHTML(html);
   
   // Sort by date ascending (earliest first) - UI will auto-scroll to today

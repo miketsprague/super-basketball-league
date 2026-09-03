@@ -7,7 +7,7 @@ import { LeagueSelector } from './components/LeagueSelector';
 import { TeamView } from './components/TeamView';
 import type { Match, StandingsEntry, League } from './types';
 import { fetchAllData, fetchLeagues, APIError } from './services/dataProvider';
-import { DEFAULT_LEAGUE, predefinedLeagues, getLeagueConfig } from './services/leagues';
+import { DEFAULT_LEAGUE, visibleLeagues, getLeagueConfig } from './services/leagues';
 import { getFollowedTeam } from './services/teamStorage';
 
 // Helper function to extract detailed error message
@@ -35,7 +35,7 @@ function HomePage() {
   const [error, setError] = useState<string | null>(null);
   
   // League state
-  const [leagues, setLeagues] = useState<League[]>(predefinedLeagues);
+  const [leagues, setLeagues] = useState<League[]>(visibleLeagues);
   const [leaguesLoading, setLeaguesLoading] = useState(true);
   const [leaguesError, setLeaguesError] = useState<string | null>(null);
 
@@ -76,7 +76,7 @@ function HomePage() {
         console.error('Failed to fetch leagues:', error);
         const errorDetail = getErrorMessage(error);
         setLeaguesError(`Failed to load leagues: ${errorDetail}. Using default options.`);
-        // Keep using predefinedLeagues as fallback
+        // Keep using visibleLeagues as fallback
       } finally {
         setLeaguesLoading(false);
       }

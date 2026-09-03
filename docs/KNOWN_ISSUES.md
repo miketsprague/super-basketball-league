@@ -56,6 +56,31 @@ The `.github/workflows/api-health-check.yml` workflow mirrors this same rollover
 **Cause:** `fetchAllData()` always fetched standings regardless of competition format
 **Solution:** Check `leagueConfig.hasStandings === false` in `dataProvider.fetchAllData()` and skip the standings request entirely for those competitions, returning `standings: []`
 
+### Genius Sports - Bare `/schedule` and `/standings` endpoints are pinned to a stale season
+**Symptom:** SLB Championship kept showing the previous season's fixtures and league table even after the new season's competition ID was configured
+**Cause:** `fetchGeniusSportsMatches()`/`fetchGeniusSportsStandings()` special-cased the default competition to use the **bare** `/schedule?roundNumber=-1` and `/standings` endpoints. Those are pinned server-side to one fixed competition and never roll over - they were still returning competition `41897` (2025-26) well after the 2026-27 season went live, so changing `SLB_COMPETITION_IDS` had no effect on the Championship.
+**Solution:** Always use the competition-scoped endpoint, including for the default competition
+```typescript
+// ❌ Wrong - the bare endpoint is frozen on an old season
+const endpoint = competitionId === DEFAULT_COMPETITION_ID
+  ? '/schedule?roundNumber=-1'
+  : `/competition/${competitionId}/schedule?roundNumber=-1`;
+
+// ✅ Correct
+const endpoint = `/competition/${competitionId}/schedule?roundNumber=-1`;
+```
+`.github/workflows/api-health-check.yml` was hitting the same bare endpoints and is now competition-scoped too, so the health check monitors the season the app actually shows.
+
+### Genius Sports - Competition IDs change every season
+**Symptom:** Fixtures/standings go stale at the start of a new season
+**Cause:** Genius Sports mints a **new competition ID for every edition of every competition**; IDs are not stable year to year
+**Solution:** Refresh `SLB_COMPETITION_IDS` in `src/services/leagues.ts` each August from the competition chooser on <https://hosted.dcd.shared.geniussports.com/SLB/en/> (a `<select id="competitionChooser">` listing `competition/{id}` URLs labelled by season). Never guess or derive an ID.
+
+### SLB Trophy discontinued for 2026-27
+**Symptom:** No `Trophy 26-27` competition exists in the Genius Sports chooser
+**Cause:** The Trophy was scrapped and absorbed into the restructured Cup (Play-In → Quarter-Finals → two-legged Semi-Finals → Final)
+**Solution:** The Trophy `LeagueConfig` is kept pointing at its final 2025-26 edition (`42212`) but marked `hidden: true`. Hidden leagues are excluded from `visibleLeagues` (so they don't appear in the league selector or pollute current-season team records) while remaining in `predefinedLeagues` so historic match deep links still resolve.
+
 ## GitHub Actions Issues
 
 ### Environment Secrets Not Working
