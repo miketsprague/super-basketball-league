@@ -20,6 +20,23 @@ EuroLeague data is split across **two separate APIs**:
 | EuroLeague | E{year} | E2025 (2025-26 season) |
 | EuroCup | U{year} | U2025 (2025-26 season) |
 
+**The season year is computed dynamically, never hardcoded.**
+`getCurrentSeasonYear()` in `src/services/euroleagueApi.ts` derives the
+season year from the current date, since EuroLeague/EuroCup seasons run
+roughly October-June but the provider starts publishing next season's
+fixtures/rosters around August:
+
+- **January - July:** still the season that started the *previous* calendar
+  year (e.g. March 2026 => season `2025`, part of the 2025-26 season).
+- **August - December:** the season that started *this* calendar year (e.g.
+  September 2026 => season `2026`, part of the 2026-27 season).
+
+`getCurrentSeasonYear()` accepts an optional reference `Date` (used by
+tests to check the rollover boundary) and defaults to `new Date()`. The
+`.github/workflows/api-health-check.yml` workflow mirrors this same
+August-rollover logic in bash so it always checks the current season
+rather than a stale hardcoded one.
+
 ## V1 API (Completed Games + Standings + Match Details)
 
 ### Base URL
@@ -173,13 +190,24 @@ Returns scheduled/upcoming games. Does NOT include completed games.
 |-----------|-------------|---------|
 | comp | Competition code | E (EuroLeague), U (EuroCup) |
 | seasonCode | Full season code | E2025, U2025 |
-| pageSize | Results per page (max 100) | 100 |
-| pageNumber | Page index (0-based) | 0 |
+| limit | Results per page (offset/limit mechanism) | 100 |
+| offset | Number of results to skip | 0, 100, 200, ... |
+
+**`pageSize`/`pageNumber` are also accepted by the API, but this app uses
+`limit`/`offset` instead** - they compose more naturally into a pagination
+loop (`offset += limit`) than translating a page number.
+
+A single request only returns up to `limit` games (a full season has
+~400 games across ~4-8 pages), so `fetchUpcomingMatches()` pages through
+**all** results via `fetchAllV2Games()`: it requests `limit=100` at a time,
+incrementing `offset` by 100 each time, until `offset` reaches the
+response's `metadata.totalItems` (or the API returns an empty page, as a
+safety valve against an infinite loop).
 
 **Example Request:**
 ```bash
 curl -H "Accept: application/json" \
-  "https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/E2025/games?pageSize=100"
+  "https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/E2025/games?limit=100&offset=0"
 ```
 
 **Response Format (JSON):**
@@ -268,7 +296,19 @@ for (const match of upcomingMatches) {
 Both APIs can fail independently. The implementation handles this gracefully:
 - If V1 fails, only upcoming games are shown
 - If V2 fails, only completed games are shown
-- If both fail, an error is thrown
+- If both fail, `fetchEuroLeagueMatches()` throws so the data provider can
+  show an error or use the configured mock fallback instead of presenting an
+  ambiguous empty season
+
+### Standings failures don't lose fixtures
+
+`fetchEuroLeagueAllData()` fetches matches and standings independently (via
+`Promise.allSettled`, not `Promise.all`). If fetching standings fails but
+matches succeed, fixtures are still returned with an empty standings array
+instead of discarding everything - this matters most right after the
+August season rollover, when a new season's fixtures may be published
+before its standings table exists. If fetching matches itself rejects,
+that error is propagated (fixtures are the primary data the app needs).
 
 ### Team Logos
 

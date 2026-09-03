@@ -304,6 +304,22 @@ describe('fetchAllData', () => {
 
     await expect(dp.fetchAllData(LEAGUE_IDS.EUROLEAGUE)).rejects.toThrow('All data fail');
   });
+
+  it('should skip standings entirely for knockout-only competitions (hasStandings: false)', async () => {
+    const expectedMatches = [makeMatch()];
+    vi.mocked(geniusSportsApi.fetchGeniusSportsMatches).mockResolvedValue(expectedMatches);
+
+    const result = await fetchAllData(LEAGUE_IDS.SLB_CUP);
+
+    expect(geniusSportsApi.fetchGeniusSportsMatches).toHaveBeenCalledWith(
+      SLB_COMPETITION_IDS.CUP,
+    );
+    // The combined-fetch helper (which would also request standings) must
+    // not be used for knockout-only competitions.
+    expect(geniusSportsApi.fetchGeniusSportsAllData).not.toHaveBeenCalled();
+    expect(geniusSportsApi.fetchGeniusSportsStandings).not.toHaveBeenCalled();
+    expect(result).toEqual({ matches: expectedMatches, standings: [] });
+  });
 });
 
 // ─── fetchMatchDetails ───────────────────────────────────────────────────────

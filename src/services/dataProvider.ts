@@ -92,14 +92,41 @@ export async function fetchStandings(leagueId: string): Promise<StandingsEntry[]
   }
 }
 
+/**
+ * Fetch matches only, without standings. Used for knockout-only
+ * competitions (`hasStandings: false`) where there is no meaningful
+ * standings table to request, so we avoid hitting that endpoint at all.
+ */
+async function fetchMatchesOnly(
+  apiProvider: ReturnType<typeof getApiProvider>,
+  leagueId: string,
+  leagueConfig?: LeagueConfig,
+): Promise<Match[]> {
+  switch (apiProvider) {
+    case 'geniussports':
+      return geniusSportsApi.fetchGeniusSportsMatches(leagueConfig?.geniusSportsCompetitionId);
+    case 'euroleague':
+      return euroleagueApi.fetchEuroLeagueMatches(leagueId);
+    case 'mock':
+    default:
+      return mockProvider.fetchMockMatches(leagueId);
+  }
+}
+
 export async function fetchAllData(leagueId: string): Promise<{
   matches: Match[];
   standings: StandingsEntry[];
 }> {
   const apiProvider = getApiProvider(leagueId);
   const leagueConfig = getLeagueConfig(leagueId);
+  const skipStandings = leagueConfig?.hasStandings === false;
 
   try {
+    if (skipStandings) {
+      const matches = await fetchMatchesOnly(apiProvider, leagueId, leagueConfig);
+      return { matches, standings: [] };
+    }
+
     switch (apiProvider) {
       case 'geniussports':
         return await geniusSportsApi.fetchGeniusSportsAllData(leagueConfig?.geniusSportsCompetitionId);

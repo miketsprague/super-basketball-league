@@ -1,18 +1,24 @@
 import type { Match, MatchDetails, StandingsEntry, QuarterScores, TeamStatistics, PlayerStatistics } from '../types';
+import { SLB_COMPETITION_IDS } from './leagues';
 
 /**
  * Genius Sports Data Provider for Super League Basketball
- * 
+ *
  * This provider fetches data from the official SLB website's data source (Genius Sports).
  * The API returns JSON with HTML content that we parse to extract standings and fixtures.
- * 
+ *
  * Base URL: https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/
  * 
- * Competition IDs:
+ * Competition IDs (see `SLB_COMPETITION_IDS` in `./leagues.ts`, the single
+ * source of truth so IDs are never duplicated/guessed in more than one place):
  *   - 41897: Championship (regular season)
  *   - 42212: Trophy (group stage + knockout)
  *   - 47714: Cup (knockout tournament)
- * 
+ *
+ * New competitions (e.g. a future Playoffs bracket) should only be added to
+ * `leagues.ts` once their real Genius Sports competition ID has been
+ * published — never guessed or reused from another competition.
+ *
  * Endpoints:
  *   - /standings - League standings (Championship only)
  *   - /competition/{compId}/standings - Competition-specific standings
@@ -23,7 +29,9 @@ import type { Match, MatchDetails, StandingsEntry, QuarterScores, TeamStatistics
  */
 
 const GENIUS_SPORTS_BASE = 'https://hosted.dcd.shared.geniussports.com/embednf/SLB/en';
-const DEFAULT_COMPETITION_ID = '41897'; // Championship
+// Sourced from leagues.ts rather than re-declared here to avoid two literal
+// copies of the same ID drifting out of sync.
+const DEFAULT_COMPETITION_ID = SLB_COMPETITION_IDS.CHAMPIONSHIP;
 
 interface GeniusSportsResponse {
   css: string[];
@@ -309,18 +317,33 @@ export async function fetchGeniusSportsMatches(competitionId: string = DEFAULT_C
 
 /**
  * Fetch all data from Genius Sports
+ *
+ * Matches and standings are fetched independently so that a standings
+ * failure doesn't discard already-available fixtures. If fetching matches
+ * itself fails, that error is propagated since fixtures are the primary
+ * data this app needs to be useful.
+ *
  * @param competitionId - Competition ID (default: Championship)
  */
 export async function fetchGeniusSportsAllData(competitionId: string = DEFAULT_COMPETITION_ID): Promise<{
   matches: Match[];
   standings: StandingsEntry[];
 }> {
-  const [matches, standings] = await Promise.all([
+  const [matchesResult, standingsResult] = await Promise.allSettled([
     fetchGeniusSportsMatches(competitionId),
     fetchGeniusSportsStandings(competitionId),
   ]);
-  
-  return { matches, standings };
+
+  if (matchesResult.status === 'rejected') {
+    throw matchesResult.reason;
+  }
+
+  if (standingsResult.status === 'rejected') {
+    console.warn('Failed to fetch Genius Sports standings; returning fixtures without a league table:', standingsResult.reason);
+    return { matches: matchesResult.value, standings: [] };
+  }
+
+  return { matches: matchesResult.value, standings: standingsResult.value };
 }
 
 /**

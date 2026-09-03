@@ -30,8 +30,33 @@ const EUROLEAGUE_V1_API_BASE = 'https://api-live.euroleague.net/v1';
 // V2 API for upcoming/scheduled games (JSON)
 const EUROLEAGUE_V2_API_BASE = 'https://feeds.incrowdsports.com/provider/euroleague-feeds/v2';
 
-// Current season code format: E2025 for EuroLeague 2025-26, U2025 for EuroCup 2025-26
-const CURRENT_SEASON_YEAR = '2025';
+// V2 API page size used when paging through the complete fixture collection
+// via the offset/limit mechanism. 100 keeps individual requests small while
+// still completing a full season (~400 games) in a handful of requests.
+const V2_GAMES_PAGE_LIMIT = 100;
+
+/**
+ * Get the current EuroLeague/EuroCup season year (e.g. "2025" for the
+ * 2025-26 season, used to build codes like "E2025"/"U2025").
+ *
+ * Seasons run roughly October through June, but new-season fixtures and
+ * rosters are typically published by the provider from around August
+ * onwards. So:
+ * - January - July: still the season that started the PREVIOUS calendar
+ *   year (e.g. March 2026 => season 2025, part of the 2025-26 season).
+ * - August - December: the season that started THIS calendar year (e.g.
+ *   September 2026 => season 2026, part of the 2026-27 season).
+ *
+ * Accepts an optional reference date (primarily for testing); defaults to
+ * the current date so the season code is never hardcoded/stale.
+ */
+export function getCurrentSeasonYear(referenceDate: Date = new Date()): string {
+  const year = referenceDate.getUTCFullYear();
+  const month = referenceDate.getUTCMonth(); // 0-indexed: 0 = January, 7 = August
+  const ROLLOVER_MONTH = 7; // August
+
+  return String(month >= ROLLOVER_MONTH ? year : year - 1);
+}
 
 // Parsed game from XML (V1 API - completed games)
 interface ParsedGame {
@@ -415,16 +440,42 @@ function getCompetitionCode(leagueId: string): string {
  */
 async function fetchCompletedMatches(leagueId: string): Promise<Match[]> {
   const competitionCode = getCompetitionCode(leagueId);
-  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const seasonCode = `${competitionCode}${getCurrentSeasonYear()}`;
 
-  try {
-    const doc = await fetchXMLFromEuroLeague(`/results?seasoncode=${seasonCode}`);
-    const games = parseGamesXML(doc);
-    return games.map(transformParsedGame);
-  } catch (error) {
-    console.warn('Failed to fetch completed matches from V1 API:', error);
-    return [];
+  const doc = await fetchXMLFromEuroLeague(`/results?seasoncode=${seasonCode}`);
+  const games = parseGamesXML(doc);
+  return games.map(transformParsedGame);
+}
+
+/**
+ * Fetch the complete collection of games from the EuroLeague V2 API by
+ * paging through results with the API's supported offset/limit mechanism.
+ * A single request only returns up to `limit` games, so we keep requesting
+ * subsequent pages (increasing offset) until we've retrieved every game
+ * reported in the response metadata (`totalItems`).
+ */
+async function fetchAllV2Games(competitionCode: string, seasonCode: string): Promise<V2Game[]> {
+  const games: V2Game[] = [];
+  let offset = 0;
+  let totalItems = Infinity;
+
+  while (offset < totalItems) {
+    const response = await fetchJSONFromEuroLeagueV2(
+      `/competitions/${competitionCode}/seasons/${seasonCode}/games?limit=${V2_GAMES_PAGE_LIMIT}&offset=${offset}`
+    );
+
+    games.push(...response.data);
+    totalItems = response.metadata?.totalItems ?? games.length;
+    offset += V2_GAMES_PAGE_LIMIT;
+
+    // Safety valve: if the API stops returning data (e.g. metadata is
+    // missing/inconsistent), bail out rather than looping forever.
+    if (response.data.length === 0) {
+      break;
+    }
   }
+
+  return games;
 }
 
 /**
@@ -433,29 +484,37 @@ async function fetchCompletedMatches(leagueId: string): Promise<Match[]> {
  */
 async function fetchUpcomingMatches(leagueId: string): Promise<Match[]> {
   const competitionCode = getCompetitionCode(leagueId);
-  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const seasonCode = `${competitionCode}${getCurrentSeasonYear()}`;
 
-  try {
-    // V2 API returns games in pages, get first 100 (usually covers several rounds)
-    const response = await fetchJSONFromEuroLeagueV2(
-      `/competitions/${competitionCode}/seasons/${seasonCode}/games?pageSize=100`
-    );
-    return response.data.map(transformV2Game);
-  } catch (error) {
-    console.warn('Failed to fetch upcoming matches from V2 API:', error);
-    return [];
-  }
+  const games = await fetchAllV2Games(competitionCode, seasonCode);
+  return games.map(transformV2Game);
 }
 
 /**
  * Fetch matches from EuroLeague APIs (combines V1 completed + V2 upcoming)
  */
 export async function fetchEuroLeagueMatches(leagueId: string): Promise<Match[]> {
-  // Fetch from both APIs in parallel
-  const [completedMatches, upcomingMatches] = await Promise.all([
+  const [completedResult, upcomingResult] = await Promise.allSettled([
     fetchCompletedMatches(leagueId),
     fetchUpcomingMatches(leagueId),
   ]);
+
+  if (completedResult.status === 'rejected' && upcomingResult.status === 'rejected') {
+    throw new AggregateError(
+      [completedResult.reason, upcomingResult.reason],
+      'Both EuroLeague fixture APIs failed',
+    );
+  }
+
+  if (completedResult.status === 'rejected') {
+    console.warn('Failed to fetch completed matches from V1 API:', completedResult.reason);
+  }
+  if (upcomingResult.status === 'rejected') {
+    console.warn('Failed to fetch upcoming matches from V2 API:', upcomingResult.reason);
+  }
+
+  const completedMatches = completedResult.status === 'fulfilled' ? completedResult.value : [];
+  const upcomingMatches = upcomingResult.status === 'fulfilled' ? upcomingResult.value : [];
 
   // Deduplicate by match ID (in case there's overlap)
   const matchMap = new Map<string, Match>();
@@ -487,7 +546,7 @@ export async function fetchEuroLeagueMatches(leagueId: string): Promise<Match[]>
  */
 export async function fetchEuroLeagueStandings(leagueId: string): Promise<StandingsEntry[]> {
   const competitionCode = getCompetitionCode(leagueId);
-  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const seasonCode = `${competitionCode}${getCurrentSeasonYear()}`;
 
   const doc = await fetchXMLFromEuroLeague(`/standings?seasoncode=${seasonCode}`);
   const standings = parseStandingsXML(doc);
@@ -502,18 +561,33 @@ export async function fetchEuroLeagueStandings(leagueId: string): Promise<Standi
 }
 
 /**
- * Fetch all data from EuroLeague API
+ * Fetch all data from EuroLeague API.
+ *
+ * Matches and standings are fetched independently so that a standings
+ * failure (e.g. before a new season's standings table is published) doesn't
+ * discard already-available fixtures. If fetching matches itself fails,
+ * that error is propagated since fixtures are the primary data this app
+ * needs to be useful.
  */
 export async function fetchEuroLeagueAllData(leagueId: string): Promise<{
   matches: Match[];
   standings: StandingsEntry[];
 }> {
-  const [matches, standings] = await Promise.all([
+  const [matchesResult, standingsResult] = await Promise.allSettled([
     fetchEuroLeagueMatches(leagueId),
     fetchEuroLeagueStandings(leagueId),
   ]);
 
-  return { matches, standings };
+  if (matchesResult.status === 'rejected') {
+    throw matchesResult.reason;
+  }
+
+  if (standingsResult.status === 'rejected') {
+    console.warn('Failed to fetch EuroLeague standings; returning fixtures without a league table:', standingsResult.reason);
+    return { matches: matchesResult.value, standings: [] };
+  }
+
+  return { matches: matchesResult.value, standings: standingsResult.value };
 }
 
 /**
@@ -655,7 +729,7 @@ async function fetchGameDetails(gameCode: string, competitionCode: string): Prom
   homePlayers: PlayerStatistics[];
   awayPlayers: PlayerStatistics[];
 } | null> {
-  const seasonCode = `${competitionCode}${CURRENT_SEASON_YEAR}`;
+  const seasonCode = `${competitionCode}${getCurrentSeasonYear()}`;
   const url = `${EUROLEAGUE_V1_API_BASE}/games?gameCode=${gameCode}&seasonCode=${seasonCode}`;
   
   try {

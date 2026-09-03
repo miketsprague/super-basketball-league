@@ -19,16 +19,25 @@ The JSON API (`/embednf/`) returns parseable responses while the HTML pages are 
 
 ## Competition IDs
 
-SLB has multiple competitions, each with a unique ID:
+SLB has multiple competitions, each with a unique ID. The single source of
+truth for these IDs is `SLB_COMPETITION_IDS` in `src/services/leagues.ts` -
+`geniusSportsApi.ts`'s `DEFAULT_COMPETITION_ID` imports from there rather
+than redeclaring the value, so the ID only needs to be updated in one place:
 
 | Competition | ID | Description |
 |-------------|-----|-------------|
 | Championship | `41897` | Regular season (32 games per team) |
 | Trophy | `42212` | Group stage + knockout tournament |
 | Cup | `47714` | Knockout tournament |
-| Playoffs | TBD | Top 8 knockout (created closer to May) |
+| Playoffs | Not yet added | Top 8 knockout (created closer to May) |
 
 **Important:** Each competition has its own schedule and standings. Trophy and Cup matches are **not** included in the main Championship schedule.
+
+**Do not guess the Playoffs competition ID.** It is not published until
+Genius Sports creates the competition (~May), and it will **not** be the
+same ID as the Championship. Only add a `PLAYOFFS` entry to
+`SLB_COMPETITION_IDS`/`predefinedLeagues` once the real ID has been
+confirmed (e.g. by inspecting the live SLB website's network requests).
 
 ## Endpoints
 
@@ -304,6 +313,24 @@ Returns shot chart data (not currently used in our app).
 | 500+ | Server error |
 
 On error, the API may return HTML error pages instead of JSON. Always check `response.ok` before parsing.
+
+### Resilience: standings failures don't lose fixtures
+
+`fetchGeniusSportsAllData()` fetches matches and standings independently
+(via `Promise.allSettled`, not `Promise.all`). If the standings request
+fails but matches succeed, fixtures are still returned with an empty
+standings array rather than discarding everything. If the matches request
+itself fails, the error is propagated (fixtures are the primary data the
+app needs). This matters most for the Cup, whose knockout format standings
+sometimes differ in shape from the round-robin competitions.
+
+### Knockout-only competitions skip standings entirely
+
+For competitions with `hasStandings: false` in `leagues.ts` (currently only
+the Cup), `dataProvider.fetchAllData()` skips the standings request
+entirely rather than calling an endpoint that has nothing meaningful to
+return - it calls `fetchGeniusSportsMatches()` directly and returns an
+empty standings array.
 
 ## Example Usage
 

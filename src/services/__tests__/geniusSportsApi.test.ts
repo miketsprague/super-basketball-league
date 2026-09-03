@@ -327,6 +327,39 @@ describe('Genius Sports API', () => {
       expect(data.matches.length).toBeGreaterThanOrEqual(3);
       expect(data.standings).toHaveLength(3);
     });
+
+    it('should preserve fixtures when the standings request fails', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ html: mockScheduleHTML, css: [], js: [] }),
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+        });
+
+      const data = await fetchGeniusSportsAllData();
+
+      expect(data.matches.length).toBeGreaterThanOrEqual(3);
+      expect(data.standings).toEqual([]);
+    });
+
+    it('should propagate the error when fetching matches fails, even if standings succeed', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ html: mockStandingsHTML, css: [], js: [] }),
+        });
+
+      await expect(fetchGeniusSportsAllData()).rejects.toThrow('Genius Sports API error: 500 Internal Server Error');
+    });
   });
 
   describe('fetchGeniusSportsMatchDetails', () => {
