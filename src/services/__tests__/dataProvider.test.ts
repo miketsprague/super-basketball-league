@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { LEAGUE_IDS, predefinedLeagues, SLB_COMPETITION_IDS } from '../leagues';
+import { LEAGUE_IDS, predefinedLeagues, visibleLeagues, SLB_COMPETITION_IDS } from '../leagues';
 import type { Match, MatchDetails, StandingsEntry } from '../../types';
 
 // Mock the API modules
@@ -90,14 +90,23 @@ describe('APIError', () => {
 // ─── fetchLeagues ────────────────────────────────────────────────────────────
 
 describe('fetchLeagues', () => {
-  it('should return predefined leagues with expected shape', async () => {
+  it('should return browsable leagues with expected shape', async () => {
     const leagues = await fetchLeagues();
-    expect(leagues).toHaveLength(predefinedLeagues.length);
+    expect(leagues).toHaveLength(visibleLeagues.length);
     for (const league of leagues) {
       expect(league).toHaveProperty('id');
       expect(league).toHaveProperty('name');
       expect(league).toHaveProperty('shortName');
       expect(league).toHaveProperty('country');
+    }
+  });
+
+  it('should exclude discontinued (hidden) leagues from the selector', async () => {
+    const leagues = await fetchLeagues();
+    const hiddenIds = predefinedLeagues.filter((l) => l.hidden).map((l) => l.id);
+    expect(hiddenIds.length).toBeGreaterThan(0);
+    for (const hiddenId of hiddenIds) {
+      expect(leagues.find((l) => l.id === hiddenId)).toBeUndefined();
     }
   });
 

@@ -59,7 +59,7 @@ jobs:
           HTTP_CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "User-Agent: $USER_AGENT" \
-            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/standings")
+            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/${GENIUS_CHAMPIONSHIP_COMPETITION_ID}/standings")
 
           echo "HTTP status: $HTTP_CODE"
           echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
@@ -111,7 +111,7 @@ jobs:
           HTTP_CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "User-Agent: $USER_AGENT" \
-            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/schedule?roundNumber=-1")
+            "https://hosted.dcd.shared.geniussports.com/embednf/SLB/en/competition/${GENIUS_CHAMPIONSHIP_COMPETITION_ID}/schedule?roundNumber=-1")
 
           echo "HTTP status: $HTTP_CODE"
           echo "http_status=$HTTP_CODE" >> "$GITHUB_OUTPUT"
