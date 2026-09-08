@@ -156,3 +156,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - Do NOT create more code PRs until backlog reduces — focus on triaging and maintaining existing ones
 - October 2026 deadline: PR #163 (dynamic season year) must be merged before October or app breaks
 - AGENTS.md fix (#255) now also includes season month correction
+
+## Run 2026-09-08 (run 34256887767)
+- INFRASTRUCTURE FAILURE (repeat): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, search_issues). Same as run 34151287423. No repo state readable → no triage/labeling/PR maintenance possible. No blind writes made. Reported incomplete.
+- Two consecutive runs (2026-09-08) blocked by 401. Maintainer should check GitHub App token/credentials for the repo-assist workflow.
