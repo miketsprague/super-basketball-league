@@ -1,6 +1,13 @@
 # Repo Assist Memory
 
 ## Last Updated
+2026-09-08T08:37:00Z
+
+## Run 2026-09-08 (run 34151287423)
+- INFRASTRUCTURE FAILURE: GitHub MCP server + gh CLI both returned 401 Bad credentials on all reads (get_me, list_issues, list_pull_requests). Cannot read repo state → no triage possible this run. No safe writes made (blind writes unsafe). Reported incomplete.
+- Note: main now has merged PR #262 "investigate-apis-add-new-season" (unread — verify next run).
+
+## Prior Last Updated
 2026-08-29T17:21:40Z
 
 ## Last Run Tasks
