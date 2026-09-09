@@ -160,3 +160,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 ## Run 2026-09-08 (run 34256887767)
 - INFRASTRUCTURE FAILURE (repeat): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, search_issues). Same as run 34151287423. No repo state readable → no triage/labeling/PR maintenance possible. No blind writes made. Reported incomplete.
 - Two consecutive runs (2026-09-08) blocked by 401. Maintainer should check GitHub App token/credentials for the repo-assist workflow.
+
+## Run 2026-09-09 (run 34381654029)
+- INFRASTRUCTURE FAILURE (3rd consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, search_issues, list_pull_requests). Same as runs 34151287423 and 34256887767. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
+- ESCALATION: THREE consecutive runs (2026-09-08 x2, 2026-09-09) now blocked by 401. Maintainer must check the GitHub App token / credentials for the repo-assist workflow — this is a persistent credential issue, not transient.
