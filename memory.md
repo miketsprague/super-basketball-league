@@ -44,54 +44,8 @@ Note: #7 is only open real user issue; all proxy/automated issues are not user-f
 - PR #163 (2026-07-05): Correction comment — deadline is October, not August
 
 ## Open Repo Assist PRs (2026-08-29)
-Active (not superseded):
-- #163: fix: CURRENT_SEASON_YEAR → dynamic (Closes #101) — CI ✅ passing ⚠️ URGENT: breaks Oct 2026 season transition
-- #164: docs: fix ARCHITECTURE.md (Closes #145)
-- #165: feat: persist active tab in URL
-- #166: feat: PWA manifest and basketball icon
-- #168: feat: team logos + W% in LeagueTable
-- #176: test: MatchDetail (29 tests)
-- #178: test: App (17 tests) ✅ clean
-- #180: feat: keyboard nav + ARIA roles (supersedes #169)
-- #182: test: TeamView (12 tests)
-- #184: feat: playoff/relegation zones
-- #185: feat: highlight followed team fixtures
-- #187: feat: last refreshed timestamp
-- #189: feat: team search/filter
-- #191: feat: highlight followed team in league table
-- #193: feat: service worker/PWA
-- #195: feat: LIVE badge on Fixtures tab
-- #197: feat: adaptive polling 30s when live
-- #203: feat: skeleton loading screens
-- #205: feat: dark mode toggle
-- #207: feat: season record banner in TeamView
-- #211: feat: sortable columns in LeagueTable
-- #213: fix: preserve data on auto-refresh ✅ clean
-- #225: fix: move match utils to matchUtils.ts ✅ clean
-- #226: chore: release v0.1.0 — CHANGELOG.md protected file; cannot be auto-updated; maintainer must update CHANGELOG manually
-- #227: feat: head-to-head section in MatchDetail
-- #228: test: Fixtures (26 tests) ✅ clean
-- #229: feat: pre-match form guide in MatchDetail
-- #233: ci: deduplicate health check issues ✅ clean
-- #234: ci: season-aware health check
-- #237: test: ErrorBoundary+LeagueSelector (14 tests) ✅
-- #238: fix: Promise.allSettled in fetchGeniusSportsAllData ✅
-- #239: feat: Fixtures ARIA roles ✅
-- #240: feat: 10s request timeout ✅
-- #241: feat: computeTeamRecord utility ✅
-- #242: feat: computeNextFixture + Next Game banner ✅
-- #243: feat: iCal calendar export ✅
-- #244: feat: computeHomeAwayRecord + H/A record in TeamView ✅
-- #245: feat: computeWinStreak + streak badge in TeamView ✅
-- #246: feat: computeScoringAverage + scoring avg banner in TeamView ✅
-- #247: feat: computeCloseGameRecord + clutch record banner in TeamView ✅
-- #248: feat: computeAverageMargin + avg margin banner in TeamView ✅
-- #249: feat: computeRecentRecord + recent form banner in TeamView ✅
-- #250: fix: include today's completed matches in Results tab ✅ clean
-- #251: feat: shared date formatting utilities (dateUtils.ts) — 24 new tests ✅
-- #252: fix: update 'today' at midnight — useState+useEffect midnight scheduler, 5 new tests ✅ clean
-- #255: docs: correct AGENTS.md test file locations + naming convention + season month fix ✅ CI passing
-Superseded (close these): #169 (by #180), #171 (by #237), #173 (by #228)
+Large backlog #163–#255 (~50 PRs, mostly ✅ clean tests/features). Superseded (close): #169(by#180),#171(by#237),#173(by#228). #163 URGENT: dynamic season year, must merge before Oct 2026. #226 release blocked (CHANGELOG protected). Full detail was trimmed for memory size.
+
 
 ## Non-Repo-Assist PRs
 - #99: stale Copilot docs PR (nudged twice — do not nudge again)
@@ -172,3 +126,14 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 ## Run 2026-09-11 (run 34625979462)
 - INFRASTRUCTURE FAILURE (5th consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, list_pull_requests). Same as runs 34151287423, 34256887767, 34381654029, 34506254559. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
 - ESCALATION CONTINUES: FIVE consecutive runs (2026-09-08 x2, 09-09, 09-10, 09-11) blocked by 401. Persistent credential issue — maintainer must rotate/check the GitHub App token for the repo-assist workflow.
+
+## Run 2026-09-12 (run 34705280279)
+- INFRASTRUCTURE FAILURE (6th consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, list_pull_requests). Same as runs 34151287423, 34256887767, 34381654029, 34506254559, 34625979462. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
+- ESCALATION CONTINUES: SIX consecutive runs (2026-09-08 x2, 09-09, 09-10, 09-11, 09-12) blocked by 401. Persistent credential issue — maintainer MUST rotate/check the GitHub App token for the repo-assist workflow. This has been ongoing for 5+ days.
+
+## Auth Outage Log (consolidated)
+- SIX consecutive runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads:
+  2026-09-08 (34151287423), 2026-09-08 (34256887767), 2026-09-09 (34381654029),
+  2026-09-10 (34506254559), 2026-09-11 (34625979462), 2026-09-12 (34705280279).
+- No repo state readable → no triage/labeling/PR maintenance/monthly-summary possible. No blind writes made.
+- ACTION FOR MAINTAINER: rotate/check the GitHub App token/credentials for the repo-assist workflow. Persistent 5+ day credential outage, not transient.
