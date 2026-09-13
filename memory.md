@@ -1,7 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-09-08T08:37:00Z
+2026-09-13T17:04:00Z
+
+## Run 2026-09-13 (run 34770351342)
+- INFRASTRUCTURE FAILURE (7th consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues). Same as the six prior runs. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
+- ESCALATION CONTINUES: SEVEN consecutive runs (2026-09-08 x2, 09-09, 09-10, 09-11, 09-12, 09-13) blocked by 401. Persistent 6+ day credential outage — maintainer MUST rotate/check the GitHub App token for the repo-assist workflow.
 
 ## Run 2026-09-08 (run 34151287423)
 - INFRASTRUCTURE FAILURE: GitHub MCP server + gh CLI both returned 401 Bad credentials on all reads (get_me, list_issues, list_pull_requests). Cannot read repo state → no triage possible this run. No safe writes made (blind writes unsafe). Reported incomplete.
