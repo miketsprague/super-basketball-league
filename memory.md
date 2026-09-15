@@ -3,13 +3,6 @@
 ## Last Updated
 2026-09-13T17:04:00Z
 
-## Run 2026-09-13 (run 34770351342)
-- INFRASTRUCTURE FAILURE (7th consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues). Same as the six prior runs. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
-- ESCALATION CONTINUES: SEVEN consecutive runs (2026-09-08 x2, 09-09, 09-10, 09-11, 09-12, 09-13) blocked by 401. Persistent 6+ day credential outage — maintainer MUST rotate/check the GitHub App token for the repo-assist workflow.
-
-## Run 2026-09-08 (run 34151287423)
-- INFRASTRUCTURE FAILURE: GitHub MCP server + gh CLI both returned 401 Bad credentials on all reads (get_me, list_issues, list_pull_requests). Cannot read repo state → no triage possible this run. No safe writes made (blind writes unsafe). Reported incomplete.
-- Note: main now has merged PR #262 "investigate-apis-add-new-season" (unread — verify next run).
 
 ## Prior Last Updated
 2026-08-29T17:21:40Z
@@ -115,33 +108,10 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - October 2026 deadline: PR #163 (dynamic season year) must be merged before October or app breaks
 - AGENTS.md fix (#255) now also includes season month correction
 
-## Run 2026-09-08 (run 34256887767)
-- INFRASTRUCTURE FAILURE (repeat): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, search_issues). Same as run 34151287423. No repo state readable → no triage/labeling/PR maintenance possible. No blind writes made. Reported incomplete.
-- Two consecutive runs (2026-09-08) blocked by 401. Maintainer should check GitHub App token/credentials for the repo-assist workflow.
-
-## Run 2026-09-09 (run 34381654029)
-- INFRASTRUCTURE FAILURE (3rd consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, search_issues, list_pull_requests). Same as runs 34151287423 and 34256887767. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
-- ESCALATION: THREE consecutive runs (2026-09-08 x2, 2026-09-09) now blocked by 401. Maintainer must check the GitHub App token / credentials for the repo-assist workflow — this is a persistent credential issue, not transient.
-
-## Run 2026-09-10 (run 34506254559)
-- INFRASTRUCTURE FAILURE (4th consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, list_pull_requests). Same as runs 34151287423, 34256887767, 34381654029. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
-- ESCALATION CONTINUES: FOUR consecutive runs (2026-09-08 x2, 2026-09-09, 2026-09-10) blocked by 401. Persistent credential issue — maintainer must rotate/check the GitHub App token for the repo-assist workflow.
-
-## Run 2026-09-11 (run 34625979462)
-- INFRASTRUCTURE FAILURE (5th consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, list_pull_requests). Same as runs 34151287423, 34256887767, 34381654029, 34506254559. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
-- ESCALATION CONTINUES: FIVE consecutive runs (2026-09-08 x2, 09-09, 09-10, 09-11) blocked by 401. Persistent credential issue — maintainer must rotate/check the GitHub App token for the repo-assist workflow.
-
-## Run 2026-09-12 (run 34705280279)
-- INFRASTRUCTURE FAILURE (6th consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues, list_pull_requests). Same as runs 34151287423, 34256887767, 34381654029, 34506254559, 34625979462. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
-- ESCALATION CONTINUES: SIX consecutive runs (2026-09-08 x2, 09-09, 09-10, 09-11, 09-12) blocked by 401. Persistent credential issue — maintainer MUST rotate/check the GitHub App token for the repo-assist workflow. This has been ongoing for 5+ days.
 
 ## Auth Outage Log (consolidated)
-- SIX consecutive runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads:
-  2026-09-08 (34151287423), 2026-09-08 (34256887767), 2026-09-09 (34381654029),
-  2026-09-10 (34506254559), 2026-09-11 (34625979462), 2026-09-12 (34705280279).
+- NINE consecutive runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads (2026-09-08 through 2026-09-15): runs 34151287423, 34256887767, 34381654029, 34506254559, 34625979462, 34705280279, 34770351342, 34883199390, 35003131867.
 - No repo state readable → no triage/labeling/PR maintenance/monthly-summary possible. No blind writes made.
-- ACTION FOR MAINTAINER: rotate/check the GitHub App token/credentials for the repo-assist workflow. Persistent 5+ day credential outage, not transient.
+- ACTION FOR MAINTAINER: rotate/check the GitHub App token/credentials for the repo-assist workflow. Persistent 7+ day credential outage, not transient.
+- Latest: 2026-09-15 (run 35003131867) — same 401 on get_me, list_issues, list_pull_requests, search_issues.
 
-## Run 2026-09-14 (run 34883199390)
-- INFRASTRUCTURE FAILURE (8th consecutive): GitHub MCP reads all return 401 Bad credentials (get_me, list_issues). Same as runs since 2026-09-08. No repo state readable → no triage/labeling/PR maintenance/monthly-summary update possible. No blind writes made. Reported incomplete.
-- ESCALATION CONTINUES: EIGHT consecutive runs (2026-09-08 x2, 09-09, 09-10, 09-11, 09-12, 09-13, 09-14) blocked by 401. Persistent 6+ day credential outage — maintainer MUST rotate/check the GitHub App token for the repo-assist workflow.
