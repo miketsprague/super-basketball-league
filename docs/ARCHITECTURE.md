@@ -61,19 +61,21 @@ interface LeagueConfig {
 ```
 src/
 ├── components/          # React components
-│   ├── MatchCard.tsx   # Individual match display
-│   ├── MatchList.tsx   # List of matches
-│   ├── StandingsTable.tsx
-│   └── ...
+│   ├── ErrorBoundary.tsx  # Error boundary for graceful failure
+│   ├── Fixtures.tsx       # Match fixtures list with filtering
+│   ├── LeagueSelector.tsx # League switching UI
+│   ├── LeagueTable.tsx    # League standings table
+│   ├── MatchDetail.tsx    # Individual match detail view
+│   └── TeamView.tsx       # Team information and follow status
 ├── services/           # Data fetching layer
-│   ├── dataProvider.ts # Main routing logic
+│   ├── dataProvider.ts    # Main routing logic
 │   ├── geniusSportsApi.ts
 │   ├── euroleagueApi.ts
 │   ├── mockProvider.ts
-│   └── leagues.ts      # League configuration
+│   ├── teamStorage.ts     # Local team follow/storage
+│   └── leagues.ts         # League configuration
 ├── types/              # TypeScript interfaces
 │   └── index.ts
-├── hooks/              # Custom React hooks
 └── App.tsx             # Main app component
 
 docs/
@@ -108,7 +110,6 @@ The app is deployed to GitHub Pages via GitHub Actions:
 
 ## Future Considerations
 
-- **Match Details**: Phase 2 feature for detailed match views with live scores
 - **Caching**: Consider adding service worker caching for offline support
 - **Real-time Updates**: WebSocket integration for live match data
 - **Additional Leagues**: The multi-provider architecture supports adding new leagues
