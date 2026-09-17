@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-09-16T17:45:00Z
+2026-09-17T17:45:00Z
 
 
 ## Prior Last Updated
-2026-09-13T17:04:00Z
+2026-09-16T17:45:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -114,4 +114,5 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - No repo state readable → no triage/labeling/PR maintenance/monthly-summary possible. No blind writes made.
 - ACTION FOR MAINTAINER: rotate/check the GitHub App token/credentials for the repo-assist workflow. Persistent 7+ day credential outage, not transient.
 - Latest: 2026-09-16 (run 35129864006) — TENTH consecutive 401 on get_me and list_issues. Outage now 8+ days (2026-09-08 → 2026-09-16). Still no repo state readable; no blind writes made.
+- Latest: 2026-09-17 (run 35254450753) — ELEVENTH consecutive 401 on get_me and list_issues. Outage now 9+ days (2026-09-08 → 2026-09-17). Still no repo state readable; no blind writes made.
 
