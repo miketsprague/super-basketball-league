@@ -1,7 +1,7 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-09-27T17:56:00Z
+2026-09-28T20:20:00Z
 
 
 ## Prior Last Updated
@@ -85,9 +85,9 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - localStorage mock: Node.js 25+ native stub shadows jsdom — use explicit storageMock pattern
 - App.tsx: uses Routes (not BrowserRouter) — wrap in MemoryRouter for tests
 - vi.stubEnv for PROD: boolean (true/false) not string
-- ESLint errors in Fixtures.tsx (2 pre-existing react-refresh errors — fixed in PR #225)
+- ESLint errors in Fixtures.tsx (2 pre-existing react-refresh errors) — FIXED by new PR (branch repo-assist/improve-extract-match-utils, 2026-09-28): helpers moved to src/utils/matchUtils.ts, tests to src/utils/__tests__/matchUtils.test.ts. src/utils/ NOW EXISTS on that branch.
 - computeTeamForm(matches, teamId, maxResults?) — LeagueTable (local, no export) + PR #229
-- Main branch test count: 108 tests (on main as of 2026-08-04, confirmed CI passing)
+- Main branch test count: 132 tests (verified locally 2026-09-28, all passing; build OK)
 - PRs #250 and #252 both modify Fixtures.tsx — merge order matters (avoid conflicts)
 - Genius Sports: User-Agent required in health check (CloudFront 403), but NOT needed in browser app (browser sends it automatically)
 - getCurrentSeasonYear(): October is season transition month (month >= 10 ? year : year - 1)
@@ -96,7 +96,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
   - PR #163 description says "August" but the CODE correctly uses October — tests confirm
   - PR #163 urgency comments: Jul-01 inaccurately said "August"; corrected Jul-05 to say "October"
   - PR #163 updated 2026-08-11: JSDoc added to getCurrentSeasonYear; CI now triggered and passing ✅
-- CURRENT_SEASON_YEAR = '2025' still hardcoded on main — ⚠️ breaks October 2026 season transition
+- ✅ RESOLVED 2026-09-28: dynamic season year is now MERGED on main (PR #262). getCurrentSeasonYear() used at euroleagueApi.ts:443/487/549/732. October-transition tests present. PR #163 can likely be closed as superseded.
 - LeagueTable uses named export: { LeagueTable }
 - No src/utils/ directory in main branch (dateUtils, fixtureUtils, matchUtils are all in pending PRs)
 - Bug fixed in PR #250 (2026-06-29): counts.resultsCount badge was `< today`, now `<= today` to match filterMatchesByTab
@@ -126,3 +126,10 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - Latest: 2026-09-26 (run 36258746164) — TWENTIETH consecutive 401 on get_me and list_issues. Outage now 18+ days (2026-09-08 → 2026-09-26). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked). ACTION FOR MAINTAINER: GitHub App token for repo-assist workflow needs rotation — this is a persistent 18-day credential outage, not transient.
 - Latest: 2026-09-27 (run 36338698543) — TWENTY-FIRST consecutive 401 on get_me and list_issues. Outage now 19+ days (2026-09-08 → 2026-09-27). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked). ACTION FOR MAINTAINER: GitHub App token for repo-assist workflow needs rotation — persistent 19-day credential outage, not transient.
 
+
+## 2026-09-28 (run 36477533325)
+- TWENTY-SECOND consecutive 401 Bad credentials on get_me and list_issues. Outage 20+ days (2026-09-08 → 2026-09-28). No GitHub reads possible → no triage/labeling/monthly-summary (#259) update.
+- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. 20-day persistent credential outage.
+- Did LOCAL work instead (Task 3): verified baseline (132 tests pass, build OK, 2 lint errors on main), then created PR from branch `repo-assist/improve-extract-match-utils` extracting getMatchWinner/getMatchMargin into src/utils/matchUtils.ts. Lint now clean, 132 tests pass, build OK. AGENTS.md updated with src/utils/ + utility-test convention.
+- Memory correction: dynamic season year already merged via PR #262 — earlier "October 2026 deadline" urgency is RESOLVED.
+- Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
