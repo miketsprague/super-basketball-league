@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-09-28T20:20:00Z
+2026-09-29T18:55:00Z
 
 
 ## Prior Last Updated
-2026-09-26T17:23:00Z
+2026-09-28T20:20:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -56,7 +56,7 @@ Issue #259 (August 2026): open — updated 2026-08-29
 
 ## API Health Check Pattern
 - Failures: Jun 1, Jun 8, Jun 9, Jun 12 (Genius Sports off-season), Jun 30 (auth transient), Jul 8 (off-season)
-- Passes: Jun 13, Jun 14, Jun 17, Jun 18, Jun 19, Jul 3, Jul 4, Jul 7, Jul 9, Jul 15, Jul 22, Jul 23, Aug 2-5, Aug 10, Aug 11, Aug 14, Aug 15, Aug 16, Aug 18, Aug 19, Aug 20, Aug 21, Aug 22, Aug 23, Aug 24, Aug 25, Aug 26, Aug 27, Aug 28, Aug 29
+- Passes: consistently passing Jun 13 - Aug 29 (in-season); failures cluster in off-season windows.
 - PR #231 MERGED: adds diagnostics; PR #233 (open): dedup; PR #234 (open): season-aware
 - PR #238: Promise.allSettled partial resilience
 
@@ -110,26 +110,22 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 
 
 ## Auth Outage Log (consolidated)
-- NINE consecutive runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads (2026-09-08 through 2026-09-15): runs 34151287423, 34256887767, 34381654029, 34506254559, 34625979462, 34705280279, 34770351342, 34883199390, 35003131867.
-- No repo state readable → no triage/labeling/PR maintenance/monthly-summary possible. No blind writes made.
-- ACTION FOR MAINTAINER: rotate/check the GitHub App token/credentials for the repo-assist workflow. Persistent 7+ day credential outage, not transient.
-- Latest: 2026-09-16 (run 35129864006) — TENTH consecutive 401 on get_me and list_issues. Outage now 8+ days (2026-09-08 → 2026-09-16). Still no repo state readable; no blind writes made.
-- Latest: 2026-09-17 (run 35254450753) — ELEVENTH consecutive 401 on get_me and list_issues. Outage now 9+ days (2026-09-08 → 2026-09-17). Still no repo state readable; no blind writes made.
-- Latest: 2026-09-18 (run 35372701817) — TWELFTH consecutive 401 on get_me and list_issues. Outage now 10+ days (2026-09-08 → 2026-09-18). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked).
-- Latest: 2026-09-19 (run 35455934240) — THIRTEENTH consecutive 401 on get_me and list_issues. Outage now 11+ days (2026-09-08 → 2026-09-19). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked).
-- Latest: 2026-09-20 (run 35524275224) — FOURTEENTH consecutive 401 on get_me and list_issues. Outage now 12+ days (2026-09-08 → 2026-09-20). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked).
-- Latest: 2026-09-21 (run 35641232705) — FIFTEENTH consecutive 401 on get_me and list_issues. Outage now 13+ days (2026-09-08 → 2026-09-21). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked).
-- Latest: 2026-09-22 (run 35762611691) — SIXTEENTH consecutive 401 on get_me and list_issues. Outage now 14+ days (2026-09-08 → 2026-09-22). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked).
-- Latest: 2026-09-23 (run 35899021677) — SEVENTEENTH consecutive 401 on get_me, list_issues, list_pull_requests. Outage now 15+ days (2026-09-08 → 2026-09-23). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked).
-- Latest: 2026-09-24 (run 36037638113) — EIGHTEENTH consecutive 401 on get_me and list_issues. Outage now 16+ days (2026-09-08 → 2026-09-24). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked).
-- Latest: 2026-09-25 (run 36170906044) — NINETEENTH consecutive 401 on get_me. Outage now 17+ days (2026-09-08 → 2026-09-25). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked).
-- Latest: 2026-09-26 (run 36258746164) — TWENTIETH consecutive 401 on get_me and list_issues. Outage now 18+ days (2026-09-08 → 2026-09-26). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked). ACTION FOR MAINTAINER: GitHub App token for repo-assist workflow needs rotation — this is a persistent 18-day credential outage, not transient.
-- Latest: 2026-09-27 (run 36338698543) — TWENTY-FIRST consecutive 401 on get_me and list_issues. Outage now 19+ days (2026-09-08 → 2026-09-27). Still no repo state readable; no blind writes made. Monthly summary (#259) cannot be updated (read blocked). ACTION FOR MAINTAINER: GitHub App token for repo-assist workflow needs rotation — persistent 19-day credential outage, not transient.
-
+- 23 CONSECUTIVE runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads: 2026-09-08 -> 2026-09-29 (21+ days).
+- Effect: no repo state readable -> no triage, labeling, PR maintenance, or monthly-summary (#259) updates possible. No blind writes ever made.
+- ACTION FOR MAINTAINER: rotate/replace the GitHub App token for the repo-assist workflow. This is a persistent 21-day credential outage, NOT transient.
+- Latest checked: 2026-09-29 (run 36614850657) - still 401 on get_me and list_issues.
 
 ## 2026-09-28 (run 36477533325)
 - TWENTY-SECOND consecutive 401 Bad credentials on get_me and list_issues. Outage 20+ days (2026-09-08 → 2026-09-28). No GitHub reads possible → no triage/labeling/monthly-summary (#259) update.
 - ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. 20-day persistent credential outage.
 - Did LOCAL work instead (Task 3): verified baseline (132 tests pass, build OK, 2 lint errors on main), then created PR from branch `repo-assist/improve-extract-match-utils` extracting getMatchWinner/getMatchMargin into src/utils/matchUtils.ts. Lint now clean, 132 tests pass, build OK. AGENTS.md updated with src/utils/ + utility-test convention.
 - Memory correction: dynamic season year already merged via PR #262 — earlier "October 2026 deadline" urgency is RESOLVED.
+- Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
+
+## 2026-09-29 (run 36614850657)
+- TWENTY-THIRD consecutive 401 Bad credentials on get_me and list_issues. Outage 21+ days (2026-09-08 -> 2026-09-29). No GitHub reads possible -> no triage/labeling/monthly-summary (#259) update.
+- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. 21-day persistent credential outage, not transient.
+- Did LOCAL work instead (Task 3): created branch `repo-assist/improve-leagueselector-tests` adding src/components/__tests__/LeagueSelector.test.tsx (8 tests). Test-only change, no source files touched -> conflict-free with other open PRs.
+- Verified: 140 tests pass (132 baseline + 8 new), build OK. Lint: 2 pre-existing Fixtures.tsx react-refresh errors on main (fixed by pending PR from branch repo-assist/improve-extract-match-utils, 2026-09-28).
+- Untested components remaining: TeamView, App. Good candidates for future runs.
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
