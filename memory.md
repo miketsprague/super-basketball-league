@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-09-30T18:40:00Z
+2026-10-01T19:05:00Z
 
 
 ## Prior Last Updated
-2026-09-29T18:55:00Z
+2026-09-30T18:40:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -87,7 +87,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - vi.stubEnv for PROD: boolean (true/false) not string
 - ESLint errors in Fixtures.tsx (2 pre-existing react-refresh errors) — FIXED by new PR (branch repo-assist/improve-extract-match-utils, 2026-09-28): helpers moved to src/utils/matchUtils.ts, tests to src/utils/__tests__/matchUtils.test.ts. src/utils/ NOW EXISTS on that branch.
 - computeTeamForm(matches, teamId, maxResults?) — LeagueTable (local, no export) + PR #229
-- Main branch test count: 132 tests (verified locally 2026-09-28, all passing; build OK)
+- Main branch test count: 132 tests (verified locally 2026-10-01, all passing; build OK)
 - PRs #250 and #252 both modify Fixtures.tsx — merge order matters (avoid conflicts)
 - Genius Sports: User-Agent required in health check (CloudFront 403), but NOT needed in browser app (browser sends it automatically)
 - getCurrentSeasonYear(): October is season transition month (month >= 10 ? year : year - 1)
@@ -110,27 +110,22 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 
 
 ## Auth Outage Log (consolidated)
-- 24 CONSECUTIVE runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads: 2026-09-08 -> 2026-09-30 (22+ days).
+- 25 CONSECUTIVE runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads: 2026-09-08 -> 2026-10-01 (23+ days).
 - Effect: no repo state readable -> no triage, labeling, PR maintenance, or monthly-summary (#259) updates possible. No blind writes ever made.
 - ACTION FOR MAINTAINER: rotate/replace the GitHub App token for the repo-assist workflow. This is a persistent 21-day credential outage, NOT transient.
-- Latest checked: 2026-09-30 (run 36759255012) - still 401 on get_me. 24 CONSECUTIVE runs, 22+ days.
+- Latest checked: 2026-10-01 (run 36910993071) - still 401 on get_me. 25 CONSECUTIVE runs, 23+ days.
 
-## 2026-09-28 (run 36477533325)
-- 22nd 401 outage run. Local Task 3: branch `repo-assist/improve-extract-match-utils` extracting getMatchWinner/getMatchMargin to src/utils/matchUtils.ts (fixes 2 lint errors). PR created.
+## Local Test PRs Created During Outage (condensed)
+- 2026-09-28 run 36477533325: branch `repo-assist/improve-extract-match-utils` — moved getMatchWinner/getMatchMargin to src/utils/matchUtils.ts (fixes 2 Fixtures.tsx lint errors). PR created.
+- 2026-09-29 run 36614850657: branch `repo-assist/improve-leagueselector-tests` — LeagueSelector.test.tsx (8 tests). PR created.
+- 2026-09-30 run 36759255012: branch `repo-assist/improve-teamview-tests` — TeamView.test.tsx (6 tests). PR created.
 
-## 2026-09-29 (run 36614850657)
-- TWENTY-THIRD consecutive 401 Bad credentials on get_me and list_issues. Outage 21+ days (2026-09-08 -> 2026-09-29). No GitHub reads possible -> no triage/labeling/monthly-summary (#259) update.
-- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. 21-day persistent credential outage, not transient.
-- Did LOCAL work instead (Task 3): created branch `repo-assist/improve-leagueselector-tests` adding src/components/__tests__/LeagueSelector.test.tsx (8 tests). Test-only change, no source files touched -> conflict-free with other open PRs.
-- Verified: 140 tests pass (132 baseline + 8 new), build OK. Lint: 2 pre-existing Fixtures.tsx react-refresh errors on main (fixed by pending PR from branch repo-assist/improve-extract-match-utils, 2026-09-28).
-- Untested components remaining: TeamView, App. Good candidates for future runs.
-- Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
-
-## 2026-09-30 (run 36759255012)
-- TWENTY-FOURTH consecutive 401 Bad credentials on get_me. Outage 22+ days (2026-09-08 -> 2026-09-30). No GitHub reads -> no triage/labeling/monthly-summary (#259) update possible.
-- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. This is NOT transient.
-- Did LOCAL work (Task 3): branch `repo-assist/improve-teamview-tests` adding src/components/__tests__/TeamView.test.tsx (6 tests). Test-only, no source files touched -> conflict-free with other open PRs. PR created.
-- Covered: team name decoding, fetchMatchesForTeam call, error + Try Again retry, follow/unfollow localStorage persistence, pre-followed state, navigate(-1) on Back.
-- Verified: 138 tests pass (132 baseline + 6 new), build OK. Lint: same 2 pre-existing Fixtures.tsx react-refresh errors on main.
-- Untested components remaining: App only (App.test.tsx planned in PR #178). Next local candidate: src/services/dataProvider edge cases or App-level tests.
+## 2026-10-01 (run 36910993071)
+- TWENTY-FIFTH consecutive 401 Bad credentials on get_me. Outage 23+ days (2026-09-08 -> 2026-10-01). No GitHub reads -> no triage/labeling/monthly-summary (#259) update possible.
+- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. NOT transient.
+- Did LOCAL work (Task 3): branch `repo-assist/improve-errorboundary-tests` adding src/components/__tests__/ErrorBoundary.test.tsx (5 tests). Test-only, conflict-free. PR created.
+- Covered: children render, fallback UI on throw, technical-details error message, componentDidCatch logging, window.location.reload on Refresh Page click.
+- Verified: 137 tests pass (132 baseline + 5 new), build OK, eslint clean on new file.
+- Component test coverage now: ErrorBoundary, Fixtures(winner utils), LeagueTable, MatchDetail(share), + pending PRs for LeagueSelector/TeamView. Remaining untested: App.tsx, Fixtures full render.
+- Next local candidate: src/services/dataProvider edge cases, or App-level tests (MemoryRouter + fake timers).
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
