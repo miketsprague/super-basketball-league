@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-01T19:05:00Z
+2026-10-02T18:40:00Z
 
 
 ## Prior Last Updated
-2026-09-30T18:40:00Z
+2026-10-01T19:05:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -87,7 +87,7 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - vi.stubEnv for PROD: boolean (true/false) not string
 - ESLint errors in Fixtures.tsx (2 pre-existing react-refresh errors) — FIXED by new PR (branch repo-assist/improve-extract-match-utils, 2026-09-28): helpers moved to src/utils/matchUtils.ts, tests to src/utils/__tests__/matchUtils.test.ts. src/utils/ NOW EXISTS on that branch.
 - computeTeamForm(matches, teamId, maxResults?) — LeagueTable (local, no export) + PR #229
-- Main branch test count: 132 tests (verified locally 2026-10-01, all passing; build OK)
+- Main branch test count: 132 tests baseline; 144 with mockProvider tests (verified 2026-10-02, build + eslint OK)
 - PRs #250 and #252 both modify Fixtures.tsx — merge order matters (avoid conflicts)
 - Genius Sports: User-Agent required in health check (CloudFront 403), but NOT needed in browser app (browser sends it automatically)
 - getCurrentSeasonYear(): October is season transition month (month >= 10 ? year : year - 1)
@@ -113,12 +113,14 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - 25 CONSECUTIVE runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads: 2026-09-08 -> 2026-10-01 (23+ days).
 - Effect: no repo state readable -> no triage, labeling, PR maintenance, or monthly-summary (#259) updates possible. No blind writes ever made.
 - ACTION FOR MAINTAINER: rotate/replace the GitHub App token for the repo-assist workflow. This is a persistent 21-day credential outage, NOT transient.
-- Latest checked: 2026-10-01 (run 36910993071) - still 401 on get_me. 25 CONSECUTIVE runs, 23+ days.
+- Latest checked: 2026-10-02 (run 37048850812) - still 401 on get_me. 26 CONSECUTIVE runs, 24+ days.
 
 ## Local Test PRs Created During Outage (condensed)
 - 2026-09-28 run 36477533325: branch `repo-assist/improve-extract-match-utils` — moved getMatchWinner/getMatchMargin to src/utils/matchUtils.ts (fixes 2 Fixtures.tsx lint errors). PR created.
 - 2026-09-29 run 36614850657: branch `repo-assist/improve-leagueselector-tests` — LeagueSelector.test.tsx (8 tests). PR created.
 - 2026-09-30 run 36759255012: branch `repo-assist/improve-teamview-tests` — TeamView.test.tsx (6 tests). PR created.
+- 2026-10-01 run 36910993071: branch `repo-assist/improve-errorboundary-tests` — ErrorBoundary.test.tsx (5 tests). PR created.
+- 2026-10-02 run 37048850812: branch `repo-assist/improve-mockprovider-tests` — src/services/__tests__/mockProvider.test.ts (12 tests). PR created. Covers league routing fallbacks for matches/standings/allData, match details hit+miss, leagues list.
 
 ## 2026-10-01 (run 36910993071)
 - TWENTY-FIFTH consecutive 401 Bad credentials on get_me. Outage 23+ days (2026-09-08 -> 2026-10-01). No GitHub reads -> no triage/labeling/monthly-summary (#259) update possible.
@@ -127,5 +129,12 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - Covered: children render, fallback UI on throw, technical-details error message, componentDidCatch logging, window.location.reload on Refresh Page click.
 - Verified: 137 tests pass (132 baseline + 5 new), build OK, eslint clean on new file.
 - Component test coverage now: ErrorBoundary, Fixtures(winner utils), LeagueTable, MatchDetail(share), + pending PRs for LeagueSelector/TeamView. Remaining untested: App.tsx, Fixtures full render.
-- Next local candidate: src/services/dataProvider edge cases, or App-level tests (MemoryRouter + fake timers).
+- Next local candidate: App-level tests (MemoryRouter + fake timers), or Fixtures full-render tests. mockProvider now covered (2026-10-02).
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
+
+## 2026-10-02 (run 37048850812)
+- TWENTY-SIXTH consecutive 401 Bad credentials on get_me. Outage 24+ days (2026-09-08 -> 2026-10-02).
+- No GitHub reads possible -> Task 1/5/6/7/9/11 all blocked. Monthly summary #259 still stale.
+- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. NOT transient.
+- Did LOCAL work (Task 3): mockProvider.test.ts — 12 tests, first coverage for src/services/mockProvider.ts.
+- Verified: 144 tests pass, `npm run build` OK, eslint clean on new file. Test-only, conflict-free.
