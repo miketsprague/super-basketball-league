@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-02T18:40:00Z
+2026-10-03T17:40:00Z
 
 
 ## Prior Last Updated
-2026-10-01T19:05:00Z
+2026-10-02T18:40:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -113,13 +113,14 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - 25 CONSECUTIVE runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads: 2026-09-08 -> 2026-10-01 (23+ days).
 - Effect: no repo state readable -> no triage, labeling, PR maintenance, or monthly-summary (#259) updates possible. No blind writes ever made.
 - ACTION FOR MAINTAINER: rotate/replace the GitHub App token for the repo-assist workflow. This is a persistent 21-day credential outage, NOT transient.
-- Latest checked: 2026-10-02 (run 37048850812) - still 401 on get_me. 26 CONSECUTIVE runs, 24+ days.
+- Latest checked: 2026-10-03 (run 37140945068) - still 401 on get_me. 27 CONSECUTIVE runs, 25+ days.
 
 ## Local Test PRs Created During Outage (condensed)
 - 2026-09-28 run 36477533325: branch `repo-assist/improve-extract-match-utils` — moved getMatchWinner/getMatchMargin to src/utils/matchUtils.ts (fixes 2 Fixtures.tsx lint errors). PR created.
 - 2026-09-29 run 36614850657: branch `repo-assist/improve-leagueselector-tests` — LeagueSelector.test.tsx (8 tests). PR created.
 - 2026-09-30 run 36759255012: branch `repo-assist/improve-teamview-tests` — TeamView.test.tsx (6 tests). PR created.
 - 2026-10-01 run 36910993071: branch `repo-assist/improve-errorboundary-tests` — ErrorBoundary.test.tsx (5 tests). PR created.
+- 2026-10-03 run 37140945068: branch `repo-assist/improve-fixtures-render-tests` — src/components/__tests__/Fixtures.render.test.tsx (13 tests). PR created. Covers empty/loading states, Fixtures/Results/All tab filtering, Today/Tomorrow headers, LIVE+FT badges, margin badge, league-name badge, TBC time/venue, sessionStorage scroll save, tab counts. Baseline now 145 tests.
 - 2026-10-02 run 37048850812: branch `repo-assist/improve-mockprovider-tests` — src/services/__tests__/mockProvider.test.ts (12 tests). PR created. Covers league routing fallbacks for matches/standings/allData, match details hit+miss, leagues list.
 
 ## 2026-10-01 (run 36910993071)
@@ -138,3 +139,12 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. NOT transient.
 - Did LOCAL work (Task 3): mockProvider.test.ts — 12 tests, first coverage for src/services/mockProvider.ts.
 - Verified: 144 tests pass, `npm run build` OK, eslint clean on new file. Test-only, conflict-free.
+
+## 2026-10-03 (run 37140945068)
+- TWENTY-SEVENTH consecutive 401 Bad credentials on get_me. Outage 25+ days (2026-09-08 -> 2026-10-03).
+- Task 1/2/5/6/7/9/11 all blocked (no GitHub reads). Monthly summary #259 still stale.
+- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. NOT transient.
+- Did LOCAL work (Task 3): Fixtures.render.test.tsx — 13 tests, first full-render coverage for Fixtures.tsx.
+- Verified: 145 tests pass, `npm run build` OK, eslint clean. Test-only, conflict-free.
+- NOTE: node_modules not pre-installed in this runner; must run `npm install` before `npm run test`.
+- Remaining untested surface: App.tsx (MemoryRouter + fake timers) — next local candidate.
