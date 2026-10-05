@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-04T17:55:00Z
+2026-10-05T21:30:00Z
 
 
 ## Prior Last Updated
-2026-10-03T17:40:00Z
+2026-10-04T17:55:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -116,27 +116,27 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - Latest checked: 2026-10-04 (run 37221855299) - still 401 on get_me. 28 CONSECUTIVE runs, 26+ days.
 
 ## Local Test PRs Created During Outage (condensed)
-- 2026-09-28 run 36477533325: branch `repo-assist/improve-extract-match-utils` — moved getMatchWinner/getMatchMargin to src/utils/matchUtils.ts (fixes 2 Fixtures.tsx lint errors). PR created.
-- 2026-09-29 run 36614850657: branch `repo-assist/improve-leagueselector-tests` — LeagueSelector.test.tsx (8 tests). PR created.
-- 2026-09-30 run 36759255012: branch `repo-assist/improve-teamview-tests` — TeamView.test.tsx (6 tests). PR created.
-- 2026-10-01 run 36910993071: branch `repo-assist/improve-errorboundary-tests` — ErrorBoundary.test.tsx (5 tests). PR created.
-- 2026-10-03 run 37140945068: branch `repo-assist/improve-fixtures-render-tests` — src/components/__tests__/Fixtures.render.test.tsx (13 tests). PR created. Covers empty/loading states, Fixtures/Results/All tab filtering, Today/Tomorrow headers, LIVE+FT badges, margin badge, league-name badge, TBC time/venue, sessionStorage scroll save, tab counts. Baseline now 145 tests.
-- 2026-10-02 run 37048850812: branch `repo-assist/improve-mockprovider-tests` — src/services/__tests__/mockProvider.test.ts (12 tests). PR created. Covers league routing fallbacks for matches/standings/allData, match details hit+miss, leagues list.
+All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`:
+- improve-extract-match-utils (09-28): matchUtils.ts extraction, fixes 2 Fixtures.tsx lint errors
+- improve-leagueselector-tests (09-29): 8 tests | improve-teamview-tests (09-30): 6 tests
+- improve-errorboundary-tests (10-01): 5 tests | improve-mockprovider-tests (10-02): 12 tests
+- improve-fixtures-render-tests (10-03): 13 tests | improve-app-tests (10-04): 10 tests, first App.tsx coverage
+- improve-matchdetail-render-tests (10-05): 19 tests
 
 ## Daily Outage Runs (condensed, all 401-blocked, local Task 3 work only)
 - 2026-10-01 run 36910993071: ErrorBoundary.test.tsx (5 tests)
 - 2026-10-02 run 37048850812: mockProvider.test.ts (12 tests)
 - 2026-10-03 run 37140945068: Fixtures.render.test.tsx (13 tests)
+- 2026-10-05 run 37374414199: MatchDetail.render.test.tsx (19 tests)
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
-## 2026-10-04 (run 37221855299)
-- TWENTY-EIGHTH consecutive 401 Bad credentials on get_me. Outage 26+ days (2026-09-08 -> 2026-10-04).
-- Task 1/2/5/6/7/9/11 all blocked (no GitHub reads). Monthly summary #259 still stale.
+## 2026-10-05 (run 37374414199)
+- TWENTY-NINTH consecutive 401 Bad credentials on get_me. Outage 27+ days (2026-09-08 -> 2026-10-05).
+- Tasks 1/2/5/6/7/8/9/11 all blocked (no GitHub reads possible). Monthly summary #259 still stale.
 - ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. NOT transient.
-- Did LOCAL work (Task 3): branch `repo-assist/improve-app-tests` — src/__tests__/App.test.tsx, 10 tests, FIRST coverage of App.tsx. PR created.
-- Covers: header+tabs render, data load on mount, tab switch, League Table tab hidden for SLB Cup (hasStandings:false), ?league= URL param selection, unknown-league fallback to default, APIError status-code banner, Try Again retry success, non-blocking leagues-error banner, refetch on league change.
-- Verified: 142 tests pass (132 baseline + 10), `npm run build` OK, eslint clean. Test-only, conflict-free.
-- Gotchas learned: Fixtures renders team `shortName` (not `name`) — assert on shortName. Fixture dates must be in the FUTURE (computed from Date.now()) or Fixtures shows "No upcoming fixtures". "Basketball Leagues" appears in BOTH header and footer — use getByRole('heading').
-- NOTE: node_modules not pre-installed; run `npm install` first.
-- App.tsx on main has NO isInitialLoad flag (AGENTS.md mentions it — may be from an unmerged PR).
-- Remaining untested surface: MatchDetail full render (only share button tested), geniusSportsApi edge cases.
+- Did LOCAL work (Task 3): branch `repo-assist/improve-matchdetail-render-tests` — src/components/__tests__/MatchDetail.render.test.tsx, 19 tests. PR created (draft).
+- Covers: team names/scores/venue/date, '- - -' missing-score placeholder, status badges (Upcoming/Full Time/live currentPeriod + Updated: timestamp), quarter table incl. conditional OT column + hidden for scheduled, TeamStatsComparison + % formatting, scheduled/completed stats placeholders, Top Performers slice(0,3), team-name nav to /team/<encoded>, Back -> navigate(-1), Match not found (null), Failed to load match details (throw), Try again retry, Refresh refetch, ?league= param forwarded.
+- Verified: 151 tests pass (132 baseline + 19), `npm run build` OK. Lint: only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: score line renders as a single text node '90 - 80' (and '- - -' when undefined). Team short names are <button> elements — use getByRole('button', {name:'HOM'}). Mock useNavigate at module level to assert navigation. Refresh button has title='Refresh' (no aria-label) — use findByTitle.
+- NOTE: node_modules NOT pre-installed; `npm install` required first.
+- Remaining untested surface: geniusSportsApi edge cases, MatchDetail live-polling interval (15s), StatBar zero-division 50/50 split.
