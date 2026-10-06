@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-05T21:30:00Z
+2026-10-06T19:05:00Z
 
 
 ## Prior Last Updated
-2026-10-04T17:55:00Z
+2026-10-05T21:30:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -122,12 +122,14 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - improve-errorboundary-tests (10-01): 5 tests | improve-mockprovider-tests (10-02): 12 tests
 - improve-fixtures-render-tests (10-03): 13 tests | improve-app-tests (10-04): 10 tests, first App.tsx coverage
 - improve-matchdetail-render-tests (10-05): 19 tests
+- improve-genius-matchdetails-tests (10-06): 10 tests, boxscore/play-by-play parsing
 
 ## Daily Outage Runs (condensed, all 401-blocked, local Task 3 work only)
 - 2026-10-01 run 36910993071: ErrorBoundary.test.tsx (5 tests)
 - 2026-10-02 run 37048850812: mockProvider.test.ts (12 tests)
 - 2026-10-03 run 37140945068: Fixtures.render.test.tsx (13 tests)
 - 2026-10-05 run 37374414199: MatchDetail.render.test.tsx (19 tests)
+- 2026-10-06 run 37515683292: geniusSportsApi.matchDetails.test.ts (10 tests)
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
 ## 2026-10-05 (run 37374414199)
@@ -140,3 +142,13 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - Gotchas: score line renders as a single text node '90 - 80' (and '- - -' when undefined). Team short names are <button> elements — use getByRole('button', {name:'HOM'}). Mock useNavigate at module level to assert navigation. Refresh button has title='Refresh' (no aria-label) — use findByTitle.
 - NOTE: node_modules NOT pre-installed; `npm install` required first.
 - Remaining untested surface: geniusSportsApi edge cases, MatchDetail live-polling interval (15s), StatBar zero-division 50/50 split.
+
+## 2026-10-06 (run 37515683292)
+- THIRTIETH consecutive 401 Bad credentials on get_me AND list_issues. Outage 28+ days (2026-09-08 -> 2026-10-06).
+- Tasks 1/2/5/6/7/8/9/11 all blocked (no GitHub reads). Monthly summary #259 still stale.
+- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. NOT transient.
+- Did LOCAL work (Task 3): branch `repo-assist/improve-genius-matchdetails-tests` -> src/services/__tests__/geniusSportsApi.matchDetails.test.ts, 10 tests. Draft PR created.
+- Covers previously-untested parseBoxScoreHTML + parsePlayByPlayHTML: endpoint URLs, 22-col player row parsing (mins "34:01"->34, pts idx20/reb idx14/ast idx15), points-desc sorting per team table, nameless-row skip, `player-<n>` id fallback when no /person/<id> link, tfoot team totals, cumulative->per-quarter derivation incl. OT, OT omitted in regulation, {} when no "Period end", boxscore-failure and pbp-failure graceful degradation, lastUpdated validity.
+- Verified: 142 tests pass (132 baseline + 10), `npm run build` OK. Lint: only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: Promise.all order in fetchGeniusSportsMatchDetails is schedule -> boxscore -> playbyplay, so mockResolvedValueOnce order must match. parseBoxScoreHTML requires >=10 <td> cells per row. Must stub console.error for the failure-path tests.
+- Remaining untested surface: MatchDetail live-polling interval (15s), StatBar zero-division 50/50 split, euroleagueApi v1 XML edge cases.
