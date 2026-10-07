@@ -1,11 +1,11 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-06T19:05:00Z
+2026-10-07T19:35:00Z
 
 
 ## Prior Last Updated
-2026-10-05T21:30:00Z
+2026-10-06T19:05:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -123,6 +123,7 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - improve-fixtures-render-tests (10-03): 13 tests | improve-app-tests (10-04): 10 tests, first App.tsx coverage
 - improve-matchdetail-render-tests (10-05): 19 tests
 - improve-genius-matchdetails-tests (10-06): 10 tests, boxscore/play-by-play parsing
+- improve-euroleague-matchdetails-tests (10-07): 14 tests, V1 game-details XML parsing
 
 ## Daily Outage Runs (condensed, all 401-blocked, local Task 3 work only)
 - 2026-10-01 run 36910993071: ErrorBoundary.test.tsx (5 tests)
@@ -130,25 +131,20 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - 2026-10-03 run 37140945068: Fixtures.render.test.tsx (13 tests)
 - 2026-10-05 run 37374414199: MatchDetail.render.test.tsx (19 tests)
 - 2026-10-06 run 37515683292: geniusSportsApi.matchDetails.test.ts (10 tests)
+- 2026-10-07 run 37674746715: euroleagueApi.matchDetails.test.ts (14 tests)
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
-## 2026-10-05 (run 37374414199)
-- TWENTY-NINTH consecutive 401 Bad credentials on get_me. Outage 27+ days (2026-09-08 -> 2026-10-05).
-- Tasks 1/2/5/6/7/8/9/11 all blocked (no GitHub reads possible). Monthly summary #259 still stale.
-- ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. NOT transient.
-- Did LOCAL work (Task 3): branch `repo-assist/improve-matchdetail-render-tests` — src/components/__tests__/MatchDetail.render.test.tsx, 19 tests. PR created (draft).
-- Covers: team names/scores/venue/date, '- - -' missing-score placeholder, status badges (Upcoming/Full Time/live currentPeriod + Updated: timestamp), quarter table incl. conditional OT column + hidden for scheduled, TeamStatsComparison + % formatting, scheduled/completed stats placeholders, Top Performers slice(0,3), team-name nav to /team/<encoded>, Back -> navigate(-1), Match not found (null), Failed to load match details (throw), Try again retry, Refresh refetch, ?league= param forwarded.
-- Verified: 151 tests pass (132 baseline + 19), `npm run build` OK. Lint: only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
-- Gotchas: score line renders as a single text node '90 - 80' (and '- - -' when undefined). Team short names are <button> elements — use getByRole('button', {name:'HOM'}). Mock useNavigate at module level to assert navigation. Refresh button has title='Refresh' (no aria-label) — use findByTitle.
-- NOTE: node_modules NOT pre-installed; `npm install` required first.
-- Remaining untested surface: geniusSportsApi edge cases, MatchDetail live-polling interval (15s), StatBar zero-division 50/50 split.
+## Condensed Outage Run Log (2026-10-05, 2026-10-06)
+- 10-05 run 37374414199 (29th 401): MatchDetail.render.test.tsx, 19 tests. Gotchas: score line is ONE text node ('90 - 80' / '- - -'); team short names are <button> (getByRole); mock useNavigate at module level; Refresh has title='Refresh' not aria-label.
+- 10-06 run 37515683292 (30th 401): geniusSportsApi.matchDetails.test.ts, 10 tests. Gotchas: fetch order is schedule -> boxscore -> playbyplay; parseBoxScoreHTML needs >=10 <td> per row; stub console.error for failure paths.
+- node_modules NOT pre-installed; `npm install` required first each run.
 
-## 2026-10-06 (run 37515683292)
-- THIRTIETH consecutive 401 Bad credentials on get_me AND list_issues. Outage 28+ days (2026-09-08 -> 2026-10-06).
+## 2026-10-07 (run 37674746715)
+- THIRTY-FIRST consecutive 401 Bad credentials (get_me AND list_issues). Outage 29+ days (2026-09-08 -> 2026-10-07).
 - Tasks 1/2/5/6/7/8/9/11 all blocked (no GitHub reads). Monthly summary #259 still stale.
 - ACTION FOR MAINTAINER: rotate the GitHub App token for the repo-assist workflow. NOT transient.
-- Did LOCAL work (Task 3): branch `repo-assist/improve-genius-matchdetails-tests` -> src/services/__tests__/geniusSportsApi.matchDetails.test.ts, 10 tests. Draft PR created.
-- Covers previously-untested parseBoxScoreHTML + parsePlayByPlayHTML: endpoint URLs, 22-col player row parsing (mins "34:01"->34, pts idx20/reb idx14/ast idx15), points-desc sorting per team table, nameless-row skip, `player-<n>` id fallback when no /person/<id> link, tfoot team totals, cumulative->per-quarter derivation incl. OT, OT omitted in regulation, {} when no "Period end", boxscore-failure and pbp-failure graceful degradation, lastUpdated validity.
-- Verified: 142 tests pass (132 baseline + 10), `npm run build` OK. Lint: only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
-- Gotchas: Promise.all order in fetchGeniusSportsMatchDetails is schedule -> boxscore -> playbyplay, so mockResolvedValueOnce order must match. parseBoxScoreHTML requires >=10 <td> cells per row. Must stub console.error for the failure-path tests.
-- Remaining untested surface: MatchDetail live-polling interval (15s), StatBar zero-division 50/50 split, euroleagueApi v1 XML edge cases.
+- Did LOCAL work (Task 3): branch `repo-assist/improve-euroleague-matchdetails-tests` -> src/services/__tests__/euroleagueApi.matchDetails.test.ts, 14 tests. Draft PR created.
+- Covers previously-untested parseGameDetailsXML/fetchGameDetails: details URL gameCode extraction (/(\d+)$/ on 'E2025_170' -> '170') + E2025/U2025 season codes, Partial1-4 quarter scores, ExtraPeriod1 OT inclusion/omission, missing-partials -> {}, player id/name/pts/reb/ast parsing + points-desc sort, TimePlayed 'MM:SS' -> minutes, team totals + FG/3PT/FT pct 1dp rounding, zero-attempt -> 0 not NaN, empty playerstats -> undefined arrays, non-ok + thrown-error graceful fallback, scheduled fixture makes only 2 fetches, lastUpdated ISO valid.
+- Verified: 146 tests pass (132 baseline + 14), `npm run build` OK. Lint: only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: fetchEuroLeagueMatchDetails issues 3 fetches for a COMPLETED match (V1 results -> V2 games -> V1 game details); only 2 for scheduled. V2 mock needs metadata.totalItems set or fetchAllV2Games pages forever (V2_GAMES_PAGE_LIMIT=100). parseGameDetailsXML tag selectors are case-sensitive in XML docs (PlayerName, Score, Assistances, TimePlayed, BlocksFavour). Must stub console.error for failure-path tests.
+- Remaining untested surface: MatchDetail live-polling interval (15s), StatBar zero-division 50/50 split, euroleagueApi parseStandingsXML edge cases, dataProvider routing edge cases.
