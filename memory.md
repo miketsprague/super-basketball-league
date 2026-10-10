@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-09T19:05:00Z
+2026-10-10T18:05:00Z
 
 ## Prior Last Updated
-2026-10-08T19:30:00Z
+2026-10-09T19:05:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -103,24 +103,20 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - improve-euroleague-matchdetails-tests (10-07): 14 tests, V1 game-details XML parsing
 - improve-euroleague-standings-tests (10-08): 14 tests, standings XML parse/transform + fetchXML error paths
 - improve-matchdetail-polling-tests (10-09): 13 tests, MatchDetail 15s live polling + StatBar/TeamStatsComparison
+- improve-matchdetail-quarterscores-tests (10-10): 10 tests, quarter-score table (OT column, live dashes, hidden states) + Top Performers slice/guards
 
 ## Daily Outage Runs (condensed, all 401-blocked, local Task 3 work only)
-- 2026-10-01 run 36910993071: ErrorBoundary.test.tsx (5 tests)
-- 2026-10-02 run 37048850812: mockProvider.test.ts (12 tests)
-- 2026-10-03 run 37140945068: Fixtures.render.test.tsx (13 tests)
-- 2026-10-05 run 37374414199: MatchDetail.render.test.tsx (19 tests)
-- 2026-10-06 run 37515683292: geniusSportsApi.matchDetails.test.ts (10 tests)
-- 2026-10-07 run 37674746715: euroleagueApi.matchDetails.test.ts (14 tests)
-- 2026-10-08 run 37831586855: euroleagueApi.standings.test.ts (14 tests)
-- 2026-10-09 run 37976826387: MatchDetail.polling.test.tsx (13 tests)
+- 2026-10-01..2026-10-09: daily local test-only PRs (see 'Local Test PRs' list above for file/test counts).
+- 2026-10-10 run 38073828754: MatchDetail.quarterScores.test.tsx (10 tests)
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
-## 2026-10-09 (run 37976826387)
-- THIRTY-THIRD consecutive 401 Bad credentials (get_me AND list_issues). Outage 31 days (2026-09-08 -> 2026-10-09).
+
+## 2026-10-10 (run 38073828754)
+- THIRTY-FOURTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 32 days (2026-09-08 -> 2026-10-10).
 - Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED. Monthly summary #259 still stale since 2026-08-29.
-- ACTION FOR MAINTAINER (urgent): rotate the GitHub App token for the repo-assist workflow. NOT transient.
-- Did LOCAL Task 3: branch `repo-assist/improve-matchdetail-polling-tests` -> src/components/__tests__/MatchDetail.polling.test.tsx, 13 tests. Draft PR created.
-- Covers: LIVE_POLL_INTERVAL=15000 re-fetch while live; NO polling for completed/scheduled; clearInterval on unmount; background poll keeps score visible (loadMatchDetails(false) skips skeleton); scheduled->live via manual refresh starts polling; ?league= forwarded to fetchMatchDetails(id, leagueId) and undefined when absent; 8 StatBar labels; % suffix only for percentage stats; 0-0 zero-division -> 50/50 no NaN (asserted with a 75% bar so equal-values data can't pass trivially); scheduled & completed stats placeholders.
-- Verified: 145 tests pass (132 baseline + 13), `npm run build` OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
-- Gotchas: StatBar/TeamStatsComparison are private -> test via MatchDetail render + container.querySelectorAll('[style*="width"]'). Refresh button has title='Refresh' (no aria-label). Fake timers BEFORE render; advance inside `await act(async () => { vi.advanceTimersByTime(n); await Promise.resolve(); })`.
-- Remaining untested surface: App.tsx polling transitions (pending PR), LeagueSelector/TeamView render paths (pending PRs), MatchDetail play-by-play/quarter-score table rendering, Fixtures date-grouping headers.
+- ACTION FOR MAINTAINER (urgent): rotate the GitHub App token for the repo-assist workflow.
+- Did LOCAL Task 3: branch `repo-assist/improve-matchdetail-quarterscores-tests` -> src/components/__tests__/MatchDetail.quarterScores.test.tsx, 10 tests. Draft PR created.
+- Covers: full Q1-Q4 row/total assertions via array equality; no-OT header = [Team,Q1..Q4,Total]; OT adds header AND both data cells; live match shows '-' for unplayed quarters; table hidden for scheduled even with quarter data; hidden when quarterScores = {}; Top Performers slice(0,3) drops 4th player; pts/reb/ast rendered; hidden when only one team has players (&& guard) and when absent.
+- Verified: 142 tests pass (132 baseline + 10), `npm run build` OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: quarter table cells read via container.querySelectorAll('tbody tr')/td and compared as full arrays so a dropped column cannot pass silently. 'Test Arena' (venue) is a reliable post-load anchor for findBy when asserting a section is ABSENT.
+- Remaining untested surface: App.tsx polling transitions (pending PR), LeagueSelector/TeamView render paths (pending PRs), Fixtures date-grouping headers, MatchDetail error/retry path.
