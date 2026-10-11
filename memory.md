@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-10T18:05:00Z
+2026-10-11T18:30:00Z
 
 ## Prior Last Updated
-2026-10-09T19:05:00Z
+2026-10-10T18:05:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -104,10 +104,12 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - improve-euroleague-standings-tests (10-08): 14 tests, standings XML parse/transform + fetchXML error paths
 - improve-matchdetail-polling-tests (10-09): 13 tests, MatchDetail 15s live polling + StatBar/TeamStatsComparison
 - improve-matchdetail-quarterscores-tests (10-10): 10 tests, quarter-score table (OT column, live dashes, hidden states) + Top Performers slice/guards
+- improve-matchdetail-error-tests (10-11): 8 tests, error state / Try again retry / navigate(-1) / ?league= pass-through
 
 ## Daily Outage Runs (condensed, all 401-blocked, local Task 3 work only)
 - 2026-10-01..2026-10-09: daily local test-only PRs (see 'Local Test PRs' list above for file/test counts).
 - 2026-10-10 run 38073828754: MatchDetail.quarterScores.test.tsx (10 tests)
+- 2026-10-11 run 38163636016: MatchDetail.error.test.tsx (8 tests) — error/retry/league-param
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
 
@@ -120,3 +122,14 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - Verified: 142 tests pass (132 baseline + 10), `npm run build` OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
 - Gotchas: quarter table cells read via container.querySelectorAll('tbody tr')/td and compared as full arrays so a dropped column cannot pass silently. 'Test Arena' (venue) is a reliable post-load anchor for findBy when asserting a section is ABSENT.
 - Remaining untested surface: App.tsx polling transitions (pending PR), LeagueSelector/TeamView render paths (pending PRs), Fixtures date-grouping headers, MatchDetail error/retry path.
+
+## 2026-10-11 (run 38163636016)
+- THIRTY-FIFTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 33 days (2026-09-08 -> 2026-10-11).
+- Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED. Monthly summary #259 still stale since 2026-08-29.
+- ACTION FOR MAINTAINER (urgent): rotate the GitHub App token for the repo-assist workflow.
+- Did LOCAL Task 3: branch `repo-assist/improve-matchdetail-error-tests` -> src/components/__tests__/MatchDetail.error.test.tsx, 8 tests. Draft PR created.
+- Covers: rejected fetch -> 'Failed to load match details'; null result -> 'Match not found'; 'Try again' button present; retry success clears error and renders match (2 provider calls); retry failure keeps error; error-state back button calls navigate(-1); ?league=euroleague forwarded as 2nd arg to fetchMatchDetails; undefined when absent.
+- Verified: 140 tests pass (132 baseline + 8), `npm run build` OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: mockNavigate must be declared BEFORE vi.mock('react-router-dom') factory and cleared per-test (vi.resetAllMocks does not reset it since it is not auto-mocked). 'Test Arena' (venue) is the reliable post-load anchor. mockRejectedValueOnce + mockResolvedValue chains the retry-recovery case cleanly.
+- Remaining untested surface: App.tsx polling transitions (pending PR), Fixtures date-grouping headers, MatchDetail skeleton/loading state, dataProvider league routing edge cases.
+
