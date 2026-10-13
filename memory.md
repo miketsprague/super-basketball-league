@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-12T21:55:00Z
+2026-10-13T20:00:00Z
 
 ## Prior Last Updated
-2026-10-11T18:30:00Z
+2026-10-12T21:55:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -106,21 +106,29 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - improve-matchdetail-quarterscores-tests (10-10): 10 tests, quarter-score table (OT column, live dashes, hidden states) + Top Performers slice/guards
 - improve-matchdetail-error-tests (10-11): 8 tests, error state / Try again retry / navigate(-1) / ?league= pass-through
 - improve-fixtures-dategrouping-tests (10-12): 14 tests, date grouping headers + tab filtering + empty/loading states
+- improve-fixtures-navigation-tests (10-13): 10 tests, handleMatchClick nav/?league pass-through + sessionStorage scroll save/restore
 
 ## Daily Outage Runs (condensed, all 401-blocked, local Task 3 work only)
 - 2026-10-01..2026-10-09: daily local test-only PRs (see 'Local Test PRs' list above for file/test counts).
 - 2026-10-10 run 38073828754: MatchDetail.quarterScores.test.tsx (10 tests)
 - 2026-10-11 run 38163636016: MatchDetail.error.test.tsx (8 tests) — error/retry/league-param
 - 2026-10-12 run 38313087343: Fixtures.dateGrouping.test.tsx (14 tests) — date headers/grouping/tabs
+- 2026-10-13 run 38458768225: Fixtures.navigation.test.tsx (10 tests) — nav + scroll restore
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
 
 ## 2026-10-12 (run 38313087343)
-- THIRTY-SIXTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 34 days (2026-09-08 -> 2026-10-12).
+- 36th consecutive 401. Local Task 3: `repo-assist/improve-fixtures-dategrouping-tests` -> Fixtures.dateGrouping.test.tsx (14 tests). 146 pass, build OK.
+- Gotcha: headingTexts helper MUST use screen.queryAllByRole (getAllByRole THROWS when a tab renders zero groups). Fixtures uses useSearchParams -> MemoryRouter initialEntries '/?tab=results'.
+
+## 2026-10-13 (run 38458768225)
+- THIRTY-SEVENTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 35 days (2026-09-08 -> 2026-10-13).
 - Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED. Monthly summary #259 still stale since 2026-08-29.
 - ACTION FOR MAINTAINER (urgent): rotate the GitHub App token for the repo-assist workflow.
-- Did LOCAL Task 3: branch `repo-assist/improve-fixtures-dategrouping-tests` -> src/components/__tests__/Fixtures.dateGrouping.test.tsx, 14 tests. Draft PR created.
-- Covers: formatDateHeader Today/Tomorrow/Yesterday + en-GB long fallback; group collapsing of consecutive same-date matches; repeated date after another date starts a NEW group (sequential grouping); singular '(1 match)' vs '(N matches)'; header bg classes orange-50/gray-50/green-50; fixtures tab >= today plus live-past matches; results tab past+completed only, reverse order; past non-completed excluded; per-tab empty messages; tab badge counts; loading spinner; global empty state.
-- Verified: 146 tests pass (132 baseline + 14), `npm run build` OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
-- Gotchas: headingTexts helper MUST use screen.queryAllByRole (getAllByRole THROWS when a tab renders zero groups, e.g. the empty-results case). Fixtures uses useSearchParams -> wrap in MemoryRouter and select tab via initialEntries '/?tab=results'. Compute all dates relative to real today via a local toLocalDateString mirror -> timezone/day-agnostic, no fake timers needed.
-- Remaining untested surface: App.tsx polling transitions (pending PR), MatchDetail skeleton/loading state, dataProvider league routing edge cases, Fixtures scroll-restore sessionStorage behaviour, handleMatchClick navigation + ?league pass-through.
+- Did LOCAL Task 3: branch `repo-assist/improve-fixtures-navigation-tests` -> src/components/__tests__/Fixtures.navigation.test.tsx, 10 tests. Draft PR created.
+- Covers: navigate('/match/:id'); ?league= pass-through + encodeURIComponent of special chars; sessionStorage save of window.scrollY on click; tab change clears SCROLL_KEY; 50ms-deferred window.scrollTo restore; key cleared after restore; no-op when no saved value / loading / empty matches.
+- Verified: 142 tests pass (132 baseline + 10), `npm run build` OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: match cards render team SHORT NAME (shortName), not name — selecting cards by full name finds nothing. Filter tabs are also <button>, so filter getAllByRole('button') by shortName text. Node 25+ native sessionStorage stub shadows jsdom -> use explicit storageMock via Object.defineProperty(window,'sessionStorage',...). window.scrollY must be redefined with Object.defineProperty (not assignment).
+- Remaining untested surface: App.tsx polling transitions (pending PR), MatchDetail skeleton/loading state, dataProvider league routing edge cases, LeagueTable sorting/tie-breaks, teamStorage favourite-team flows.
+
+NOTE: memory.md is near the 12 KB limit — trim oldest condensed outage entries before adding new sections.
