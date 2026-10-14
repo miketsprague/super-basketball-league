@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-13T20:00:00Z
+2026-10-14T18:15:00Z
 
 ## Prior Last Updated
-2026-10-12T21:55:00Z
+2026-10-13T20:00:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -90,23 +90,13 @@ Note: npm audit shows 9 vulnerabilities (1 low, 7 high, 1 critical) — maintain
 - 25 CONSECUTIVE runs blocked by 401 Bad credentials on ALL GitHub MCP/gh reads: 2026-09-08 -> 2026-10-01 (23+ days).
 - Effect: no repo state readable -> no triage, labeling, PR maintenance, or monthly-summary (#259) updates possible. No blind writes ever made.
 - ACTION FOR MAINTAINER: rotate/replace the GitHub App token for the repo-assist workflow. This is a persistent 21-day credential outage, NOT transient.
-- Latest checked: 2026-10-09 (run 37976826387) - still 401 on get_me AND list_issues. 33 CONSECUTIVE runs, 31 days (2026-09-08 -> 2026-10-09).
+- Latest checked: 2026-10-14 (run 38612631977) - still 401 on get_me AND list_issues. 38 CONSECUTIVE runs, 36 days (2026-09-08 -> 2026-10-14).
 
 ## Local Test PRs Created During Outage (condensed)
 All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`:
 - improve-extract-match-utils (09-28): matchUtils.ts extraction, fixes 2 Fixtures.tsx lint errors
-- improve-leagueselector-tests (09-29): 8 tests | improve-teamview-tests (09-30): 6 tests
-- improve-errorboundary-tests (10-01): 5 tests | improve-mockprovider-tests (10-02): 12 tests
-- improve-fixtures-render-tests (10-03): 13 tests | improve-app-tests (10-04): 10 tests, first App.tsx coverage
-- improve-matchdetail-render-tests (10-05): 19 tests
-- improve-genius-matchdetails-tests (10-06): 10 tests, boxscore/play-by-play parsing
-- improve-euroleague-matchdetails-tests (10-07): 14 tests, V1 game-details XML parsing
-- improve-euroleague-standings-tests (10-08): 14 tests, standings XML parse/transform + fetchXML error paths
-- improve-matchdetail-polling-tests (10-09): 13 tests, MatchDetail 15s live polling + StatBar/TeamStatsComparison
-- improve-matchdetail-quarterscores-tests (10-10): 10 tests, quarter-score table (OT column, live dashes, hidden states) + Top Performers slice/guards
-- improve-matchdetail-error-tests (10-11): 8 tests, error state / Try again retry / navigate(-1) / ?league= pass-through
-- improve-fixtures-dategrouping-tests (10-12): 14 tests, date grouping headers + tab filtering + empty/loading states
-- improve-fixtures-navigation-tests (10-13): 10 tests, handleMatchClick nav/?league pass-through + sessionStorage scroll save/restore
+- 09-29..10-13 (one per day): leagueselector(8), teamview(6), errorboundary(5), mockprovider(12), fixtures-render(13), app(10), matchdetail-render(19), genius-matchdetails(10), euroleague-matchdetails(14), euroleague-standings(14), matchdetail-polling(13), matchdetail-quarterscores(10), matchdetail-error(8), fixtures-dategrouping(14), fixtures-navigation(10)
+- improve-leaguetable-rows-tests (10-14): 13 tests, row cells/+-sign/navigate encoding/playoff+relegation zones
 
 ## Daily Outage Runs (condensed, all 401-blocked, local Task 3 work only)
 - 2026-10-01..2026-10-09: daily local test-only PRs (see 'Local Test PRs' list above for file/test counts).
@@ -117,18 +107,15 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
 
-## 2026-10-12 (run 38313087343)
-- 36th consecutive 401. Local Task 3: `repo-assist/improve-fixtures-dategrouping-tests` -> Fixtures.dateGrouping.test.tsx (14 tests). 146 pass, build OK.
-- Gotcha: headingTexts helper MUST use screen.queryAllByRole (getAllByRole THROWS when a tab renders zero groups). Fixtures uses useSearchParams -> MemoryRouter initialEntries '/?tab=results'.
-
-## 2026-10-13 (run 38458768225)
-- THIRTY-SEVENTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 35 days (2026-09-08 -> 2026-10-13).
+## 2026-10-14 (run 38612631977)
+- THIRTY-EIGHTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 36 days (2026-09-08 -> 2026-10-14).
 - Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED. Monthly summary #259 still stale since 2026-08-29.
 - ACTION FOR MAINTAINER (urgent): rotate the GitHub App token for the repo-assist workflow.
-- Did LOCAL Task 3: branch `repo-assist/improve-fixtures-navigation-tests` -> src/components/__tests__/Fixtures.navigation.test.tsx, 10 tests. Draft PR created.
-- Covers: navigate('/match/:id'); ?league= pass-through + encodeURIComponent of special chars; sessionStorage save of window.scrollY on click; tab change clears SCROLL_KEY; 50ms-deferred window.scrollTo restore; key cleared after restore; no-op when no saved value / loading / empty matches.
-- Verified: 142 tests pass (132 baseline + 10), `npm run build` OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
-- Gotchas: match cards render team SHORT NAME (shortName), not name — selecting cards by full name finds nothing. Filter tabs are also <button>, so filter getAllByRole('button') by shortName text. Node 25+ native sessionStorage stub shadows jsdom -> use explicit storageMock via Object.defineProperty(window,'sessionStorage',...). window.scrollY must be redefined with Object.defineProperty (not assignment).
-- Remaining untested surface: App.tsx polling transitions (pending PR), MatchDetail skeleton/loading state, dataProvider league routing edge cases, LeagueTable sorting/tie-breaks, teamStorage favourite-team flows.
+- Did LOCAL Task 3: branch `repo-assist/improve-leaguetable-rows-tests` -> src/components/__tests__/LeagueTable.rows.test.tsx, 13 tests. Draft PR created.
+- Covers: 8 column headers; row count; position/P/W/L/Pts cell indices; pointsDifference sign (+42 / -17 / plain 0); shortName shown not name; navigate('/team/<encodeURIComponent(name)>') incl. & and /; top-4 bg-green-50, bottom-2 bg-red-50, mid bg-white; legend; render order preserved (no re-sort).
+- Verified: 145 tests pass (132 baseline + 13), build OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: LeagueTable cell order is td[0]=position, [2]=P, [3]=W, [4]=L, [5]=+/- (hidden sm:table-cell but still in DOM), [6]=Pts, [7]=Form. Mock useNavigate via vi.mock with vi.importActual spread so MemoryRouter still works. Team cells are <button> with shortName text.
+- Remaining untested surface: App.tsx polling transitions (pending PR), MatchDetail skeleton/loading, dataProvider is well covered already, teamStorage well covered, LeagueSelector/TeamView/ErrorBoundary in pending PRs.
+
 
 NOTE: memory.md is near the 12 KB limit — trim oldest condensed outage entries before adding new sections.
