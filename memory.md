@@ -1,10 +1,10 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-14T18:15:00Z
+2026-10-15T17:55:00Z
 
 ## Prior Last Updated
-2026-10-13T20:00:00Z
+2026-10-14T18:15:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -100,22 +100,20 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 
 ## Daily Outage Runs (condensed, all 401-blocked, local Task 3 work only)
 - 2026-10-01..2026-10-09: daily local test-only PRs (see 'Local Test PRs' list above for file/test counts).
-- 2026-10-10 run 38073828754: MatchDetail.quarterScores.test.tsx (10 tests)
-- 2026-10-11 run 38163636016: MatchDetail.error.test.tsx (8 tests) — error/retry/league-param
-- 2026-10-12 run 38313087343: Fixtures.dateGrouping.test.tsx (14 tests) — date headers/grouping/tabs
-- 2026-10-13 run 38458768225: Fixtures.navigation.test.tsx (10 tests) — nav + scroll restore
+- 2026-10-10..10-13: quarterScores(10), MatchDetail.error(8), Fixtures.dateGrouping(14), Fixtures.navigation(10)
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
 
 ## 2026-10-14 (run 38612631977)
-- THIRTY-EIGHTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 36 days (2026-09-08 -> 2026-10-14).
-- Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED. Monthly summary #259 still stale since 2026-08-29.
+- 38th consecutive 401. Local Task 3: branch `repo-assist/improve-leaguetable-rows-tests` -> LeagueTable.rows.test.tsx (13 tests). Draft PR created.
+- Gotchas: LeagueTable td order [0]=pos,[2]=P,[3]=W,[4]=L,[5]=+/-,[6]=Pts,[7]=Form. Mock useNavigate via vi.mock + importActual spread. Team cells are <button> with shortName.
+
+## 2026-10-15 (run 38780817112)
+- THIRTY-NINTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 37 days (2026-09-08 -> 2026-10-15).
+- Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED. Monthly summary #259 stale since 2026-08-29.
 - ACTION FOR MAINTAINER (urgent): rotate the GitHub App token for the repo-assist workflow.
-- Did LOCAL Task 3: branch `repo-assist/improve-leaguetable-rows-tests` -> src/components/__tests__/LeagueTable.rows.test.tsx, 13 tests. Draft PR created.
-- Covers: 8 column headers; row count; position/P/W/L/Pts cell indices; pointsDifference sign (+42 / -17 / plain 0); shortName shown not name; navigate('/team/<encodeURIComponent(name)>') incl. & and /; top-4 bg-green-50, bottom-2 bg-red-50, mid bg-white; legend; render order preserved (no re-sort).
-- Verified: 145 tests pass (132 baseline + 13), build OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
-- Gotchas: LeagueTable cell order is td[0]=position, [2]=P, [3]=W, [4]=L, [5]=+/- (hidden sm:table-cell but still in DOM), [6]=Pts, [7]=Form. Mock useNavigate via vi.mock with vi.importActual spread so MemoryRouter still works. Team cells are <button> with shortName text.
-- Remaining untested surface: App.tsx polling transitions (pending PR), MatchDetail skeleton/loading, dataProvider is well covered already, teamStorage well covered, LeagueSelector/TeamView/ErrorBoundary in pending PRs.
-
-
-NOTE: memory.md is near the 12 KB limit — trim oldest condensed outage entries before adding new sections.
+- Did LOCAL Task 3: branch `repo-assist/improve-matchdetail-teamstats-tests` -> src/components/__tests__/MatchDetail.teamStats.test.tsx, 10 tests. Draft PR created.
+- Covers: Team Statistics heading; 8 stat labels; % suffix vs plain counts; proportional bar split (30/10 -> 75%/25%); zero-division 50/50 guard; 0 vs 9 -> 0%/100%; scheduled placeholder "Statistics will be available once the match begins"; completed+live "Loading statistics..."; one-sided stats -> no comparison block.
+- Verified: npm ci needed first (node_modules absent). 142 tests pass (132 baseline + 10), build OK, lint = only 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: StatBar bar track selector is `.rounded.overflow-hidden`; label element's closest('div').parentElement is the StatBar row. MatchDetail stats fallbacks branch on status (scheduled vs completed/live).
+- Remaining untested surface: App.tsx polling transitions, MatchDetail skeleton/loading state, MatchDetail player (top performers) table, LeagueSelector/TeamView/ErrorBoundary (in pending PRs).
