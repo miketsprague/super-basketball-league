@@ -1,13 +1,13 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-18T16:50:00Z (run aborted: GitHub MCP 401 Bad credentials, again)
+2026-10-19T19:35:00Z (40th consecutive run blocked by GitHub MCP 401 Bad credentials)
 
 ## Prev Updated
-2026-10-15T17:55:00Z
+2026-10-18T16:50:00Z
 
 ## Prior Last Updated
-2026-10-14T18:15:00Z
+2026-10-15T17:55:00Z
 
 ## Last Run Tasks
 - Task 5: CI verified — API health check passing (2026-08-29); PR #163 CI passing (2026-08-29)
@@ -120,3 +120,14 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - Verified: npm ci needed first (node_modules absent). 142 tests pass (132 baseline + 10), build OK, lint = only 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
 - Gotchas: StatBar bar track selector is `.rounded.overflow-hidden`; label element's closest('div').parentElement is the StatBar row. MatchDetail stats fallbacks branch on status (scheduled vs completed/live).
 - Remaining untested surface: App.tsx polling transitions, MatchDetail skeleton/loading state, MatchDetail player (top performers) table, LeagueSelector/TeamView/ErrorBoundary (in pending PRs).
+
+## 2026-10-19 (run 39310975651)
+- FORTIETH consecutive 401 Bad credentials (verified on get_me AND list_issues). Outage now 41 days (2026-09-08 -> 2026-10-19).
+- Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED (no repo reads possible). Monthly summary #259 still stale since 2026-08-29.
+- ACTION FOR MAINTAINER (urgent, repeated): rotate/replace the GitHub App token for the repo-assist workflow.
+- Did LOCAL Task 3: branch `repo-assist/improve-matchdetail-topperformers-tests` -> src/components/__tests__/MatchDetail.topPerformers.test.tsx, 10 tests. Draft PR created.
+- Covers Top Performers section: hidden with no player data / only one team / empty list; heading renders; names both teams; pts/reb/ast suffixes; slice(0,3) cap (players 4 & 5 absent); team shortName column headings; zero values render as "0 pts"/"0 reb"/"0 ast"; renders for scheduled matches when data provided.
+- Verified: npm ci first (node_modules absent each run). 142 tests pass (132 baseline + 10), build OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: Top Performers guard requires BOTH homePlayers and awayPlayers non-empty. PlayerStatistics = {id,name,points,rebounds,assists,minutes}. Team shortName appears more than once in the DOM (score header + column heading) -> use getAllByText.
+- Remaining untested surface: App.tsx polling transitions, MatchDetail skeleton/loading state, LeagueSelector/TeamView/ErrorBoundary (already in pending PRs).
+- Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
