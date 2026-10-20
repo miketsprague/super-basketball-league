@@ -1,7 +1,7 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-19T19:35:00Z (40th consecutive run blocked by GitHub MCP 401 Bad credentials)
+2026-10-20T18:10:00Z (41st consecutive run blocked by GitHub MCP 401 Bad credentials)
 
 ## Prev Updated
 2026-10-18T16:50:00Z
@@ -107,27 +107,18 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
 
 
-## 2026-10-14 (run 38612631977)
-- 38th consecutive 401. Local Task 3: branch `repo-assist/improve-leaguetable-rows-tests` -> LeagueTable.rows.test.tsx (13 tests). Draft PR created.
-- Gotchas: LeagueTable td order [0]=pos,[2]=P,[3]=W,[4]=L,[5]=+/-,[6]=Pts,[7]=Form. Mock useNavigate via vi.mock + importActual spread. Team cells are <button> with shortName.
+## Daily Outage Runs 2026-10-14..10-19 (condensed; all 401-blocked, local Task 3 test-only PRs)
+- 10-14 (38612631977): LeagueTable.rows.test.tsx (13). Gotcha: td order [0]=pos,[2]=P,[3]=W,[4]=L,[5]=+/-,[6]=Pts,[7]=Form; team cells are <button> with shortName.
+- 10-15 (38780817112): MatchDetail.teamStats.test.tsx (10). Gotcha: StatBar track selector `.rounded.overflow-hidden`; stats fallback branches on status (scheduled vs completed/live).
+- 10-19 (39310975651): MatchDetail.topPerformers.test.tsx (10). Gotcha: section requires BOTH homePlayers and awayPlayers non-empty; slice(0,3) cap; team shortName appears twice -> getAllByText.
 
-## 2026-10-15 (run 38780817112)
-- THIRTY-NINTH consecutive 401 Bad credentials (get_me AND list_issues). Outage 37 days (2026-09-08 -> 2026-10-15).
-- Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED. Monthly summary #259 stale since 2026-08-29.
-- ACTION FOR MAINTAINER (urgent): rotate the GitHub App token for the repo-assist workflow.
-- Did LOCAL Task 3: branch `repo-assist/improve-matchdetail-teamstats-tests` -> src/components/__tests__/MatchDetail.teamStats.test.tsx, 10 tests. Draft PR created.
-- Covers: Team Statistics heading; 8 stat labels; % suffix vs plain counts; proportional bar split (30/10 -> 75%/25%); zero-division 50/50 guard; 0 vs 9 -> 0%/100%; scheduled placeholder "Statistics will be available once the match begins"; completed+live "Loading statistics..."; one-sided stats -> no comparison block.
-- Verified: npm ci needed first (node_modules absent). 142 tests pass (132 baseline + 10), build OK, lint = only 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
-- Gotchas: StatBar bar track selector is `.rounded.overflow-hidden`; label element's closest('div').parentElement is the StatBar row. MatchDetail stats fallbacks branch on status (scheduled vs completed/live).
-- Remaining untested surface: App.tsx polling transitions, MatchDetail skeleton/loading state, MatchDetail player (top performers) table, LeagueSelector/TeamView/ErrorBoundary (in pending PRs).
-
-## 2026-10-19 (run 39310975651)
-- FORTIETH consecutive 401 Bad credentials (verified on get_me AND list_issues). Outage now 41 days (2026-09-08 -> 2026-10-19).
-- Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED (no repo reads possible). Monthly summary #259 still stale since 2026-08-29.
+## 2026-10-20 (run 39471628074)
+- FORTY-FIRST consecutive 401 Bad credentials (verified on get_me AND list_issues). Outage 42 days (2026-09-08 -> 2026-10-20).
+- Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED (no repo reads). Monthly summary #259 still stale since 2026-08-29.
 - ACTION FOR MAINTAINER (urgent, repeated): rotate/replace the GitHub App token for the repo-assist workflow.
-- Did LOCAL Task 3: branch `repo-assist/improve-matchdetail-topperformers-tests` -> src/components/__tests__/MatchDetail.topPerformers.test.tsx, 10 tests. Draft PR created.
-- Covers Top Performers section: hidden with no player data / only one team / empty list; heading renders; names both teams; pts/reb/ast suffixes; slice(0,3) cap (players 4 & 5 absent); team shortName column headings; zero values render as "0 pts"/"0 reb"/"0 ast"; renders for scheduled matches when data provided.
-- Verified: npm ci first (node_modules absent each run). 142 tests pass (132 baseline + 10), build OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
-- Gotchas: Top Performers guard requires BOTH homePlayers and awayPlayers non-empty. PlayerStatistics = {id,name,points,rebounds,assists,minutes}. Team shortName appears more than once in the DOM (score header + column heading) -> use getAllByText.
-- Remaining untested surface: App.tsx polling transitions, MatchDetail skeleton/loading state, LeagueSelector/TeamView/ErrorBoundary (already in pending PRs).
+- Did LOCAL Task 3: branch `repo-assist/improve-matchdetail-skeleton-tests` -> src/components/__tests__/MatchDetail.skeleton.test.tsx, 9 tests. Draft PR created.
+- Covers: skeleton while initial fetch pending; skeleton replaced on resolve; 14 placeholder blocks (header/score/quarters/stats); no error panel while loading; "Try again" re-enters skeleton then recovers; ?league= forwarded to fetchMatchDetails; absent param -> undefined; back button -> navigate(-1); null resolve -> "Match not found".
+- Verified: npm ci first (node_modules absent each run). 141 tests pass (132 baseline + 9), build OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: skeleton root selector `.min-h-screen.animate-pulse` (live status badge also uses animate-pulse, so scope to min-h-screen). Use an unresolved Promise to hold the loading state; resolve inside act(). Mock useNavigate via a module-scope vi.fn so navigate(-1) is assertable.
+- Remaining untested surface: App.tsx polling transitions; LeagueSelector/TeamView/ErrorBoundary (already in pending PRs). MatchDetail is now essentially fully covered across the pending PR set.
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
