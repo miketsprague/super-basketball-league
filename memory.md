@@ -1,7 +1,7 @@
 # Repo Assist Memory
 
 ## Last Updated
-2026-10-20T18:10:00Z (41st consecutive run blocked by GitHub MCP 401 Bad credentials)
+2026-10-21T18:15:00Z (42nd consecutive run blocked by GitHub MCP 401 Bad credentials)
 
 ## Prev Updated
 2026-10-18T16:50:00Z
@@ -121,4 +121,15 @@ All test-only, conflict-free, PRs created as drafts. Branch `repo-assist/<name>`
 - Verified: npm ci first (node_modules absent each run). 141 tests pass (132 baseline + 9), build OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
 - Gotchas: skeleton root selector `.min-h-screen.animate-pulse` (live status badge also uses animate-pulse, so scope to min-h-screen). Use an unresolved Promise to hold the loading state; resolve inside act(). Mock useNavigate via a module-scope vi.fn so navigate(-1) is assertable.
 - Remaining untested surface: App.tsx polling transitions; LeagueSelector/TeamView/ErrorBoundary (already in pending PRs). MatchDetail is now essentially fully covered across the pending PR set.
+- Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
+
+## 2026-10-21 (run 39650687623)
+- FORTY-SECOND consecutive 401 Bad credentials (verified on get_me AND list_issues). Outage 43 days (2026-09-08 -> 2026-10-21).
+- Tasks 1/2/5/6/7/8/9/11 ALL BLOCKED (no repo reads). Monthly summary #259 still stale since 2026-08-29.
+- ACTION FOR MAINTAINER (urgent, repeated): rotate/replace the GitHub App token for the repo-assist workflow.
+- Did LOCAL Task 3: branch `repo-assist/improve-genius-parsing-edge-tests` -> src/services/__tests__/geniusSportsApi.parsing.test.ts, 15 tests. Draft PR created.
+- Covers geniusSportsApi parser FALLBACK branches (previously untested): standings rows <5 cells skipped; sort by position; teamId falls back to team code; shortName derived when no team-name-code; missing stats -> 0; logo undefined. Schedule: `match-N` fallback id; non-numeric score (&nbsp;/-) -> undefined; Home/Away name fallback; teamId -> derived shortName; venue 'TBC' + venue link preference; "Jan 30, 2026, 7:30 PM" -> 2026-01-30/19:30; missing/unparseable datetime -> today + 'TBC'; empty HTML -> [].
+- Verified: npm ci first (node_modules absent each run). 147 tests pass (132 baseline + 15), build OK, lint = only the 2 PRE-EXISTING Fixtures.tsx react-refresh errors.
+- Gotchas: parseStandingsHTML requires `table.standings tbody tr`; cells.length<5 guard counts ALL td. Mock fetch returns { html, css, js }. Score element selector is `.team-score .fake-cell, .team-score`.
+- Remaining untested surface: App.tsx polling transitions (app(10) PR may cover); euroleagueApi parser fallbacks; dataProvider error paths.
 - Next run (if auth restored): verify PR list, close superseded PR #163, update monthly summary #259, work the uncommented-issue backlog.
